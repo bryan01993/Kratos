@@ -1,11 +1,11 @@
-import pandas as pd
 import time
 import os.path
-import subprocess
 import shutil
-import xml.etree.ElementTree as et
 from tkinter import *
 import tkinter as tk
+import xml.etree.ElementTree as et
+import subprocess
+import pandas as pd
 from bokeh.plotting import curdoc, figure
 from bokeh.models import ColumnDataSource, Select, CustomJS
 from bokeh.layouts import row, column
