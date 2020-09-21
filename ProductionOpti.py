@@ -1098,7 +1098,6 @@ class Application(tk.Frame):
 
 root = tk.Tk() # raiz es el cuadro mas grande
 root.title("Optimizer Ecoelite")
-#root.geometry("650x350")
 root.config(bg='gray')
 myFrame = Frame(root)
 
@@ -1107,22 +1106,22 @@ myFrame.pack(fill='both',expand=True) # para colocarlo en algun borde consultar 
 myFrame.config(bg='#292524',width=1200,height=1000)
 Label(myFrame, text = 'Lanzamiento',fg='white',bg='#292524',font=(18)).grid(row=0,column=0,columnspan=2) #Label Launch Panel
 
-LabelBotName=Label(myFrame,text = "EA Name:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label BotName
+Label(myFrame,text = "EA Name:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label BotName
 BotName= Entry(myFrame,fg='white',bg='#151312',width=12)
 BotName.grid(row=1,column=1,sticky='w',padx=10,pady=10)                   #Entry BotName
 BotName.get()
 
-LabelStartDate=Label(myFrame,text = "Start Date:",fg='white',bg='#292524').grid(row=2,column=0,sticky='w',padx=10,pady=10) #Label Start Date
+Label(myFrame,text = "Start Date:",fg='white',bg='#292524').grid(row=2,column=0,sticky='w',padx=10,pady=10) #Label Start Date
 Opti_start_date= Entry(myFrame,fg='white',bg='#151312',width=10)
 Opti_start_date.grid(row=2,column=1,sticky='w',padx=10,pady=10)                   #Entry Start Date
 Opti_start_date.get()
 
-LabelForwardDate=Label(myFrame,text = "Forward Date:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Forward Date
+Label(myFrame,text = "Forward Date:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Forward Date
 ForwardDate= Entry(myFrame,fg='white',bg='#151312',width=10)
 ForwardDate.grid(row=3,column=1,sticky='w',padx=10,pady=10)                   #Entry Forward Date
 ForwardDate.get()
 
-LabelStartDate=Label(myFrame,text = "End Date:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label End Date
+Label(myFrame,text = "End Date:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label End Date
 Opti_end_date= Entry(myFrame,fg='white',bg='#151312',width=10)
 Opti_end_date.grid(row=4,column=1,sticky='w',padx=10,pady=10)                   #Entry End Date
 Opti_end_date.get()
@@ -1138,62 +1137,62 @@ def IteratetionsFunction():
     print('EA to analize:',BotName.get(),'Total:',Opticount,'Optimizations')
 
 
-CreateFoldersButton=Button(myFrame,text="Create ALL Folders",fg='black',bg='#34D7DF',borderwidth=0,command=CreateALLFoldersPhase1).grid(row=2,column=2,padx=10,pady=10)
+Button(myFrame,text="Create ALL Folders",fg='black',bg='#34D7DF',borderwidth=0,command=CreateALLFoldersPhase1).grid(row=2,column=2,padx=10,pady=10)
 
-CreateIniForAllPhase1Button=Button(myFrame,text="Create Ini Files For Phase 1",fg='black',bg='#34D7DF',borderwidth=0,command=CreateIniForAllPhase1).grid(row=4,column=2,padx=10,pady=10)
+Button(myFrame,text="Create Ini Files For Phase 1",fg='black',bg='#34D7DF',borderwidth=0,command=CreateIniForAllPhase1).grid(row=4,column=2,padx=10,pady=10)
 
-LaunchButtonPhase1=Button(myFrame,text='LAUNCH Phase 1',fg='black',bg='#E74C3C',borderwidth=0,command=LaunchPhase1).grid(row=5,column=2,padx=10,pady=10)
+Button(myFrame,text='LAUNCH Phase 1',fg='black',bg='#E74C3C',borderwidth=0,command=LaunchPhase1).grid(row=5,column=2,padx=10,pady=10)
 
-AccotateResultsPhase1Button=Button(myFrame,text="Accotate Results from Phase 1",fg='black',bg='#34D7DF',borderwidth=0,command=AccotateResultsPhase1).grid(row=6,column=2,padx=10,pady=10)
+Button(myFrame,text="Accotate Results from Phase 1",fg='black',bg='#34D7DF',borderwidth=0,command=AccotateResultsPhase1).grid(row=6,column=2,padx=10,pady=10)
 
-AccotateOptisetsPhase1Button=Button(myFrame,text="Accotate Optisets for Phase 2",fg='black',bg='#34D7DF',borderwidth=0,command=AccotateOptisetsPhase1).grid(row=7,column=2,padx=10,pady=10)
+Button(myFrame,text="Accotate Optisets for Phase 2",fg='black',bg='#34D7DF',borderwidth=0,command=AccotateOptisetsPhase1).grid(row=7,column=2,padx=10,pady=10)
 
-CreateIniforAllPhase2Button=Button(myFrame,text="Create Ini Files for Phase 2",fg='black',bg='#34D7DF',borderwidth=0,command=CreateIniForAllPhase2).grid(row=8,column=2,padx=10,pady=10)
+Button(myFrame,text="Create Ini Files for Phase 2",fg='black',bg='#34D7DF',borderwidth=0,command=CreateIniForAllPhase2).grid(row=8,column=2,padx=10,pady=10)
 
-LaunchButtonPhase2=Button(myFrame,text='LAUNCH Phase 2',fg='black',bg='#E74C3C',borderwidth=0,command=LaunchPhase2).grid(row=9,column=2,padx=10,pady=10)
+Button(myFrame,text='LAUNCH Phase 2',fg='black',bg='#E74C3C',borderwidth=0,command=LaunchPhase2).grid(row=9,column=2,padx=10,pady=10)
 
-AccotateResultsPhase2=Button(myFrame,text='Join Results and Filter for Phase 3',fg='black',bg='#34D7DF',borderwidth=0,command=AccotateResultsPhase2).grid(row=10,column=2,padx=10,pady=10)
+Button(myFrame,text='Join Results and Filter for Phase 3',fg='black',bg='#34D7DF',borderwidth=0,command=AccotateResultsPhase2).grid(row=10,column=2,padx=10,pady=10)
 
-AccotateOptisetsPhase2Button=Button(myFrame,text='Accotate Optisets for Phase 3 TO FIX',fg='black',bg='#34D7DF',borderwidth=0,command=AccotateOptisetsPhase2).grid(row=11,column=2,padx=10,pady=10)
+Button(myFrame,text='Accotate Optisets for Phase 3 TO FIX',fg='black',bg='#34D7DF',borderwidth=0,command=AccotateOptisetsPhase2).grid(row=11,column=2,padx=10,pady=10)
 
-BTSetsForPhase3Button=Button(myFrame,text='Produce Sets and Inis for Phase 3',fg='black',bg='#34D7DF',borderwidth=0,command=BTSetsForPhase3).grid(row=12,column=2,padx=10,pady=10)
+Button(myFrame,text='Produce Sets and Inis for Phase 3',fg='black',bg='#34D7DF',borderwidth=0,command=BTSetsForPhase3).grid(row=12,column=2,padx=10,pady=10)
 
-LaunchButtonPhase3=Button(myFrame,text='LAUNCH Phase 3',fg='black',bg='#E74C3C',borderwidth=0,command=LaunchPhase3).grid(row=13,column=2,padx=10,pady=10)
+Button(myFrame,text='LAUNCH Phase 3',fg='black',bg='#E74C3C',borderwidth=0,command=LaunchPhase3).grid(row=13,column=2,padx=10,pady=10)
 
-HCTESTBUTTON=Button(myFrame,text='LAUNCH HC',fg='black',bg='#E74C3C',borderwidth=0,command=HillClimbPhase2).grid(row=14,column=2,padx=10,pady=10)  # HILL CLIMBING TEST BUTTON
+Button(myFrame,text='LAUNCH HC',fg='black',bg='#E74C3C',borderwidth=0,command=HillClimbPhase2).grid(row=14,column=2,padx=10,pady=10)  # HILL CLIMBING TEST BUTTON
 
-LabelPairList=Label(myFrame,text = "Pairs",fg='white',bg='#292524').grid(row=5,column=0,padx=10,pady=10) #Label Pairs
+Label(myFrame,text = "Pairs",fg='white',bg='#292524').grid(row=5,column=0,padx=10,pady=10) #Label Pairs
 
 
 pairGBPUSD=IntVar()
-CheckGBPUSD=Checkbutton(myFrame, text="GBPUSD",fg='black',bg='#68E552', variable=pairGBPUSD,onvalue=1,offvalue=0).grid(row=6,column=0) #CheckBox EURUSD
+Checkbutton(myFrame, text="GBPUSD", fg='black', bg='#68E552', variable=pairGBPUSD, onvalue=1, offvalue=0).grid(row=6,column=0) #CheckBox EURUSD
 
 pairEURUSD=IntVar()
-CheckEURUSD=Checkbutton(myFrame, text="EURUSD",fg='black',bg='#68E552', variable=pairEURUSD,onvalue=1,offvalue=0).grid(row=7,column=0) #CheckBox EURUSD
+Checkbutton(myFrame, text="EURUSD", fg='black', bg='#68E552', variable=pairEURUSD, onvalue=1, offvalue=0).grid(row=7,column=0) #CheckBox EURUSD
 
 pairUSDCAD=IntVar()
-CheckUSDCAD=Checkbutton(myFrame, text="USDCAD",fg='black',bg='#68E552', variable=pairUSDCAD,onvalue=1,offvalue=0).grid(row=8,column=0) #CheckBox USDCAD
+Checkbutton(myFrame, text="USDCAD", fg='black', bg='#68E552', variable=pairUSDCAD, onvalue=1, offvalue=0).grid(row=8,column=0) #CheckBox USDCAD
 
-pairUSDCHF=IntVar()
-CheckUSDJAP=Checkbutton(myFrame, text="USDCHF",fg='black',bg='#68E552', variable=pairUSDCHF,onvalue=1,offvalue=0).grid(row=9,column=0) #CheckBox USDCHF
+pairUSDCHF = IntVar()
+Checkbutton(myFrame, text="USDCHF", fg='black', bg='#68E552', variable=pairUSDCHF, onvalue=1, offvalue=0).grid(row=9, column=0) #CheckBox USDCHF
 
-pairUSDJPY=IntVar()
-CheckUSDJPY=Checkbutton(myFrame, text="USDJPY",fg='black',bg='#68E552', variable=pairUSDJPY,onvalue=1,offvalue=0).grid(row=10,column=0) #CheckBox USDJPY
+pairUSDJPY = IntVar()
+Checkbutton(myFrame, text="USDJPY", fg='black', bg='#68E552', variable=pairUSDJPY, onvalue=1, offvalue=0).grid(row=10, column=0) #CheckBox USDJPY
 
-pairGBPJPY=IntVar()
-CheckGBPJPY=Checkbutton(myFrame, text="GBPJPY",fg='black',bg='#68E552', variable=pairGBPJPY,onvalue=1,offvalue=0).grid(row=11,column=0) #CheckBox GBPJPY
+pairGBPJPY = IntVar()
+Checkbutton(myFrame, text="GBPJPY", fg='black', bg='#68E552', variable=pairGBPJPY, onvalue=1, offvalue=0).grid(row=11, column=0) #CheckBox GBPJPY
 
-pairEURAUD=IntVar()
-CheckEURAUD=Checkbutton(myFrame, text="EURAUD",fg='black',bg='#68E552', variable=pairEURAUD,onvalue=1,offvalue=0).grid(row=12,column=0) #CheckBox EURAUD
+pairEURAUD = IntVar()
+Checkbutton(myFrame, text="EURAUD", fg='black', bg='#68E552', variable=pairEURAUD, onvalue=1, offvalue=0).grid(row=12, column=0) #CheckBox EURAUD
 
-pairEURGBP=IntVar()
-CheckEURGBP=Checkbutton(myFrame, text="EURGBP",fg='black',bg='#68E552', variable=pairEURGBP,onvalue=1,offvalue=0).grid(row=13,column=0) #CheckBox EURGBP
+pairEURGBP = IntVar()
+Checkbutton(myFrame, text="EURGBP", fg='black', bg='#68E552', variable=pairEURGBP, onvalue=1, offvalue=0).grid(row=13, column=0) #CheckBox EURGBP
 
-pairEURJPY=IntVar()
-CheckEURJPY=Checkbutton(myFrame, text="EURJPY",fg='black',bg='#68E552', variable=pairEURJPY,onvalue=1,offvalue=0).grid(row=14,column=0) #CheckBox EURJPY
+pairEURJPY = IntVar()
+Checkbutton(myFrame, text="EURJPY", fg='black', bg='#68E552', variable=pairEURJPY, onvalue=1, offvalue=0).grid(row=14, column=0) #CheckBox EURJPY
 
-pairEURCHF=IntVar()
-CheckEURCHF=Checkbutton(myFrame, text="EURCHF",fg='black',bg='#68E552', variable=pairEURCHF,onvalue=1,offvalue=0).grid(row=15,column=0) #CheckBox EURCHF
+pairEURCHF = IntVar()
+Checkbutton(myFrame, text="EURCHF",fg='black',bg='#68E552', variable=pairEURCHF, onvalue=1, offvalue=0).grid(row=15, column=0) #CheckBox EURCHF
 
 
 PairListTest = {'GBPUSD':pairGBPUSD,'EURUSD':pairEURUSD,'USDCAD':pairUSDCAD,'USDCHF':pairUSDCHF,'USDJPY':pairUSDJPY,'GBPJPY':pairGBPJPY,'EURAUD':pairEURAUD,'EURGBP':pairEURGBP,'EURJPY':pairEURJPY,'EURCHF':pairEURCHF}
@@ -1202,9 +1201,9 @@ PairListTest = {'GBPUSD':pairGBPUSD,'EURUSD':pairEURUSD,'USDCAD':pairUSDCAD,'USD
 def checkallpairs():
     pairGBPUSD.set(1),pairEURUSD.set(1),pairUSDCAD.set(1),pairUSDJPY.set(1),pairUSDCHF.set(1),pairGBPJPY.set(1),pairEURAUD.set(1),pairEURGBP.set(1),pairEURJPY.set(1),pairEURCHF.set(1)
 
-Checkallpairbutton=Button(myFrame,text='Check all pairs',fg='black',bg='#34D7DF',borderwidth=0,command=checkallpairs).grid(row=18,column=0,padx=10,pady=10)
+Button(myFrame,text='Check all pairs',fg='black',bg='#34D7DF',borderwidth=0,command=checkallpairs).grid(row=18,column=0,padx=10,pady=10)
 
-LabelTimeFrameList=Label(myFrame,text = "Timeframes",fg='white',bg='#292524').grid(row=5,column=1,padx=10,pady=10) #Label TimeFrameList
+Label(myFrame,text = "Timeframes",fg='white',bg='#292524').grid(row=5,column=1,padx=10,pady=10) #Label TimeFrameList
 
 TFH4=IntVar()
 Checkbutton(myFrame, text="H4",fg='black',bg='#68E552', variable=TFH4).grid(row=6,column=1) #CheckBox H4
@@ -1400,7 +1399,7 @@ def GraphBacktestPhase1():
                     # bokeh serve - -show bokehINTERACTIVE.py
                     print('After')"""
 
-GraphButton=Button(myFrame,text='Graph Selected Pair/TF Opti Phase 1',fg='black',bg='#34D7DF',borderwidth=0,command=GraphBacktestPhase1).grid(row=12,column=3,padx=10,pady=10)
+Button(myFrame,text='Graph Selected Pair/TF Opti Phase 1',fg='black',bg='#34D7DF',borderwidth=0,command=GraphBacktestPhase1).grid(row=12,column=3,padx=10,pady=10)
 
 def GraphBacktestPhase2():
     for i in PairListTest:
@@ -1484,11 +1483,11 @@ def GraphBacktestPhase2():
                     # Posteriormente agregar lineas del CSV en vivo con sliders tal como en https://demo.bokeh.org/export_csv
                     # bokeh serve - -show ProductionOpti.py
 
-GraphButton2=Button(myFrame,text='Graph Selected Pair/TF Opti Phase 2',fg='black',bg='#34D7DF',borderwidth=0,command=GraphBacktestPhase2).grid(row=11,column=3,padx=10,pady=10)
+Button(myFrame,text='Graph Selected Pair/TF Opti Phase 2',fg='black',bg='#34D7DF',borderwidth=0,command=GraphBacktestPhase2).grid(row=11,column=3,padx=10,pady=10)
 def checkalltfs():
     TFH4.set(1),TFH1.set(1),TFM30.set(1),TFM15.set(1),TFM5.set(1),TFM1.set(1)
 
-Checkalltfsbutton=Button(myFrame,text='Check all timeframes',fg='black',bg='#34D7DF',borderwidth=0,command=checkalltfs).grid(row=18,column=1,padx=10,pady=10)
+Button(myFrame,text='Check all timeframes',fg='black',bg='#34D7DF',borderwidth=0,command=checkalltfs).grid(row=18,column=1,padx=10,pady=10)
 
 
 IteratetionsFunction=Button(myFrame,text='Iterate Selections',fg='black',bg='#34D7DF',borderwidth=0,command=IteratetionsFunction)
