@@ -10,8 +10,6 @@ from bokeh.plotting import curdoc, figure
 from bokeh.models import ColumnDataSource, Select, CustomJS
 from bokeh.layouts import row, column
 from bokeh.io import output_notebook
-Title = "So it begins once again, a comenzar de nuevo desde 0 con python pero ahora con una vision mas global" \
-        " y avanzada, mas alla de una vulgar estrategia basada en velas"
 
 
 #---------------------------------------------------VARIABLES PARA EL LANZAMIENTO ----------------------------------------------------
@@ -1233,32 +1231,32 @@ Phase1FilterSettingswindow = tk.Toplevel(myFrame,bg='#292524',width=800,height=6
 Phase1FilterSettingswindow.title("Base Filter Settings")
 Label(Phase1FilterSettingswindow, text = 'Base Filter Settings',fg='white',bg='#292524',font=(18)).grid(row=0,column=0,columnspan=2) #Label Launch Panel
 
-LabelFilterNetProfitPhase1Entry=Label(Phase1FilterSettingswindow,text = "Min. Net Profit:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label Net Profit
+Label(Phase1FilterSettingswindow,text = "Min. Net Profit:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label Net Profit
 FilterNetProfitPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                   #Entry Net Profit
 FilterNetProfitPhase1.grid(row=1,column=1,sticky='w',padx=10,pady=10)
 FilterNetProfitPhase1.get()
 
-LabelFilterExpectedPayoffPhase1Entry=Label(Phase1FilterSettingswindow,text = "Min. Exp. Payoff:",fg='white',bg='#292524').grid(row=2,column=0,sticky='w',padx=10,pady=10) #Label Expected Payoff
-FilterExpectedPayoffPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Expected Payoff
+Label(Phase1FilterSettingswindow,text = "Min. Exp. Payoff:",fg='white',bg='#292524').grid(row=2,column=0,sticky='w',padx=10,pady=10) #Label Expected Payoff
+FilterExpectedPayoffPhase1 = Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Expected Payoff
 FilterExpectedPayoffPhase1.grid(row=2,column=1,sticky='w',padx=10,pady=10)
 FilterExpectedPayoffPhase1.get()
 
-LabelFilterProfitFactorPhase1Entry=Label(Phase1FilterSettingswindow,text = "Min. Profit Factor:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Min Net Profit
+Label(Phase1FilterSettingswindow,text = "Min. Profit Factor:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Min Net Profit
 FilterProfitFactorPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Profit Factor
 FilterProfitFactorPhase1.grid(row=3,column=1,sticky='w',padx=10,pady=10)
 FilterProfitFactorPhase1.get()
 
-LabelFilterCustomPhase1Entry=Label(Phase1FilterSettingswindow,text = "Min. Custom Value:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label Custom Value
+Label(Phase1FilterSettingswindow,text = "Min. Custom Value:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label Custom Value
 FilterCustomPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Custom Value
 FilterCustomPhase1.grid(row=4,column=1,sticky='w',padx=10,pady=10)
 FilterCustomPhase1.get()
 
-LabelFilterEquityDDPhase1Entry=Label(Phase1FilterSettingswindow,text = "Max. Drawdown:",fg='white',bg='#292524').grid(row=5,column=0,sticky='w',padx=10,pady=10) #Label Equity DD
+Label(Phase1FilterSettingswindow,text = "Max. Drawdown:",fg='white',bg='#292524').grid(row=5,column=0,sticky='w',padx=10,pady=10) #Label Equity DD
 FilterEquityDDPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Equity DD
 FilterEquityDDPhase1.grid(row=5,column=1,sticky='w',padx=10,pady=10)
 FilterEquityDDPhase1.get()
 
-LabelFilterTradesPhase1Entry=Label(Phase1FilterSettingswindow,text = "Min. Trades:",fg='white',bg='#292524').grid(row=6,column=0,sticky='w',padx=10,pady=10) #Label Filter Trades
+Label(Phase1FilterSettingswindow,text = "Min. Trades:",fg='white',bg='#292524').grid(row=6,column=0,sticky='w',padx=10,pady=10) #Label Filter Trades
 FilterTradesPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Filter Trades
 FilterTradesPhase1.grid(row=6,column=1,sticky='w',padx=10,pady=10)
 FilterTradesPhase1.get()
@@ -1268,33 +1266,33 @@ Phase2FilterSettingswindow = tk.Toplevel(myFrame,bg='#292524',width=800,height=6
 Phase2FilterSettingswindow.title("Proyection Filter Settings")
 Label(Phase2FilterSettingswindow, text = 'Proyection Filter Settings',fg='white',bg='#292524',font=(18)).grid(row=0,column=0,columnspan=2) #Label Launch Panel
 
-LabelFilterNetProfitPhase1Entry=Label(Phase2FilterSettingswindow,text = "Forward Min. Net Profit:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label Net Profit
+Label(Phase2FilterSettingswindow,text = "Forward Min. Net Profit:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label Net Profit
 ForwardFilterNetProfitPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                   #Entry Net Profit
 ForwardFilterNetProfitPhase1.grid(row=1,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterNetProfitPhase1.get()
 
-LabelFilterExpectedPayoffPhase1Entry=Label(Phase2FilterSettingswindow,text = "Forward Min. Exp. Payoff:",fg='white',bg='#292524').grid(row=2,column=0,sticky='w',padx=10,pady=10) #Label Expected Payoff
+Label(Phase2FilterSettingswindow,text = "Forward Min. Exp. Payoff:",fg='white',bg='#292524').grid(row=2,column=0,sticky='w',padx=10,pady=10) #Label Expected Payoff
 ForwardFilterExpectedPayoffPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Expected Payoff
 ForwardFilterExpectedPayoffPhase1.grid(row=2,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterExpectedPayoffPhase1.get()
 
-LabelFilterProfitFactorPhase1Entry=Label(Phase2FilterSettingswindow,text = "Forward Min. Profit Factor:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Min Net Profit
+Label(Phase2FilterSettingswindow,text = "Forward Min. Profit Factor:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Min Net Profit
 ForwardFilterProfitFactorPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Profit Factor
 ForwardFilterProfitFactorPhase1.grid(row=3,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterProfitFactorPhase1.get()
 
-LabelFilterCustomPhase1Entry=Label(Phase2FilterSettingswindow,text = "Forward Min. Custom Value:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label Custom Value
+Label(Phase2FilterSettingswindow,text = "Forward Min. Custom Value:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label Custom Value
 ForwardFilterCustomPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Custom Value
 ForwardFilterCustomPhase1.grid(row=4,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterCustomPhase1.get()
 
-LabelFilterEquityDDPhase1Entry=Label(Phase2FilterSettingswindow,text = "Forward Max. Drawdown:",fg='white',bg='#292524').grid(row=5,column=0,sticky='w',padx=10,pady=10) #Label Equity DD
+Label(Phase2FilterSettingswindow,text = "Forward Max. Drawdown:",fg='white',bg='#292524').grid(row=5,column=0,sticky='w',padx=10,pady=10) #Label Equity DD
 ForwardFilterEquityDDPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Equity DD
 ForwardFilterEquityDDPhase1.grid(row=5,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterEquityDDPhase1.get()
 
-LabelFilterTradesPhase1Entry=Label(Phase2FilterSettingswindow,text = "Forward Min. Trades:",fg='white',bg='#292524').grid(row=6,column=0,sticky='w',padx=10,pady=10) #Label Filter Trades
-ForwardFilterTradesPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Filter Trades
+Label(Phase2FilterSettingswindow,text = "Forward Min. Trades:",fg='white',bg='#292524').grid(row=6,column=0,sticky='w',padx=10,pady=10) #Label Filter Trades
+ForwardFilterTradesPhase1 = Entry(Phase2FilterSettingswindow, fg='white', bg='#151312', width=12)                  #Entry Filter Trades
 ForwardFilterTradesPhase1.grid(row=6,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterTradesPhase1.get()
 
@@ -1412,11 +1410,7 @@ def GraphBacktestPhase2():
                     df = pd.read_csv(
                         'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase2.csv'.format(
                             BotName.get(), i, j, BotName.get(), i, j))
-                    ps = df['Pass']
-                    rs = df['Result']
-                    pr = df['Profit']
-                    dd = df['Equity DD %']
-                    tr = df['Trades']
+
                     columns = sorted(df.columns)
                     discrete = [x for x in columns if df[x].dtype == object]
                     continuous = [x for x in columns if x not in discrete]
@@ -1465,7 +1459,7 @@ def GraphBacktestPhase2():
                         layout.children[1] = create_figure()
                         callback = CustomJS(code="console.log('tap event occurred')")
 
-                    source = ColumnDataSource(data=dict(x=df['Pass'], y=df['Profit']))
+                    # source = ColumnDataSource(data=dict(x=df['Pass'], y=df['Profit']))
                     x = Select(title='X-Axis', value='Pass', options=columns)
                     x.on_change('value', callback)
 
