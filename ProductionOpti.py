@@ -13,21 +13,19 @@ from bokeh.io import output_notebook
 Title = "So it begins once again, a comenzar de nuevo desde 0 con python pero ahora con una vision mas global" \
         " y avanzada, mas alla de una vulgar estrategia basada en velas"
 
-# IMPORTACIONES
-
 
 #---------------------------------------------------VARIABLES PARA EL LANZAMIENTO ----------------------------------------------------
 BotName = 'EA-B3v1'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
 BotMagicNumberSeries = '08'   # should be last numbers of the EA 09 for S3
 UserSeries = '01' #01 La Opti la hizo bryan, 02 la hizo richard
 #--------------------------------------------PATHS----------------------------------------------------------------------
-MT5_Path="C:/Program Files/Darwinex MetaTrader 5/terminal64.exe"
-Folder_Path="C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
-FolderLaunch = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/INITS/Phase1".format(BotName)
-Launch_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Launch'
-Launch_folder_Init = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Launch/LAUNCH_INIT/'
-Tom_Test_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Tom_Test/'
-Tom_Test_Init_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Tom_Test/Tom_Test_INITS/'
+MT5_PATH = "C:/Program Files/Darwinex MetaTrader 5/terminal64.exe"
+FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
+FOLDER_LAUNCH = os.path.join(FOLDER_PATH, "reports/{}/INITS/Phase1".format(BotName))
+#Launch_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Launch'
+#Launch_folder_Init = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Launch/LAUNCH_INIT/'
+#Tom_Test_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Tom_Test/'
+#Tom_Test_Init_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Tom_Test/Tom_Test_INITS/'
 #------------------------------------------INIT Parameters--------------------------------------------------------------
 Opti_start_date = "2007.01.01" #YYYY.MM.DD
 Opti_end_date = "2020.01.01" #YYYY.MM.DD
@@ -69,37 +67,37 @@ ForwardFilterTradesPhase1 = 20
 def CreateALLFoldersPhase1():
     """Creates Folders for Results, Optisets and INIT files"""
     try:
-        os.makedirs(Folder_Path +'/reports/{}/INITS/Phase1'.format(BotName.get()))
+        os.makedirs(FOLDER_PATH +'/reports/{}/INITS/Phase1'.format(BotName.get()))
         print('Directory for',BotName.get(), ' INITS Phase 1 Created')
     except FileExistsError:
         print('Directory for',BotName.get(), ' INITS Phase 1 already exists')
 
     try:
-        os.makedirs(Folder_Path +'/MQL5/Profiles/Tester/{}'.format(BotName.get()))
+        os.makedirs(FOLDER_PATH +'/MQL5/Profiles/Tester/{}'.format(BotName.get()))
         print('Directory for', BotName.get(), ' OPTISETS Phase 2 Created')
     except FileExistsError:
         print('Directory for',BotName.get(), ' OPTISETS Phase 2 already exists')
 
     try:
-        os.makedirs(Folder_Path +'/reports/{}/INITS/HC'.format(BotName.get()))
+        os.makedirs(FOLDER_PATH +'/reports/{}/INITS/HC'.format(BotName.get()))
         print('Directory for', BotName.get(), ' Hill Climbing Created')
     except FileExistsError:
         print('Directory for',BotName.get(), ' Hill Climbing already exists')
 
     try:
-        os.makedirs(Folder_Path +'/reports/{}/INITS/Phase2'.format(BotName.get()))
+        os.makedirs(FOLDER_PATH +'/reports/{}/INITS/Phase2'.format(BotName.get()))
         print('Directory for', BotName.get(), ' Phase 2 Created')
     except FileExistsError:
         print('Directory for',BotName.get(), ' Phase 2 already exists')
 
     try:
-        os.makedirs(Folder_Path +'/reports/{}/INITS/Phase3'.format(BotName.get()))
+        os.makedirs(FOLDER_PATH +'/reports/{}/INITS/Phase3'.format(BotName.get()))
         print('Directory for', BotName.get(), ' Phase 3 Created')
     except FileExistsError:
         print('Directory for',BotName.get(), ' Phase 3 already exists')
 
     try:
-        os.makedirs(Folder_Path +'/reports/{}/SETS'.format(BotName.get()))
+        os.makedirs(FOLDER_PATH +'/reports/{}/SETS'.format(BotName.get()))
         print('Directory for',BotName.get(), ' Sets Created')
     except FileExistsError:
         print('Directory for',BotName.get(), ' Sets already exists')
@@ -107,7 +105,7 @@ def CreateALLFoldersPhase1():
     for i in PairList:
         for j in TimeFrameList:
             try:
-                os.makedirs(Folder_Path +"/reports/"+"{}".format(BotName.get())+"/"+ i +"/"+ j )
+                os.makedirs(FOLDER_PATH +"/reports/"+"{}".format(BotName.get())+"/"+ i +"/"+ j )
                 print("Directory for", BotName.get(), i, "and", j, "created")
             except FileExistsError:
                 print("Directory for",BotName.get(),i,"and",j, "already exists")
@@ -118,7 +116,7 @@ def CreateIniFilesPhase1 (BotName ="MACD Sample" ,PairList ='EURUSD',TimeFrameLi
                           ModelList=2,OptimizationList=2,ShutdownTerminalList=1,VisualList=0,LeverageValue=33,
                           ReplaceReportList=1,UseLocalList=1,ForwardModeList=4,ExecutionValue=28,Phase=1):
     """Creates INIT file specific for the Phase 1 optimization"""
-    f = open(Folder_Path +'/reports/{}/INITS/Phase1/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'.
+    f = open(FOLDER_PATH +'/reports/{}/INITS/Phase1/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'.
              format(BotName.get(),PairList,TimeFrameList,Phase),"w")
     f.write(';[Common]' + "\n" \
     ';Login=40539843' + "\n" \
@@ -158,7 +156,7 @@ def CreateIniFilesPhase1 (BotName ="MACD Sample" ,PairList ='EURUSD',TimeFrameLi
     'ProfitInPips=0' + "\n" \
     'Leverage={}'.format(str(LeverageValue)) + "\n" )
     f.close()
-    f = open(Folder_Path +'/reports/{}/INITS/Phase1/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'.
+    f = open(FOLDER_PATH +'/reports/{}/INITS/Phase1/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'.
              format(BotName.get(),PairList,TimeFrameList,Phase), "r")
 
 #-----------------------------------CREATES INIT FILES FOR ALL PAIRS PHASE 1--------------------------------------------
@@ -178,11 +176,11 @@ def CreateIniForAllPhase1():
 def LaunchPhase1():
     """Executes in CMD the INIT file on MT5 for every pair and timeframe selected for Phase 1"""
     FullStart=time.time()
-    for file in os.listdir(FolderLaunch):
+    for file in os.listdir(FOLDER_LAUNCH):
         start = time.time()
-        print(str((MT5_Path + " /config:" + "{}/".format(Folder_Path) + "reports/{}/INITS/Phase1/{}"
+        print(str((MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + "reports/{}/INITS/Phase1/{}"
                    .format(BotName.get(),file))))
-        process = subprocess.call(MT5_Path + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal"
+        process = subprocess.call(MT5_PATH + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal"
                                              "\\6C3C6A11D1C3791DD4DBF45421BF8028\\reports\\{}\\INITS\\Phase1\{}"
                                   .format(BotName.get(),file))
         end = time.time()
@@ -412,8 +410,8 @@ def AccotateOptisetsPhase1():
     try:
         for i in PairList:
             for j in TimeFrameList:
-                with open (Folder_Path +'\MQL5\Profiles\Tester\Phase1-{}.set'.format(BotName.get()),'r',encoding='utf-16') as f:
-                    with open (Folder_Path +'\MQL5\Profiles\Tester\{}\Phase2-{}-{}-{}.set'.format(BotName.get(),BotName.get(),i,j),'w',encoding='utf-16') as f1:
+                with open (FOLDER_PATH +'\MQL5\Profiles\Tester\Phase1-{}.set'.format(BotName.get()),'r',encoding='utf-16') as f:
+                    with open (FOLDER_PATH +'\MQL5\Profiles\Tester\{}\Phase2-{}-{}-{}.set'.format(BotName.get(),BotName.get(),i,j),'w',encoding='utf-16') as f1:
                         for line in f:
                             try:
                                 first_letter = line[0]
@@ -464,7 +462,7 @@ def CreateIniFilesPhase2 (BotName ="MACD Sample" ,PairList ='EURUSD',TimeFrameLi
                           ModelList=2,OptimizationList=2,ShutdownTerminalList=1,VisualList=0,LeverageValue=33,
                           ReplaceReportList=1,UseLocalList=1,ForwardModeList=4,ExecutionValue=28,Phase=2):
     """Creates the INIT file specific for a Phase 2 Optimization"""
-    f =open(Folder_Path +'/reports/{}/INITS/Phase2/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'
+    f =open(FOLDER_PATH +'/reports/{}/INITS/Phase2/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'
             .format(BotName.get(),PairList,TimeFrameList,Phase),"w")
     f.write(';[Common]' + "\n" \
     ';Login=40539843' + "\n" \
@@ -505,7 +503,7 @@ def CreateIniFilesPhase2 (BotName ="MACD Sample" ,PairList ='EURUSD',TimeFrameLi
     'ProfitInPips=0' + "\n" \
     'Leverage={}'.format(str(LeverageValue)) + "\n" )
     f.close()
-    f = open(Folder_Path +'/reports/{}/INITS/Phase2/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'
+    f = open(FOLDER_PATH +'/reports/{}/INITS/Phase2/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'
              .format(BotName.get(),PairList,TimeFrameList,Phase), "r")
 
 #------------------------------------CREATES INIT FILES FOR ALL PAIRS PHASE 2-------------------------------------------
@@ -528,9 +526,9 @@ def LaunchPhase2():
     for file in os.listdir("C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/"
                            "reports/{}/INITS/Phase2".format(BotName.get())):
         start = time.time()
-        print(str((MT5_Path + " /config:" + "{}/".format(Folder_Path) + "reports/{}/INITS/Phase2/{}".
+        print(str((MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + "reports/{}/INITS/Phase2/{}".
                    format(BotName.get(),file))))
-        process = subprocess.call(MT5_Path + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\"
+        process = subprocess.call(MT5_PATH + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\"
                                              "6C3C6A11D1C3791DD4DBF45421BF8028\\reports\\{}\\INITS\\Phase2\{}".
                                   format(BotName.get(),file))
         end = time.time()
@@ -738,8 +736,8 @@ def AccotateOptisetsPhase2(): #Still not decided if this STEP SHOULD BE INCLUDED
     try:
         for i in PairList:
             for j in TimeFrameList:
-                with open (Folder_Path +'\MQL5\Profiles\Tester\Phase1-{}.set'.format(BotName.get()),'r',encoding='utf-16') as f:
-                    with open (Folder_Path +'\MQL5\Profiles\Tester\{}\Phase3-{}-{}-{}.set'.format(BotName.get(),BotName.get(),i,j),'w',encoding='utf-16') as f1:
+                with open (FOLDER_PATH +'\MQL5\Profiles\Tester\Phase1-{}.set'.format(BotName.get()),'r',encoding='utf-16') as f:
+                    with open (FOLDER_PATH +'\MQL5\Profiles\Tester\{}\Phase3-{}-{}-{}.set'.format(BotName.get(),BotName.get(),i,j),'w',encoding='utf-16') as f1:
                         for line in f:
                             try:
                                 first_letter = line[0]
@@ -790,7 +788,7 @@ def AccotateOptisetsPhase2(): #Still not decided if this STEP SHOULD BE INCLUDED
 
 # =============================================================================================== HILL CLIMBING INIT FILE ==========================================================================================
 def HCInit (PairList ='EURUSD',TimeFrameList ='H1',OptimizationCriterionList=0,ModelList=2,OptimizationList=1,ShutdownTerminalList=1,VisualList=0,LeverageValue=33,ReplaceReportList=1,UseLocalList=1,ForwardModeList=0,ExecutionValue=28):
-    f =open(Folder_Path +'/reports/{}/INITS/HC/'.format(BotName.get()) + 'INIT-HC-{}-{}-{}-Phase1.ini'.format(BotName.get(),PairList,TimeFrameList),'w')
+    f =open(FOLDER_PATH +'/reports/{}/INITS/HC/'.format(BotName.get()) + 'INIT-HC-{}-{}-{}-Phase1.ini'.format(BotName.get(),PairList,TimeFrameList),'w')
     f.write(';[Common]' + "\n" \
     ';Login=40539843' + "\n" \
     ';Password=jPHIWVnmZUFn' + "\n"  \
@@ -843,9 +841,9 @@ def HillClimbPhase2():  # Hill Climbing Step
     HCOptimizable = []
     FullStart = time.time()
     # Creates a Copy of the Optiset so that we can work with a HC Optiset and set all previous optimizable variables to "N"
-    OriginalSet = Folder_Path + '\MQL5\Profiles\Tester\Phase1-{}.set'.format(BotName.get())
-    HCBaseOptiset = Folder_Path + '\MQL5\Profiles\Tester\HCB-Phase1-{}.set'.format(BotName.get())
-    HCOptiset = Folder_Path + '\MQL5\Profiles\Tester\HC-Phase1-{}.set'.format(BotName.get())
+    OriginalSet = FOLDER_PATH + '\MQL5\Profiles\Tester\Phase1-{}.set'.format(BotName.get())
+    HCBaseOptiset = FOLDER_PATH + '\MQL5\Profiles\Tester\HCB-Phase1-{}.set'.format(BotName.get())
+    HCOptiset = FOLDER_PATH + '\MQL5\Profiles\Tester\HC-Phase1-{}.set'.format(BotName.get())
 
     with open (OriginalSet,'r',encoding='utf-16') as f:
         lines = f.readlines()
@@ -899,8 +897,8 @@ def HillClimbPhase2():  # Hill Climbing Step
 
         for file in os.listdir("C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/INITS/HC/".format(BotName.get())):
             start = time.time()
-            print(str((MT5_Path + " /config:" + "{}/".format(Folder_Path) + "reports/{}/INITS/HC/{}".format(BotName.get(), file))))
-            process = subprocess.call(MT5_Path + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\6C3C6A11D1C3791DD4DBF45421BF8028\\reports\\{}\\INITS\\HC\{}".format(BotName.get(), file))
+            print(str((MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + "reports/{}/INITS/HC/{}".format(BotName.get(), file))))
+            process = subprocess.call(MT5_PATH + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\6C3C6A11D1C3791DD4DBF45421BF8028\\reports\\{}\\INITS\\HC\{}".format(BotName.get(), file))
             end = time.time()
             print('Duration for HC on {} was of'.format(v), (end - start), 'seconds')
 
@@ -984,13 +982,13 @@ def BTSetsForPhase3():
     for i in PairList:
         for j in TimeFrameList:
             try:
-                file_a = Folder_Path +'\MQL5\Profiles\Tester\Phase1-{}.set'.format(BotName.get(),i,j)
+                file_a = FOLDER_PATH +'\MQL5\Profiles\Tester\Phase1-{}.set'.format(BotName.get(),i,j)
                 file_a_open = open(file_a,'rb')
                 with open(file_a,'r',encoding='utf-16') as f:
                     dfOpti = pd.read_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.Complete-Filtered.csv'.format(BotName.get(),i,j,BotName.get(),i,j))
                     Var_Name_list=[]
                     for g,row in dfOpti.iterrows():
-                        file_b = Folder_Path +'\MQL5\Profiles\Tester\{}\Phase3-{}-{}-{}-{}.set'.format(BotName.get(),BotName.get(),i,j,g)
+                        file_b = FOLDER_PATH +'\MQL5\Profiles\Tester\{}\Phase3-{}-{}-{}-{}.set'.format(BotName.get(),BotName.get(),i,j,g)
                         shutil.copyfile(file_a,file_b)
                         file_b_open = open(file_b,'wb')
                         TotalSets +=1
@@ -1020,7 +1018,7 @@ def BTSetsForPhase3():
     print('Done All Pairs and TimeFrames BT Sets Created in:',round(TimeCalculus,ndigits=2),'seconds')
 #----------------------------------------------------CREATES INIT FILES FOR PHASE 3----(SET PRODUCTION)-------------------------------------------
 def CreateIniFilesPhase3 (PairList ='EURUSD',TimeFrameList ='H1',OptimizationCriterionList=0,ModelList=2,OptimizationList=0,ShutdownTerminalList=1,VisualList=0,LeverageValue=33,ReplaceReportList=1,UseLocalList=1,ForwardModeList=0,ExecutionValue=28,Phase=3,TailNumber=0):
-    f =open(Folder_Path +'/reports/{}/INITS/Phase3/'.format(BotName.get()) + 'INIT-BT-{}-{}-{}-Phase{}-{}.ini'.format(BotName.get(),PairList,TimeFrameList,Phase,TailNumber),"w")
+    f =open(FOLDER_PATH +'/reports/{}/INITS/Phase3/'.format(BotName.get()) + 'INIT-BT-{}-{}-{}-Phase{}-{}.ini'.format(BotName.get(),PairList,TimeFrameList,Phase,TailNumber),"w")
     f.write(';[Common]' + "\n" \
     ';Login=40539843' + "\n" \
     ';Password=jPHIWVnmZUFn' + "\n"  \
@@ -1058,7 +1056,7 @@ def CreateIniFilesPhase3 (PairList ='EURUSD',TimeFrameList ='H1',OptimizationCri
     'ProfitInPips=0' + "\n" \
     'Leverage={}'.format(str(LeverageValue)) + "\n" )
     f.close()
-    f = open(Folder_Path +'/reports/{}/INITS/Phase3/'.format(BotName.get()) + 'INIT-BT-{}-{}-{}-Phase{}-{}.ini'.format(BotName.get(),PairList,TimeFrameList,Phase,TailNumber), "r")
+    f = open(FOLDER_PATH +'/reports/{}/INITS/Phase3/'.format(BotName.get()) + 'INIT-BT-{}-{}-{}-Phase{}-{}.ini'.format(BotName.get(),PairList,TimeFrameList,Phase,TailNumber), "r")
 
 #----------------------------------------------------LAUNCHES INIT FILES IN CMD FOR PHASE 3------SET GENERATION---------------------------
 def LaunchPhase3():
@@ -1066,8 +1064,8 @@ def LaunchPhase3():
     TotalSets= 0
     for file in os.listdir('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/INITS/Phase3/'.format(BotName.get())):
         start = time.time()
-        print(str((MT5_Path + " /config:" + "{}/".format(Folder_Path) + "reports/{}/INITS/Phase3/{}".format(BotName.get(),file))))
-        process = subprocess.call(MT5_Path + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\6C3C6A11D1C3791DD4DBF45421BF8028\\reports\\{}\\INITS\\Phase3\{}".format(BotName.get(),file))
+        print(str((MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + "reports/{}/INITS/Phase3/{}".format(BotName.get(),file))))
+        process = subprocess.call(MT5_PATH + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\6C3C6A11D1C3791DD4DBF45421BF8028\\reports\\{}\\INITS\\Phase3\{}".format(BotName.get(),file))
         end = time.time()
         print('Duration for Phase 3 on one Pair and TF was of',end - start, 'seconds.')
         TotalSets += 1
