@@ -7,7 +7,7 @@ import xml.etree.ElementTree as et
 import subprocess
 import pandas as pd
 from bokeh.plotting import curdoc, figure
-from bokeh.models import ColumnDataSource, Select, CustomJS
+from bokeh.models import Select, CustomJS
 from bokeh.layouts import row, column
 from bokeh.io import output_notebook
 
