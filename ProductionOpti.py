@@ -29,19 +29,19 @@ Opti_start_date = "2007.01.01" #YYYY.MM.DD
 Opti_end_date = "2020.01.01" #YYYY.MM.DD
 Initial_deposit = 10000 #Default Value es 10000 para todos los analisis
 Deposit_Currency = "USD" #Default Currency para todos los  analisis
-Real_Currency="EUR" #Default Currency para Prueba de Tom
-PairList ={'GBPUSD':'01' ,'EURUSD':'02','USDCAD':'03','USDCHF':'04','USDJPY':'05','GBPJPY':'06','EURAUD':'07','EURGBP':'08','EURJPY':'09','EURCHF':'10'} # List Of Pairs to select for launch.
+Real_Currency = "EUR" #Default Currency para Prueba de Tom
+PairList = {'GBPUSD':'01' ,'EURUSD':'02','USDCAD':'03','USDCHF':'04','USDJPY':'05','GBPJPY':'06','EURAUD':'07','EURGBP':'08','EURJPY':'09','EURCHF':'10'} # List Of Pairs to select for launch.
 TimeFrameList = {'H4':'96','H1':'95','M30':'94','M15':'93','M5':'92','M1':'91'} # Agregar 'D1', no parece obtener la data de M1 dentro del MT5.
 ModelList = [0,1,2,3] #(0 — "Every tick", 1 — "1 minute OHLC", 2 — "Open price only", 3 — "Math calculations", 4 — "Every tick based on real ticks"). If this parameter is not specified, Every Tick mode is used. Default 2
 OptimizationList = [0,1,2] #(0 — optimization disabled, 1 — "Slow complete algorithm", 2 — "Fast genetic based algorithm", 3 — "All symbols selected in Market Watch")
 OptimizationCriterionList = [0,1,2,3,4,5,6] #(0 — the maximum balance value, 1 — the maximum value of product of the balance and profitability, 2 — the product of the balance and expected payoff, 3 — the maximum value of the expression (100% - Drawdown)*Balance, 4 — the product of the balance and the recovery factor, 5 — the product of the balance and the Sharpe Ratio, 6 — a custom optimization criterion received from the OnTester() function in the Expert Advisor); Default 0
-ForwardModeList=[0,1,2,3,4] # (0 — off, 1 — 1/2 of the testing period, 2 — 1/3 of the testing period, 3 — 1/4 of the testing period, 4 — custom interval specified using the ForwardDate parameter); Default 3
+ForwardModeList = [0, 1, 2, 3, 4] # (0 — off, 1 — 1/2 of the testing period, 2 — 1/3 of the testing period, 3 — 1/4 of the testing period, 4 — custom interval specified using the ForwardDate parameter); Default 3
 ForwardDate = "2019.01.01" #YYYY.MM.DD Only if ForwardModeList = 4
-ReplaceReportList = [0,1] #(0 — disable, 1 — enable). If overwriting is forbidden and a file with the same name already exists, a number in square brackets will be added to the file name. For example, tester[1].htm. If this parameter is not set, default 0 is used (overwriting is not allowed)
-ShutdownTerminalList=[0,1] #0 Won't close platform after finished, 1 will close the platform once finished; Default 1
-UseLocalList=[0,1] # 0 Uses NO local resources, 1 Uses Local Resources ; Default 0
-VisualList=[0,1] # Does not use Visual mode; Default 0
-Phase=[1,2,3,4,5] # Phase in Production/Analisis Line
+ReplaceReportList = [0, 1] #(0 — disable, 1 — enable). If overwriting is forbidden and a file with the same name already exists, a number in square brackets will be added to the file name. For example, tester[1].htm. If this parameter is not set, default 0 is used (overwriting is not allowed)
+ShutdownTerminalList = [0, 1] #0 Won't close platform after finished, 1 will close the platform once finished; Default 1
+UseLocalList = [0, 1] # 0 Uses NO local resources, 1 Uses Local Resources ; Default 0
+VisualList = [0,1] # Does not use Visual mode; Default 0
+Phase = [1,2,3,4,5] # Phase in Production/Analisis Line
 LeverageValue = 33
 ExecutionValue = 28
 OptimizedVariables = 4 #Number of variables to be optimized
@@ -173,7 +173,7 @@ def CreateIniForAllPhase1():
 #------------------------------------LAUNCHES INIT FILES IN CMD FOR PHASE 1---------------------------------------------
 def LaunchPhase1():
     """Executes in CMD the INIT file on MT5 for every pair and timeframe selected for Phase 1"""
-    FullStart=time.time()
+    FullStart = time.time()
     for file in os.listdir(FOLDER_LAUNCH):
         start = time.time()
         print(str((MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + "reports/{}/INITS/Phase1/{}"
@@ -183,7 +183,7 @@ def LaunchPhase1():
                                   .format(BotName.get(),file))
         end = time.time()
         print('Duration for Phase 1 on', BotName.get(), 'was of',(end - start)/60, 'minutes')
-    FullEnd=time.time()
+    FullEnd = time.time()
     print('Launch from Phase 1 Ended during a total',(FullEnd-FullStart)/60,'minutes')
 
 #-------------PROCESS TO OBTAIN OPTISET VALUES FOR PHASE 2 --- CREATE CSV ACCOTATTED FROM XML AND FILTERS IT------------
@@ -404,7 +404,7 @@ def AccotateResultsPhase1():
 #-----------------------------------------PROCESS TO OBTAIN OPTISET VALUES FOR PHASE 2----------------------------------
 def AccotateOptisetsPhase1():
     """Generates the Optiset for the Results that passed the previous filter"""
-    FullStart=time.time()
+    FullStart = time.time()
     try:
         for i in PairList:
             for j in TimeFrameList:
@@ -452,7 +452,7 @@ def AccotateOptisetsPhase1():
     except FileNotFoundError:
         pass
         print('This Pair and Timeframe has no File',i,j)
-    FullEnd=time.time()
+    FullEnd = time.time()
     print('Phase 1 Optisets Accotated in :',(FullEnd-FullStart),' seconds.')
 
 #----------------------------CREATES INIT FILES FOR PHASE 2-----(OPTI ACCOTATED)----------------------------------------
@@ -460,7 +460,7 @@ def CreateIniFilesPhase2 (BotName ="MACD Sample" ,PairList ='EURUSD',TimeFrameLi
                           ModelList=2,OptimizationList=2,ShutdownTerminalList=1,VisualList=0,LeverageValue=33,
                           ReplaceReportList=1,UseLocalList=1,ForwardModeList=4,ExecutionValue=28,Phase=2):
     """Creates the INIT file specific for a Phase 2 Optimization"""
-    f =open(FOLDER_PATH +'/reports/{}/INITS/Phase2/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'
+    f = open(FOLDER_PATH +'/reports/{}/INITS/Phase2/'.format(BotName.get()) + 'INIT-{}-{}-{}-Phase{}.ini'
             .format(BotName.get(),PairList,TimeFrameList,Phase),"w")
     f.write(';[Common]' + "\n" \
     ';Login=40539843' + "\n" \
@@ -514,13 +514,13 @@ def CreateIniForAllPhase2():
                 if TimeFrameListTest[j].get() == 1:
                     CreateIniFilesPhase2(BotName,PairList=i,TimeFrameList=j)
                     print(i,j,'INIT Phase 2 Created')
-                    inicount +=1
+                    inicount += 1
     print("INITS for All Phase 2 Created. Total",inicount,'INIT files.')
 
 #-----------------------------------LAUNCHES INIT FILES IN CMD FOR PHASE 2----------------------------------------------
 def LaunchPhase2():
     """Executes in CMD the INIT file on MT5 for every pair and timeframe selected for Phase 2"""
-    FullStart=time.time()
+    FullStart = time.time()
     for file in os.listdir("C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/"
                            "reports/{}/INITS/Phase2".format(BotName.get())):
         start = time.time()
@@ -531,7 +531,7 @@ def LaunchPhase2():
                                   format(BotName.get(),file))
         end = time.time()
         print('Duration for Phase 2 on was of',(end - start)/60, 'minutes')
-    FullEnd=time.time()
+    FullEnd = time.time()
     print('Launch from Phase 2 Ended during a total',(FullEnd-FullStart)/60,'minutes')
 
 #--PROCESS TO OBTAIN OPTISET VALUES FOR PHASE 3 --CREATE CSV ACCOTATTED FROM XML, JOINS BACK AND FORWARD AND FILTERS IT-
@@ -568,15 +568,15 @@ def AccotateResultsPhase2():
                 for child in rootback:
                     for Section in child:
                         for Row in Section:
-                            Row_list_back=[]
+                            Row_list_back = []
                             csv_list_back.append(Row_list_back)
                             for Cell in Row:
                                 for Data in Cell:
                                     Row_list_back.append(Data.text)
-                dfback= pd.DataFrame(data=csv_list_back)
+                dfback = pd.DataFrame(data=csv_list_back)
                 dfback = dfback.drop(dfback.index[:Nullvaluesindex]) # 4 variables hacen 13 9
                 dfback_columns_name = csv_list_back[NullvaluesColumns] # 4 variables hacen 12
-                dfback.columns = dfback_columns_name ###
+                dfback.columns = dfback_columns_name
                 dfback['Lots'] = 0.1
                 dfback['Average Loss'] = dfback['Result']
                 dfback['Win Ratio'] = dfback['Result']
@@ -613,7 +613,7 @@ def AccotateResultsPhase2():
                 print('Done Backtest Results for:',i,j)
 
                 #------------------------------------------------------------FORWARD FILE----------------------------------------------------------------------------------------------------------------------------
-                csvFileNameForward='C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal//6C3C6A11D1C3791DD4DBF45421BF8028//reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.forward.csv'.format(BotName.get(),i,j,BotName.get(),i,j)
+                csvFileNameForward = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal//6C3C6A11D1C3791DD4DBF45421BF8028//reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.forward.csv'.format(BotName.get(),i,j,BotName.get(),i,j)
                 treeforward = et.parse('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal//6C3C6A11D1C3791DD4DBF45421BF8028//reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.forward.xml'.format(BotName.get(),i,j,BotName.get(),i,j))
                 rootforward = treeforward.getroot()
                 csv_list_forward = []
@@ -625,7 +625,7 @@ def AccotateResultsPhase2():
                             for Cell in Row:
                                 for Data in Cell:
                                     Row_list_forward.append(Data.text)
-                dfforward= pd.DataFrame(data=csv_list_forward)
+                dfforward = pd.DataFrame(data=csv_list_forward)
                 dfforward = dfforward.drop(dfforward.index[:Nullvaluesindex]) # 4 variables hacen 13 9
                 dfforward_columns_name = csv_list_forward[NullvaluesColumns] # 4 variables hacen 12
                 dfforward.columns = dfforward_columns_name ###
@@ -747,11 +747,11 @@ def AccotateOptisetsPhase2(): #Still not decided if this STEP SHOULD BE INCLUDED
                                         if (len(dfOpti)) <1:
                                             continue
                                         try:
-                                            OptiColumnName =line.split('=')
+                                            OptiColumnName = line.split('=')
                                             OptiColumnMax = dfOpti['{}'.format(OptiColumnName[0])].max()
                                             OptiColumnMin = dfOpti['{}'.format(OptiColumnName[0])].min()
                                             Min_Steps = 50
-                                            if  OptiColumnMax ==OptiColumnMin:
+                                            if  OptiColumnMax == OptiColumnMin:
                                                 if OptiColumnMax <= 1:
                                                     OptiColumnMin=0
                                                     OptiColumnSteps = 1
@@ -1058,8 +1058,8 @@ def CreateIniFilesPhase3 (PairList ='EURUSD',TimeFrameList ='H1',OptimizationCri
 
 #----------------------------------------------------LAUNCHES INIT FILES IN CMD FOR PHASE 3------SET GENERATION---------------------------
 def LaunchPhase3():
-    FullStart=time.time()
-    TotalSets= 0
+    FullStart =time.time()
+    TotalSets = 0
     for file in os.listdir('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/INITS/Phase3/'.format(BotName.get())):
         start = time.time()
         print(str((MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + "reports/{}/INITS/Phase3/{}".format(BotName.get(),file))))
@@ -1067,7 +1067,7 @@ def LaunchPhase3():
         end = time.time()
         print('Duration for Phase 3 on one Pair and TF was of',end - start, 'seconds.')
         TotalSets += 1
-    FullEnd=time.time()
+    FullEnd = time.time()
     print('A Total of ',TotalSets,'were created.')
     print('Launch from Phase 3 Ended during a total',(FullEnd-FullStart)/60,'minutes.')
 
@@ -1088,8 +1088,7 @@ class Application(tk.Frame):
         self.hi_there.pack(side="top")
 
 
-        self.quit = tk.Button(self, text="QUIT", fg="red",
-                              command=self.master.destroy)
+        self.quit = tk.Button(self, text="QUIT", fg="red", command=self.master.destroy)
         self.quit.pack(side="bottom")
 
     def say_hi(self):
@@ -1107,22 +1106,22 @@ myFrame.config(bg='#292524',width=1200,height=1000)
 Label(myFrame, text = 'Lanzamiento',fg='white',bg='#292524',font=(18)).grid(row=0,column=0,columnspan=2) #Label Launch Panel
 
 Label(myFrame,text = "EA Name:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label BotName
-BotName= Entry(myFrame,fg='white',bg='#151312',width=12)
+BotName = Entry(myFrame,fg='white',bg='#151312',width=12)
 BotName.grid(row=1,column=1,sticky='w',padx=10,pady=10)                   #Entry BotName
 BotName.get()
 
 Label(myFrame,text = "Start Date:",fg='white',bg='#292524').grid(row=2,column=0,sticky='w',padx=10,pady=10) #Label Start Date
-Opti_start_date= Entry(myFrame,fg='white',bg='#151312',width=10)
+Opti_start_date = Entry(myFrame,fg='white',bg='#151312',width=10)
 Opti_start_date.grid(row=2,column=1,sticky='w',padx=10,pady=10)                   #Entry Start Date
 Opti_start_date.get()
 
 Label(myFrame,text = "Forward Date:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Forward Date
-ForwardDate= Entry(myFrame,fg='white',bg='#151312',width=10)
+ForwardDate = Entry(myFrame,fg='white',bg='#151312',width=10)
 ForwardDate.grid(row=3,column=1,sticky='w',padx=10,pady=10)                   #Entry Forward Date
 ForwardDate.get()
 
 Label(myFrame,text = "End Date:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label End Date
-Opti_end_date= Entry(myFrame,fg='white',bg='#151312',width=10)
+Opti_end_date = Entry(myFrame,fg='white',bg='#151312',width=10)
 Opti_end_date.grid(row=4,column=1,sticky='w',padx=10,pady=10)                   #Entry End Date
 Opti_end_date.get()
 
@@ -1164,13 +1163,13 @@ Button(myFrame,text='LAUNCH HC',fg='black',bg='#E74C3C',borderwidth=0,command=Hi
 Label(myFrame,text = "Pairs",fg='white',bg='#292524').grid(row=5,column=0,padx=10,pady=10) #Label Pairs
 
 
-pairGBPUSD=IntVar()
+pairGBPUSD = IntVar()
 Checkbutton(myFrame, text="GBPUSD", fg='black', bg='#68E552', variable=pairGBPUSD, onvalue=1, offvalue=0).grid(row=6,column=0) #CheckBox EURUSD
 
-pairEURUSD=IntVar()
+pairEURUSD = IntVar()
 Checkbutton(myFrame, text="EURUSD", fg='black', bg='#68E552', variable=pairEURUSD, onvalue=1, offvalue=0).grid(row=7,column=0) #CheckBox EURUSD
 
-pairUSDCAD=IntVar()
+pairUSDCAD = IntVar()
 Checkbutton(myFrame, text="USDCAD", fg='black', bg='#68E552', variable=pairUSDCAD, onvalue=1, offvalue=0).grid(row=8,column=0) #CheckBox USDCAD
 
 pairUSDCHF = IntVar()
@@ -1205,22 +1204,22 @@ Button(myFrame,text='Check all pairs',fg='black',bg='#34D7DF',borderwidth=0,comm
 
 Label(myFrame,text = "Timeframes",fg='white',bg='#292524').grid(row=5,column=1,padx=10,pady=10) #Label TimeFrameList
 
-TFH4=IntVar()
+TFH4 = IntVar()
 Checkbutton(myFrame, text="H4",fg='black',bg='#68E552', variable=TFH4).grid(row=6,column=1) #CheckBox H4
 
-TFH1=IntVar()
+TFH1 = IntVar()
 Checkbutton(myFrame, text="H1",fg='black',bg='#68E552', variable=TFH1).grid(row=7,column=1) #CheckBox H1
 
-TFM30=IntVar()
+TFM30 = IntVar()
 Checkbutton(myFrame, text="M30",fg='black',bg='#68E552', variable=TFM30).grid(row=8,column=1) #CheckBox M30
 
-TFM15=IntVar()
+TFM15 = IntVar()
 Checkbutton(myFrame, text="M15",fg='black',bg='#68E552', variable=TFM15).grid(row=9,column=1) #CheckBox M15
 
-TFM5=IntVar()
+TFM5 = IntVar()
 Checkbutton(myFrame, text="M5",fg='black',bg='#68E552', variable=TFM5).grid(row=10,column=1) #CheckBox M5
 
-TFM1=IntVar()
+TFM1 = IntVar()
 Checkbutton(myFrame, text="M1",fg='black',bg='#68E552', variable=TFM1).grid(row=11,column=1) #CheckBox M1
 
 TimeFrameListTest = {'H4':TFH4,'H1':TFH1,'M30':TFM30,'M15':TFM15,'M5':TFM5,'M1':TFM1}
@@ -1231,7 +1230,7 @@ Phase1FilterSettingswindow.title("Base Filter Settings")
 Label(Phase1FilterSettingswindow, text = 'Base Filter Settings',fg='white',bg='#292524',font=(18)).grid(row=0,column=0,columnspan=2) #Label Launch Panel
 
 Label(Phase1FilterSettingswindow,text = "Min. Net Profit:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label Net Profit
-FilterNetProfitPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                   #Entry Net Profit
+FilterNetProfitPhase1 = Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                   #Entry Net Profit
 FilterNetProfitPhase1.grid(row=1,column=1,sticky='w',padx=10,pady=10)
 FilterNetProfitPhase1.get()
 
@@ -1241,22 +1240,22 @@ FilterExpectedPayoffPhase1.grid(row=2,column=1,sticky='w',padx=10,pady=10)
 FilterExpectedPayoffPhase1.get()
 
 Label(Phase1FilterSettingswindow,text = "Min. Profit Factor:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Min Net Profit
-FilterProfitFactorPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Profit Factor
+FilterProfitFactorPhase1 = Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Profit Factor
 FilterProfitFactorPhase1.grid(row=3,column=1,sticky='w',padx=10,pady=10)
 FilterProfitFactorPhase1.get()
 
 Label(Phase1FilterSettingswindow,text = "Min. Custom Value:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label Custom Value
-FilterCustomPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Custom Value
+FilterCustomPhase1 = Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Custom Value
 FilterCustomPhase1.grid(row=4,column=1,sticky='w',padx=10,pady=10)
 FilterCustomPhase1.get()
 
 Label(Phase1FilterSettingswindow,text = "Max. Drawdown:",fg='white',bg='#292524').grid(row=5,column=0,sticky='w',padx=10,pady=10) #Label Equity DD
-FilterEquityDDPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Equity DD
+FilterEquityDDPhase1 = Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Equity DD
 FilterEquityDDPhase1.grid(row=5,column=1,sticky='w',padx=10,pady=10)
 FilterEquityDDPhase1.get()
 
 Label(Phase1FilterSettingswindow,text = "Min. Trades:",fg='white',bg='#292524').grid(row=6,column=0,sticky='w',padx=10,pady=10) #Label Filter Trades
-FilterTradesPhase1= Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Filter Trades
+FilterTradesPhase1 = Entry(Phase1FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Filter Trades
 FilterTradesPhase1.grid(row=6,column=1,sticky='w',padx=10,pady=10)
 FilterTradesPhase1.get()
 
@@ -1266,27 +1265,27 @@ Phase2FilterSettingswindow.title("Proyection Filter Settings")
 Label(Phase2FilterSettingswindow, text = 'Proyection Filter Settings',fg='white',bg='#292524',font=(18)).grid(row=0,column=0,columnspan=2) #Label Launch Panel
 
 Label(Phase2FilterSettingswindow,text = "Forward Min. Net Profit:",fg='white',bg='#292524').grid(row=1,column=0,sticky='w',padx=10,pady=10) #Label Net Profit
-ForwardFilterNetProfitPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                   #Entry Net Profit
+ForwardFilterNetProfitPhase1 = Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                   #Entry Net Profit
 ForwardFilterNetProfitPhase1.grid(row=1,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterNetProfitPhase1.get()
 
 Label(Phase2FilterSettingswindow,text = "Forward Min. Exp. Payoff:",fg='white',bg='#292524').grid(row=2,column=0,sticky='w',padx=10,pady=10) #Label Expected Payoff
-ForwardFilterExpectedPayoffPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Expected Payoff
+ForwardFilterExpectedPayoffPhase1 = Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Expected Payoff
 ForwardFilterExpectedPayoffPhase1.grid(row=2,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterExpectedPayoffPhase1.get()
 
 Label(Phase2FilterSettingswindow,text = "Forward Min. Profit Factor:",fg='white',bg='#292524').grid(row=3,column=0,sticky='w',padx=10,pady=10) #Label Min Net Profit
-ForwardFilterProfitFactorPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Profit Factor
+ForwardFilterProfitFactorPhase1 = Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Profit Factor
 ForwardFilterProfitFactorPhase1.grid(row=3,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterProfitFactorPhase1.get()
 
 Label(Phase2FilterSettingswindow,text = "Forward Min. Custom Value:",fg='white',bg='#292524').grid(row=4,column=0,sticky='w',padx=10,pady=10) #Label Custom Value
-ForwardFilterCustomPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Custom Value
+ForwardFilterCustomPhase1 = Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                  #Entry Custom Value
 ForwardFilterCustomPhase1.grid(row=4,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterCustomPhase1.get()
 
 Label(Phase2FilterSettingswindow,text = "Forward Max. Drawdown:",fg='white',bg='#292524').grid(row=5,column=0,sticky='w',padx=10,pady=10) #Label Equity DD
-ForwardFilterEquityDDPhase1= Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Equity DD
+ForwardFilterEquityDDPhase1 = Entry(Phase2FilterSettingswindow,fg='white',bg='#151312',width=12)                    #Entry Equity DD
 ForwardFilterEquityDDPhase1.grid(row=5,column=1,sticky='w',padx=10,pady=10)
 ForwardFilterEquityDDPhase1.get()
 
@@ -1301,7 +1300,7 @@ def GraphBacktestPhase1():
         for j in TimeFrameListTest:
             if PairListTest[i].get() == 1:
                 if TimeFrameListTest[j].get() == 1:
-                    df= pd.read_csv ('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.csv'.format(BotName.get(),i,j,BotName.get(),i,j))
+                    df = pd.read_csv ('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.csv'.format(BotName.get(),i,j,BotName.get(),i,j))
                     print('Before')
                     print(i,j)
                     print(df)
@@ -1490,7 +1489,7 @@ def checkalltfs():
 Button(myFrame,text='Check all timeframes',fg='black',bg='#34D7DF',borderwidth=0,command=checkalltfs).grid(row=18,column=1,padx=10,pady=10)
 
 
-IteratetionsFunction=Button(myFrame,text='Iterate Selections',fg='black',bg='#34D7DF',borderwidth=0,command=IteratetionsFunction)
+IteratetionsFunction = Button(myFrame,text='Iterate Selections',fg='black',bg='#34D7DF',borderwidth=0,command=IteratetionsFunction)
 IteratetionsFunction.grid(row=21,column=0,padx=10,pady=10,columnspan=2)
 
 def printfilters():
@@ -1515,13 +1514,13 @@ def printfilters2():
           'Forward Min. Trades:',ForwardFilterTradesPhase1.get(),'\n')
     print(ForwardFilterNetProfitPhase1.get(),ForwardFilterExpectedPayoffPhase1.get(),ForwardFilterProfitFactorPhase1.get(),ForwardFilterCustomPhase1.get(),ForwardFilterEquityDDPhase1.get(),ForwardFilterTradesPhase1.get())
 
-FiltersTestFunction=Button(myFrame,text='Test Filters',fg='black',bg='#34D7DF',borderwidth=0,command=printfilters)
+FiltersTestFunction = Button(myFrame,text='Test Filters',fg='black',bg='#34D7DF',borderwidth=0,command=printfilters)
 FiltersTestFunction.grid(row=13,column=3,padx=10,pady=10,columnspan=2)
 
-FiltersTestFunction=Button(Phase1FilterSettingswindow,text='Test Filters',fg='black',bg='#34D7DF',borderwidth=0,command=printfilters)
+FiltersTestFunction = Button(Phase1FilterSettingswindow,text='Test Filters',fg='black',bg='#34D7DF',borderwidth=0,command=printfilters)
 FiltersTestFunction.grid(row=13,column=3,padx=10,pady=10,columnspan=2)
 
-FiltersTestFunction=Button(Phase2FilterSettingswindow,text='Test Filters',fg='black',bg='#34D7DF',borderwidth=0,command=printfilters2)
+FiltersTestFunction = Button(Phase2FilterSettingswindow,text='Test Filters',fg='black',bg='#34D7DF',borderwidth=0,command=printfilters2)
 FiltersTestFunction.grid(row=13,column=3,padx=10,pady=10,columnspan=2)
 #myFrame.config(cursor='hand2') transforma el cursor en una mano
 app = Application(master=root) # frame dentro de la raiz
