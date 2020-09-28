@@ -7,9 +7,9 @@ import pandas as pd
 import subprocess
 
 # Slide Lists
-BotName = 'EA-B1v1'
-i = 'EURUSD'
-j = 'H1'
+BotName = 'EA-S3v1'
+i = 'USDJPY'
+j = 'H4'
 SIZES = list(range(6, 28, 3))
 COLORS = Inferno256
 N_SIZES = len(SIZES)

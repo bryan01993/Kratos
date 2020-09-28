@@ -17,8 +17,8 @@ Title = "So it begins once again, a comenzar de nuevo desde 0 con python pero ah
 
 
 #---------------------------------------------------VARIABLES PARA EL LANZAMIENTO ----------------------------------------------------
-BotName = 'EA-B3v1'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
-BotMagicNumberSeries = '08'   # should be last numbers of the EA 09 for S3
+BotName = 'EA-T1v2'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
+BotMagicNumberSeries = '05'   # should be last numbers of the EA 09 for S3
 UserSeries = '01' #01 La Opti la hizo bryan, 02 la hizo richard
 #--------------------------------------------PATHS----------------------------------------------------------------------
 MT5_Path="C:/Program Files/Darwinex MetaTrader 5/terminal64.exe"
@@ -248,6 +248,7 @@ def AccotateResultsPhase1():
                 dfback = movecol(dfback, cols_to_move=['Win Ratio'], ref_col='Trades', place='After')
                 dfback = movecol(dfback, cols_to_move=['Lots'], ref_col='Win Ratio', place='After')
                 dfback = dfback.apply(pd.to_numeric)
+                dfback.sort_values(by=['Pass'], ascending=False, inplace=True)
                 dfback.to_csv(csvFileNameBack, sep=',', index=False)
                 dfback.reset_index(inplace=True)
                 #-----------------------------------------THIS IS NORMALIZATION-----------------------------------------
@@ -304,7 +305,7 @@ def AccotateResultsPhase1():
                 dfforward = movecol(dfforward, cols_to_move=['Forward Win Ratio'], ref_col='Trades', place='After')
                 dfforward = movecol(dfforward, cols_to_move=['Forward Lots'], ref_col='Forward Win Ratio',place='After')
                 dfforward = dfforward.apply(pd.to_numeric)
-                dfforward.sort_values(by=['Back Result'], ascending=False, inplace=True)
+                dfforward.sort_values(by=['Pass'], ascending=False, inplace=True)
                 dfforward.reset_index(inplace=True)
                 dfforward.to_csv(csvFileNameForward, sep=',', index=False)
                 dfforward.rename(columns={'Profit': 'Forward Profit', 'Expected Payoff': 'Forward Expected Payoff',
@@ -750,32 +751,32 @@ def AccotateOptisetsPhase2(): #Still not decided if this STEP SHOULD BE INCLUDED
                                         dfOpti = pd.read_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase2.Complete-Filtered.csv'.format(BotName.get(),i,j,BotName.get(),i,j))
                                         if (len(dfOpti)) <1:
                                             continue
-                                        try:
-                                            OptiColumnName =line.split('=')
-                                            OptiColumnMax = dfOpti['{}'.format(OptiColumnName[0])].max()
-                                            OptiColumnMin = dfOpti['{}'.format(OptiColumnName[0])].min()
-                                            Min_Steps = 50
-                                            if  OptiColumnMax ==OptiColumnMin:
-                                                if OptiColumnMax <= 1:
-                                                    OptiColumnMin=0
+                                            try:
+                                                OptiColumnName =line.split('=')
+                                                OptiColumnMax = dfOpti['{}'.format(OptiColumnName[0])].max()
+                                                OptiColumnMin = dfOpti['{}'.format(OptiColumnName[0])].min()
+                                                Min_Steps = 50
+                                                if  OptiColumnMax ==OptiColumnMin:
+                                                    if OptiColumnMax <= 1:
+                                                        OptiColumnMin=0
+                                                        OptiColumnSteps = 1
+                                                        OptiColumnMax = 1
+                                                    elif OptiColumnMax >= 2:
+                                                        OptiColumnMin -= 1
+                                                        OptiColumnSteps = 1
+                                                        OptiColumnMax += 1
+                                                elif (OptiColumnMax - OptiColumnMin) < 30:
                                                     OptiColumnSteps = 1
-                                                    OptiColumnMax = 1
-                                                elif OptiColumnMax >= 2:
-                                                    OptiColumnMin -= 1
-                                                    OptiColumnSteps = 1
-                                                    OptiColumnMax += 1
-                                            elif (OptiColumnMax - OptiColumnMin) < 30:
-                                                OptiColumnSteps = 1
-                                            else:
-                                                OptiColumnSteps = (dfOpti['{}'.format(OptiColumnName[0])].max() - dfOpti['{}'.format(OptiColumnName[0])].min())/Min_Steps
-                                            if type(OptiColumnMax) == str:
+                                                else:
+                                                    OptiColumnSteps = (dfOpti['{}'.format(OptiColumnName[0])].max() - dfOpti['{}'.format(OptiColumnName[0])].min())/Min_Steps
+                                                if type(OptiColumnMax) == str:
+                                                    pass
+                                                OptiColumnBaseValue = OptiColumnName[1].split('|')
+                                                OptiFormat = "{}={}||{}||{}||{}||Y \n".format(OptiColumnName[0],OptiColumnBaseValue[0],OptiColumnMin,OptiColumnSteps,OptiColumnMax)
+                                                f1.write('\n'+ OptiFormat)
+                                            except KeyError:
+                                                f1.write(line)
                                                 pass
-                                            OptiColumnBaseValue = OptiColumnName[1].split('|')
-                                            OptiFormat = "{}={}||{}||{}||{}||Y \n".format(OptiColumnName[0],OptiColumnBaseValue[0],OptiColumnMin,OptiColumnSteps,OptiColumnMax)
-                                            f1.write('\n'+ OptiFormat)
-                                        except KeyError:
-                                            f1.write(line)
-                                            pass
                                     except FileNotFoundError:
                                         pass
                             except IndexError:
@@ -988,6 +989,9 @@ def BTSetsForPhase3():
                 file_a_open = open(file_a,'rb')
                 with open(file_a,'r',encoding='utf-16') as f:
                     dfOpti = pd.read_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.Complete-Filtered.csv'.format(BotName.get(),i,j,BotName.get(),i,j))
+                    #print('For',i,j,'Opti lenght is',len(dfOpti))
+                    if (len(dfOpti)) < 1:
+                        continue
                     Var_Name_list=[]
                     for g,row in dfOpti.iterrows():
                         file_b = Folder_Path +'\MQL5\Profiles\Tester\{}\Phase3-{}-{}-{}-{}.set'.format(BotName.get(),BotName.get(),i,j,g)
@@ -1003,9 +1007,11 @@ def BTSetsForPhase3():
                             for x in Var_Name_list:
                                 try:
                                     dfOptiValueSpot=dfOpti.iloc[g][x]
+                                    #print('On',i,j,g,dfOptiValueSpot)
                                 except KeyError:
                                     continue
                                 OptiFormat = "{}={}||1000||1000||2000||N \n".format(x,dfOptiValueSpot)  # a esta altura es donde ocurren los calculos
+                                #print('On',i,j,g,OptiFormat)
                                 f1.write('{} \n'.format(OptiFormat))
                             MagicStartLine='MagicStart={}{}{}{}{}||1000||1000||2000||N \n'.format(BotMagicNumberSeries,UserSeries,PairList[i],TimeFrameList[j],g)
                             f1.write(MagicStartLine)
