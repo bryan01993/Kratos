@@ -8,7 +8,7 @@ import subprocess
 # THIS SHALL BE Graph Phase 2 Button
 
 # Slide Lists
-BotName = 'EA-SA2v1'
+BotName = 'EA-S3v1'
 Par='EURUSD'
 M5 = 'M5'
 M15= 'M15'
