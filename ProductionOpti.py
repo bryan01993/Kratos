@@ -17,8 +17,8 @@ Title = "So it begins once again, a comenzar de nuevo desde 0 con python pero ah
 
 
 #---------------------------------------------------VARIABLES PARA EL LANZAMIENTO ----------------------------------------------------
-BotName = 'EA-T1v2'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
-BotMagicNumberSeries = '05'   # should be last numbers of the EA 09 for S3
+BotName = 'EA-B1v1'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
+BotMagicNumberSeries = '01'   # should be last numbers of the EA 09 for S3
 UserSeries = '01' #01 La Opti la hizo bryan, 02 la hizo richard
 #--------------------------------------------PATHS----------------------------------------------------------------------
 MT5_Path="C:/Program Files/Darwinex MetaTrader 5/terminal64.exe"
