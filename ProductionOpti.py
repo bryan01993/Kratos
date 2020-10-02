@@ -1229,7 +1229,7 @@ FilterExpectedPayoffPhase1 = Entry(Phase1FilterSettingswindow, fg='white', bg='#
 FilterExpectedPayoffPhase1.grid(row=2, column=1, sticky='w', padx=10, pady=10)
 FilterExpectedPayoffPhase1.get()
 
-Label(Phase1FilterSettingswindow, tex="Min. Profit Factor:", fg='white', bg='#292524').grid(row=3, column=0, sticky='w', padx=10, pady=10) #Label Min Net Profit
+Label(Phase1FilterSettingswindow, text="Min. Profit Factor:", fg='white', bg='#292524').grid(row=3, column=0, sticky='w', padx=10, pady=10) #Label Min Net Profit
 FilterProfitFactorPhase1 = Entry(Phase1FilterSettingswindow, fg='white', bg='#151312', width=12)                    #Entry Profit Factor
 FilterProfitFactorPhase1.grid(row=3, column=1, sticky='w', padx=10, pady=10)
 FilterProfitFactorPhase1.get()
