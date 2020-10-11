@@ -12,6 +12,7 @@ from bokeh.layouts import row, column
 from bokeh.io import output_notebook
 
 from services.CreateFoldersService import CreateFoldersService
+from Dto import Dto
 
 # CONSTANTS
 BOT_NAME = 'EA-B1v1'
@@ -69,7 +70,11 @@ def CreateALLFoldersPhase1():
     """Creates Folders for Results, Optisets and INIT files"""
     bot = BotName.get() or BOT_NAME
 
-    service = CreateFoldersService(bot, PairList, TimeFrameList)
+    dto = Dto(bot)
+    dto.pairs = PairList
+    dto.time_frames = TimeFrameList
+
+    service = CreateFoldersService(dto)
     service.run()
 
 #----------------------------CREATES INIT FILES FOR PHASE 1-----(BLIND OPTI)--------------------------------------------

@@ -9,11 +9,10 @@ TIME_FRAMES = {'H4':'96', 'H1':'95', 'M30':'94', 'M15':'93', 'M5':'92', 'M1':'91
 
 
 class CreateFoldersService:
-    def __init__(self, bot, pairs, time_frames):
-        print(bot)
-        self.bot = bot
-        self.pairs = pairs
-        self.time_frames = time_frames
+    def __init__(self, dto):
+        self.bot = dto.bot
+        self.pairs = dto.pairs
+        self.time_frames = dto.time_frames
 
     def run(self):
         """Creates Folders for Results, Optisets and INIT files"""
