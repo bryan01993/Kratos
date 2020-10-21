@@ -8,13 +8,13 @@ import subprocess
 # THIS SHALL BE Graph Phase 2 Button
 
 # Slide Lists
-BotName = 'EA-TR1v1'
+BotName = 'EA-1v2'
 EURUSD = 'EURUSD'
 GBPUSD = 'GBPUSD'
 USDCAD = 'USDCAD'
 USDCHF = 'USDCHF'
 USDJPY = 'USDJPY'
-TimeFrame = 'M5'
+TimeFrame = 'M15'
 Phase='1'
 SIZES = list(range(6, 28, 3))
 COLORS = Inferno256

@@ -7,21 +7,21 @@ import pandas as pd
 import subprocess
 
 # Slide Lists
-BotName = 'EA-S3v1'
-i = 'USDJPY'
+BotName = 'EA-T1v2'
+i = 'EURJPY'
 j = 'H4'
 SIZES = list(range(6, 28, 3))
 COLORS = Inferno256
 N_SIZES = len(SIZES)
 N_COLORS = len(COLORS)
 df = pd.read_csv(
-    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.csv'.format(
+    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.Complete.csv'.format(
         BotName, i, j, BotName, i, j))
 # Execution
 def Interactive_Graph(BotName,df,i,j):
     print('Interactive Graph for Phase 1 for {} on {} at {}'.format(BotName,i,j))
     df = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.csv'.format(
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase1.Complete.csv'.format(
             BotName, i, j, BotName, i, j))
     columns = sorted(df.columns)
     discrete = [x for x in columns if df[x].dtype == object]

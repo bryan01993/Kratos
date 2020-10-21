@@ -13,7 +13,7 @@ from bokeh.io import output_notebook
 
 
 #---------------------------------------------------VARIABLES PARA EL LANZAMIENTO ----------------------------------------------------
-BotName = 'EA-B1v1'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
+BotName = 'EA-R1v1'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
 BotMagicNumberSeries = '01'   # should be last numbers of the EA 09 for S3
 UserSeries = '01' #01 La Opti la hizo bryan, 02 la hizo richard
 #--------------------------------------------PATHS----------------------------------------------------------------------

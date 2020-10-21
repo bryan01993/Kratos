@@ -16,8 +16,8 @@ Tom_Test_Init_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6
 #process = subprocess.call(MT5_Path + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\6C3C6A11D1C3791DD4DBF45421BF8028\\MQL5\\Profiles\\Tester\\717.ini")
 #process = subprocess.call(MT5_Path + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\6C3C6A11D1C3791DD4DBF45421BF8028\\MQL5\\Profiles\\Tester\\718.ini")
 Opti_start_date = '2018.01.01'
-Opti_end_date = '2020.09.01'
-ForwardDate = '2020.09.02'
+Opti_end_date = '2019.01.01'
+ForwardDate = '2020.01.01'
 Initial_deposit = 10000
 #print('Done')
 
@@ -166,7 +166,7 @@ def Tom_Test():
     'ProfitInPips=0' + "\n" \
     'Leverage={}'.format(str(LeverageValue)) + "\n" )
     f.close()
-   CreateTomIniReal()
+   #CreateTomIniReal()
    CreateTomIniData()
    print("Created Tom INITS for Data and Real for {}.".format(file[0]))
   except IndexError:
