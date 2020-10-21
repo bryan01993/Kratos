@@ -11,6 +11,11 @@ from bokeh.models import Select, CustomJS
 from bokeh.layouts import row, column
 from bokeh.io import output_notebook
 
+from services.CreateFoldersService import CreateFoldersService
+from Dto import Dto
+
+# CONSTANTS
+BOT_NAME = 'EA-B1v1'
 
 #---------------------------------------------------VARIABLES PARA EL LANZAMIENTO ----------------------------------------------------
 BotName = 'EA-R1v1'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
@@ -60,54 +65,17 @@ ForwardFilterEquityDDPhase1 = 800 #Esta en valor absoluto, se encuentra despejan
 ForwardFilterTradesPhase1 = 20
 
 
-
 #---------------------------------------------CREATES BOTNAME & INIT & OPTISETS & RESULTS FOLDERS---------------------------------------------------
 def CreateALLFoldersPhase1():
     """Creates Folders for Results, Optisets and INIT files"""
-    try:
-        os.makedirs(FOLDER_PATH +'/reports/{}/INITS/Phase1'.format(BotName.get()))
-        print('Directory for', BotName.get(), ' INITS Phase 1 Created')
-    except FileExistsError:
-        print('Directory for', BotName.get(), ' INITS Phase 1 already exists')
+    bot = BotName.get() or BOT_NAME
 
-    try:
-        os.makedirs(FOLDER_PATH +'/MQL5/Profiles/Tester/{}'.format(BotName.get()))
-        print('Directory for', BotName.get(), ' OPTISETS Phase 2 Created')
-    except FileExistsError:
-        print('Directory for', BotName.get(), ' OPTISETS Phase 2 already exists')
+    dto = Dto(bot)
+    dto.pairs = PairList
+    dto.time_frames = TimeFrameList
 
-    try:
-        os.makedirs(FOLDER_PATH +'/reports/{}/INITS/HC'.format(BotName.get()))
-        print('Directory for', BotName.get(), ' Hill Climbing Created')
-    except FileExistsError:
-        print('Directory for', BotName.get(), ' Hill Climbing already exists')
-
-    try:
-        os.makedirs(FOLDER_PATH +'/reports/{}/INITS/Phase2'.format(BotName.get()))
-        print('Directory for', BotName.get(), ' Phase 2 Created')
-    except FileExistsError:
-        print('Directory for', BotName.get(), ' Phase 2 already exists')
-
-    try:
-        os.makedirs(FOLDER_PATH +'/reports/{}/INITS/Phase3'.format(BotName.get()))
-        print('Directory for', BotName.get(), ' Phase 3 Created')
-    except FileExistsError:
-        print('Directory for', BotName.get(), ' Phase 3 already exists')
-
-    try:
-        os.makedirs(FOLDER_PATH +'/reports/{}/SETS'.format(BotName.get()))
-        print('Directory for', BotName.get(), ' Sets Created')
-    except FileExistsError:
-        print('Directory for', BotName.get(), ' Sets already exists')
-
-    for i in PairList:
-        for j in TimeFrameList:
-            try:
-                os.makedirs(FOLDER_PATH +"/reports/"+"{}".format(BotName.get())+"/"+ i +"/"+ j)
-                print("Directory for", BotName.get(), i, "and", j, "created")
-            except FileExistsError:
-                print("Directory for", BotName.get(), i, "and", j, "already exists")
-    print("Path Folders for All Pairs and TimeFrames Have Been Created")
+    service = CreateFoldersService(dto)
+    service.run()
 
 #----------------------------CREATES INIT FILES FOR PHASE 1-----(BLIND OPTI)--------------------------------------------
 def CreateIniFilesPhase1(BotName="MACD Sample", PairList='EURUSD', TimeFrameList='H1', OptimizationCriterionList=6,
