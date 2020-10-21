@@ -11,7 +11,7 @@ from bokeh.models import Select, CustomJS
 from bokeh.layouts import row, column
 from bokeh.io import output_notebook
 
-from services.CreateFoldersService import CreateFoldersService
+from services.create_folders import CreateFolders
 from Dto import Dto
 
 # CONSTANTS
@@ -74,7 +74,7 @@ def CreateALLFoldersPhase1():
     dto.pairs = PairList
     dto.time_frames = TimeFrameList
 
-    service = CreateFoldersService(dto)
+    service = CreateFolders(dto)
     service.run()
 
 #----------------------------CREATES INIT FILES FOR PHASE 1-----(BLIND OPTI)--------------------------------------------
