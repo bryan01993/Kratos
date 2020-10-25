@@ -3,6 +3,9 @@ import os
 import xml.etree.ElementTree as et
 import pandas as pd
 from print_filters import PrintFilters
+from helpers import movecol
+from helpers import get_csv_list
+
 
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
@@ -45,10 +48,10 @@ class AccotateResultsPhase2:
                     dfback['Win Ratio'] = dfback['Win Ratio'].str.slice(start=-3)
                     dfback = dfback.apply(pd.to_numeric)
                     dfback['Absolute DD'] = dfback['Profit'] / dfback['Recovery Factor']
-                    dfback = self.movecol(dfback, ['Absolute DD'], 'Equity DD %')
-                    dfback = self.movecol(dfback, ['Average Loss'], 'Equity DD %', 'Before')
-                    dfback = self.movecol(dfback, ['Win Ratio'], 'Trades')
-                    dfback = self.movecol(dfback, ['Lots'], 'Win Ratio')
+                    dfback = movecol(dfback, ['Absolute DD'], 'Equity DD %')
+                    dfback = movecol(dfback, ['Average Loss'], 'Equity DD %', 'Before')
+                    dfback = movecol(dfback, ['Win Ratio'], 'Trades')
+                    dfback = movecol(dfback, ['Lots'], 'Win Ratio')
                     dfback = dfback.apply(pd.to_numeric)
                     dfback.to_csv(csv_file_name_back, sep=',', index=False)
                     dfback.reset_index(inplace=True)
@@ -88,10 +91,10 @@ class AccotateResultsPhase2:
                     dfforward['Forward Win Ratio'] = dfforward['Forward Win Ratio'].str.slice(start=-3)
                     dfforward = dfforward.apply(pd.to_numeric)
                     dfforward['Forward Absolute DD'] = dfforward['Profit'] / dfforward['Recovery Factor']
-                    dfforward = self.movecol(dfforward, ['Forward Absolute DD'], 'Equity DD %')
-                    dfforward = self.movecol(dfforward, ['Forward Average Loss'], 'Equity DD %', 'Before')
-                    dfforward = self.movecol(dfforward, ['Forward Win Ratio'], 'Trades')
-                    dfforward = self.movecol(dfforward, ['Forward Lots'], 'Forward Win Ratio')
+                    dfforward = movecol(dfforward, ['Forward Absolute DD'], 'Equity DD %')
+                    dfforward = movecol(dfforward, ['Forward Average Loss'], 'Equity DD %', 'Before')
+                    dfforward = movecol(dfforward, ['Forward Win Ratio'], 'Trades')
+                    dfforward = movecol(dfforward, ['Forward Lots'], 'Forward Win Ratio')
                     dfforward = dfforward.apply(pd.to_numeric)
                     dfforward.sort_values(by=['Back Result'], ascending=False, inplace=True)
                     dfforward.reset_index(inplace=True)
@@ -119,19 +122,19 @@ class AccotateResultsPhase2:
 
                     complete_df = pd.concat([dfback, dfforward], axis=1)
                     complete_df = complete_df.loc[:, ~complete_df.columns.duplicated()]
-                    complete_df = self.movecol(complete_df, ['Forward Result'], 'Result')
-                    complete_df = self.movecol(complete_df, ['Forward Profit'], 'Profit')
-                    complete_df = self.movecol(complete_df, ['Forward Expected Payoff'], 'Expected Payoff')
-                    complete_df = self.movecol(complete_df, ['Forward Profit Factor'], 'Profit Factor')
-                    complete_df = self.movecol(complete_df, ['Forward Recovery Factor'], 'Recovery Factor')
-                    complete_df = self.movecol(complete_df, ['Forward Sharpe Ratio'], 'Sharpe Ratio')
-                    complete_df = self.movecol(complete_df, ['Forward Custom'], 'Custom')
-                    complete_df = self.movecol(complete_df, ['Forward Average Loss'], 'Average Loss')
-                    complete_df = self.movecol(complete_df, ['Forward Equity DD %'], 'Equity DD %')
-                    complete_df = self.movecol(complete_df, ['Forward Absolute DD'], 'Absolute DD')
-                    complete_df = self.movecol(complete_df, ['Forward Trades'], 'Trades')
-                    complete_df = self.movecol(complete_df, ['Forward Win Ratio'], 'Win Ratio')
-                    complete_df = self.movecol(complete_df, ['Forward Lots'], 'Lots')
+                    complete_df = movecol(complete_df, ['Forward Result'], 'Result')
+                    complete_df = movecol(complete_df, ['Forward Profit'], 'Profit')
+                    complete_df = movecol(complete_df, ['Forward Expected Payoff'], 'Expected Payoff')
+                    complete_df = movecol(complete_df, ['Forward Profit Factor'], 'Profit Factor')
+                    complete_df = movecol(complete_df, ['Forward Recovery Factor'], 'Recovery Factor')
+                    complete_df = movecol(complete_df, ['Forward Sharpe Ratio'], 'Sharpe Ratio')
+                    complete_df = movecol(complete_df, ['Forward Custom'], 'Custom')
+                    complete_df = movecol(complete_df, ['Forward Average Loss'], 'Average Loss')
+                    complete_df = movecol(complete_df, ['Forward Equity DD %'], 'Equity DD %')
+                    complete_df = movecol(complete_df, ['Forward Absolute DD'], 'Absolute DD')
+                    complete_df = movecol(complete_df, ['Forward Trades'], 'Trades')
+                    complete_df = movecol(complete_df, ['Forward Win Ratio'], 'Win Ratio')
+                    complete_df = movecol(complete_df, ['Forward Lots'], 'Lots')
                     complete_df = complete_df.drop(['Back Result'], axis=1)
                     complete_df.to_csv(csv_file_name_complete, sep=',', index=False)
 
@@ -195,38 +198,16 @@ class AccotateResultsPhase2:
         print('Phase 2 Results Accotated in', round(time_result), 'minutes')
 
 
-
     def get_csv_list_back(self, pair, time_frame):
-        tree = et.parse(os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'OptiResults-{}-{}-{}-Phase1.xml'.format(self.bot, pair, time_frame)))
-        return self.get_csv_list(tree.getroot())
+        path = 'OptiResults-{}-{}-{}-Phase1.xml'.format(self.bot, pair, time_frame)
+        path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, path)
+        tree = et.parse(path)
+
+        return get_csv_list(tree.getroot())
 
     def get_csv_list_forward(self, pair, time_frame):
-        tree = et.parse(os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'OptiResults-{}-{}-{}-Phase1.forward.xml'.format(self.bot, pair, time_frame)))
-        return self.get_csv_list(tree.getroot())
+        path = 'OptiResults-{}-{}-{}-Phase1.forward.xml'.format(self.bot, pair, time_frame)
+        path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, path)
+        tree = et.parse(path)
 
-    def get_csv_list(self, root):
-        csv_list = []
-        for child in root:
-            for section in child:
-                for row in section:
-                    row_list = []
-                    csv_list.append(row_list)
-                    for cell in row:
-                        for data in cell:
-                            row_list.append(data.text)
-
-        return csv_list
-
-    def movecol(self, df, cols_to_move, ref_col='', place='After'):
-        cols = df.columns.tolist()
-        if place == 'After':
-            seg1 = cols[:list(cols).index(ref_col) + 1]
-            seg2 = cols_to_move
-        if place == 'Before':
-            seg1 = cols[:list(cols).index(ref_col)]
-            seg2 = cols_to_move + [ref_col]
-
-        seg1 = [pair for pair in seg1 if pair not in seg2]
-        seg3 = [pair for pair in cols if pair not in seg1 + seg2]
-
-        return df[seg1 + seg2 + seg3]
+        return get_csv_list(tree.getroot())
