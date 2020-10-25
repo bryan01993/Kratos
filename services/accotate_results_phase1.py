@@ -24,14 +24,16 @@ class AccotateResultsPhase1:
         total_count = 0
         project_count = 0
 
-        for i in self.pairs:
-            for j in self.time_frames:
+        for pair in self.pairs:
+            for time_frame in self.time_frames:
                 try:
                     # ----------------------------------------BACKTEST FILE-------------------------------------------------
                     null_values_index = 9 + OPTIMIZED_VARIABLES
                     null_values_columns = 8 + OPTIMIZED_VARIABLES
-                    csv_file_name_back = os.path.join(REPORT_PATH, self.bot, i, j, 'OptiResults-{}-{}-{}-Phase1.csv'.format(self.bot, i, j))
-                    csv_list_back = self.get_csv_list_back(i, j)
+
+                    csv_file_name_back = 'OptiResults-{}-{}-{}-Phase1.csv'.format(self.bot, pair, time_frame)
+                    csv_file_name_back = os.path.join(REPORT_PATH, self.bot, pair, time_frame, csv_file_name_back)
+                    csv_list_back = self.get_csv_list_back(pair, time_frame)
 
                     dfback = pd.DataFrame(data=csv_list_back)
                     dfback = dfback.drop(dfback.index[:null_values_index])
@@ -71,11 +73,12 @@ class AccotateResultsPhase1:
                             dfback.loc[index, 'Lots'] = row['Lots']
                         except IndexError:
                             pass
-                    print('Done Backtest Results for:', i, j)
+                    print('Done Backtest Results for:', pair, time_frame)
                     # ------------------------------------------FORWARD FILE------------------------------------------------
 
-                    csv_file_name_forward = os.path.join(REPORT_PATH, self.bot, i, j, 'OptiResults-{}-{}-{}-Phase1.forward.csv'.format(self.bot, i, j))
-                    csv_list_forward = self.get_csv_list_forward(i, j)
+                    csv_file_name_forward = 'OptiResults-{}-{}-{}-Phase1.forward.csv'.format(self.bot, pair, time_frame)
+                    csv_file_name_forward = os.path.join(REPORT_PATH, self.bot, pair, time_frame, csv_file_name_forward)
+                    csv_list_forward = self.get_csv_list_forward(pair, time_frame)
 
                     dfforward = pd.DataFrame(data=csv_list_forward)
                     dfforward = dfforward.drop(dfforward.index[:null_values_index])
@@ -102,12 +105,12 @@ class AccotateResultsPhase1:
                                               'Sharpe Ratio': 'Forward Sharpe Ratio', 'Custom': 'Forward Custom',
                                               'Equity DD %': 'Forward Equity DD %', 'Trades': 'Forward Trades'},
                                      inplace=True)
-                    print('Done Forward Results for:', i, j)
+                    print('Done Forward Results for:', pair, time_frame)
 
                     # ----------------------------------------Join DATAFRAMES-----------------------------------------------
-                    csv_file_name_complete = os.path.join(REPORT_PATH, self.bot, i, j, 'OptiResults-{}-{}-{}-Phase1.Complete.csv'.format(self.bot, i, j))
-                    csv_file_name_complete_filtered = os.path.join(REPORT_PATH, self.bot, i, j, 'OptiResults-{}-{}-{}-Phase1.Complete-Filtered.csv'.format(self.bot, i, j))
-                    csv_file_name_back = os.path.join(REPORT_PATH, self.bot, i, j, 'OptiResults-{}-{}-{}-Phase1.forward.csv'.format(self.bot, i, j))
+                    csv_file_name_complete = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'OptiResults-{}-{}-{}-Phase1.Complete.csv'.format(self.bot, pair, time_frame))
+                    csv_file_name_complete_filtered = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'OptiResults-{}-{}-{}-Phase1.Complete-Filtered.csv'.format(self.bot, pair, time_frame))
+                    csv_file_name_back = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'OptiResults-{}-{}-{}-Phase1.forward.csv'.format(self.bot, pair, time_frame))
 
                     complete_df = pd.concat([dfback, dfforward], axis=1)
                     complete_df = complete_df.loc[:, ~complete_df.columns.duplicated()]
@@ -128,7 +131,7 @@ class AccotateResultsPhase1:
                     complete_df.to_csv(csv_file_name_complete, sep=',', index=False)
 
                     # --------------------------------AFTER UNION FILTER----------------------------------------------------
-                    print('Before filtering the len of Complete DataFrame for', i, j, 'is:', len(complete_df))
+                    print('Before filtering the len of Complete DataFrame for', pair, time_frame, 'is:', len(complete_df))
                     for index, row in complete_df.iterrows():
                         total_count += 1
                         avg_loss_norm = 100 / row['Average Loss']
@@ -165,7 +168,7 @@ class AccotateResultsPhase1:
                                 complete_df.drop(labels=index, inplace=True)
                         except IndexError:
                             pass
-                    print('After filtering the len of Filtered DataFrame from Phase 1 for', i, j, 'is:', len(complete_df))
+                    print('After filtering the len of Filtered DataFrame from Phase 1 for', pair, time_frame, 'is:', len(complete_df))
 
                     try:
                         complete_df.drop(columns=['index'], inplace=True)
@@ -197,8 +200,8 @@ class AccotateResultsPhase1:
         if place == 'Before':
             seg1 = cols[:list(cols).index(ref_col)]
             seg2 = cols_to_move + [ref_col]
-        seg1 = [i for i in seg1 if i not in seg2]
-        seg3 = [i for i in cols if i not in seg1 + seg2]
+        seg1 = [pair for pair in seg1 if pair not in seg2]
+        seg3 = [pair for pair in cols if pair not in seg1 + seg2]
         return df[seg1 + seg2 + seg3]
 
     def get_csv_list_back(self, pair, time_frame):

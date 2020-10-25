@@ -2,21 +2,22 @@ import time
 import os
 import xml.etree.ElementTree as et
 import pandas as pd
+from print_filters import PrintFilters
 
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
-OPTIMIZED_VARIABLES = 4
 
 class AccotateResultsPhase2:
-    """Filtrates the Results for Phase 1 Optimization and keeps the results that passes"""
+    """Filtrates the Results for Pºhase 1 Optimization and keeps the results that passes"""
 
     def __init__(self, dto):
         self.bot = dto.bot
         self.pairs = dto.pairs
         self.time_frames = dto.time_frames
         self.dto = dto
+        self.print_filters = PrintFilters(dto)
 
-    def run(self):
+    def launch(self):
         """Filtrates the Results for Phase 2 Optimization and keeps the results that passes"""
         print('Begins Phase 2 Results Filtering')
         start = time.time()
@@ -25,17 +26,17 @@ class AccotateResultsPhase2:
         for pair in self.pairs:
             for time_frame in self.time_frames:
                 try:
-                    #---------------------------------------------------------------BACKTEST FILE-------------------------------------------------------------------------------------------------------------------
-                    null_values_index = 9 + OPTIMIZED_VARIABLES
-                    null_values_columns = 8 + OPTIMIZED_VARIABLES
+                    #-------------BACKTEST FILE----------
+                    null_values_index = 9 + self.dto.optimized_variables
+                    null_values_columns = 8 + self.dto.optimized_variables
 
                     csv_file_name_back = 'OptiResults-{}-{}-{}-Phase1.csv'.format(self.bot, pair, time_frame)
                     csv_file_name_back = os.path.join(REPORT_PATH, self.bot, pair, time_frame, csv_file_name_back)
                     csv_list_back = self.get_csv_list_back(pair, time_frame)
 
                     dfback = pd.DataFrame(data=csv_list_back)
-                    dfback = dfback.drop(dfback.index[:null_values_index]) # 4 variables hacen 13 9
-                    dfback_columns_name = csv_list_back[null_values_columns] # 4 variables hacen 12
+                    dfback = dfback.drop(dfback.index[:null_values_index])
+                    dfback_columns_name = csv_list_back[null_values_columns]
                     dfback.columns = dfback_columns_name
                     dfback['Lots'] = 0.1
                     dfback['Average Loss'] = dfback['Result']
@@ -67,7 +68,6 @@ class AccotateResultsPhase2:
                             dfback.loc[index, 'Absolute DD'] = row['Absolute DD']
                             dfback.loc[index, 'Average Loss'] = row['Average Loss']
                             dfback.loc[index, 'Lots'] = row['Lots']
-                            pass
                         except IndexError:
                             pass
                     print('Done Backtest Results for:', pair, time_frame)
@@ -89,17 +89,27 @@ class AccotateResultsPhase2:
                     dfforward = dfforward.apply(pd.to_numeric)
                     dfforward['Forward Absolute DD'] = dfforward['Profit'] / dfforward['Recovery Factor']
                     dfforward = self.movecol(dfforward, ['Forward Absolute DD'], 'Equity DD %')
-                    dfforward = self.movecol(dfforward, ['Forward Average Loss'], 'Equity DD %', place='Before')
+                    dfforward = self.movecol(dfforward, ['Forward Average Loss'], 'Equity DD %', 'Before')
                     dfforward = self.movecol(dfforward, ['Forward Win Ratio'], 'Trades')
                     dfforward = self.movecol(dfforward, ['Forward Lots'], 'Forward Win Ratio')
                     dfforward = dfforward.apply(pd.to_numeric)
                     dfforward.sort_values(by=['Back Result'], ascending=False, inplace=True)
                     dfforward.reset_index(inplace=True)
                     dfforward.to_csv(csv_file_name_forward, sep=',', index=False)
-                    dfforward.rename(columns={'Profit':'Forward Profit', 'Expected Payoff':'Forward Expected Payoff', 'Profit Factor':'Forward Profit Factor', 'Recovery Factor':'Forward Recovery Factor', 'Sharpe Ratio':'Forward Sharpe Ratio', 'Custom':'Forward Custom', 'Equity DD %':'Forward Equity DD %', 'Trades':'Forward Trades'}, inplace=True)
+                    columns = {
+                        'Profit':'Forward Profit',
+                        'Expected Payoff':'Forward Expected Payoff',
+                        'Profit Factor':'Forward Profit Factor',
+                        'Recovery Factor':'Forward Recovery Factor',
+                        'Sharpe Ratio':'Forward Sharpe Ratio',
+                        'Custom':'Forward Custom',
+                        'Equity DD %':'Forward Equity DD %',
+                        'Trades':'Forward Trades'
+                    }
+                    dfforward.rename(columns, inplace=True)
                     print('Done Forward Results for:', pair, time_frame)
 
-                    #---------------------------------------------------------------------------------Join DATAFRAMES---------------------------------------------------------------------------------------
+                    #--------Join DATAFRAMES------------------
 
                     csv_file_name_complete = 'OptiResults-{}-{}-{}-Phase1.Complete.csv'.format(self.bot, pair, time_frame)
                     csv_file_name_complete = os.path.join(REPORT_PATH, self.bot, pair, time_frame, csv_file_name_complete)
@@ -125,7 +135,7 @@ class AccotateResultsPhase2:
                     complete_df = complete_df.drop(['Back Result'], axis=1)
                     complete_df.to_csv(csv_file_name_complete, sep=',', index=False)
 
-                    #---------------------------------------------------------------------------------AFTER UNION FILTER---------------------------------------------------------------------------------------
+                    #-------------------AFTER UNION FILTER-----------------
                     print('Before filtering the len of Complete DataFrame for', pair, time_frame, 'is:', len(complete_df))
                     for index, row in complete_df.iterrows():
                         total_count += 1
@@ -146,10 +156,19 @@ class AccotateResultsPhase2:
                         complete_df.loc[index, 'Forward Lots'] = row['Forward Lots']
 
                         try:
-                            if (row['Profit'] >= int(FilterNetProfitPhase1.get())) and (row['Expected Payoff'] >= float(FilterExpectedPayoffPhase1.get())) and (row['Profit Factor'] >= float(FilterProfitFactorPhase1.get())) and (row['Custom'] >= float(FilterCustomPhase1.get())) and ((row['Absolute DD']) <= float(self.dto.filter_equitity_dd_phase1)+100) and (row['Trades'] >= int(FilterTradesPhase1.get())) and \
-                                (row['Forward Profit'] >= int(ForwardFilterNetProfitPhase1.get())) and (row['Forward Expected Payoff'] >= float(ForwardFilterExpectedPayoffPhase1.get())) and (row['Forward Profit Factor'] >= float(ForwardFilterProfitFactorPhase1.get())) and (row['Forward Custom'] >= float(ForwardFilterCustomPhase1.get())) and ((row['Forward Absolute DD']) <= float(ForwardFilterEquityDDPhase1.get())+100) and (row['Forward Trades'] >= int(ForwardFilterTradesPhase1.get())):
+                            if (row['Profit'] >= int(self.dto.filter_net_profit_phase1)
+                                    and row['Expected Payoff'] >= float(self.dto.filter_expected_payoff_phase1)
+                                    and row['Profit Factor'] >= float(self.dto.filter_profit_factor_phase1)
+                                    and row['Custom'] >= float(self.dto.filter_custom_phase1)
+                                    and row['Absolute DD'] <= float(self.dto.filter_equitity_dd_phase1) + 100
+                                    and row['Trades'] >= int(self.dto.filter_trades_phase1)
+                                    and row['Forward Profit'] >= int(self.dto.forward_filter_net_profit_phase1)
+                                    and row['Forward Expected Payoff'] >= float(self.dto.forward_filter_expected_payoff_phase1)
+                                    and row['Forward Profit Factor'] >= float(self.dto.forward_filter_profit_factor_phase1)
+                                    and row['Forward Custom'] >= float(self.dto.forward_filter_custom_phase1)
+                                    and row['Forward Absolute DD'] <= float(self.dto.forward_filter_equitity_dd_phase1) + 100
+                                    and row['Forward Trades'] >= int(self.dto.forward_filter_trades_phase1)):
                                 project_count += 1
-                                pass
                             else:
                                 complete_df.drop(labels=index, inplace=True)
 
@@ -157,7 +176,6 @@ class AccotateResultsPhase2:
                             pass
 
                     print('After filtering the len of Filtered DataFrame from Phase 2 for', pair, time_frame, 'is:', len(complete_df))
-                    #complete_df = complete_df.drop_duplicates(subset='Profit',inplace=True) drop duplicates attempt
                     print('After Removing Duplicates for', pair, time_frame, ' the len is: unknown')
                     try:
                         complete_df.drop(columns=['index'], inplace=True)
@@ -169,17 +187,14 @@ class AccotateResultsPhase2:
                     pass
         end = time.time()
         time_result = (end - start) / 60
-        project_ratio = (project_count/total_count)*100
-        print('Filtered by:', '\n', \
-            'Forward Min. Net Profit:', ForwardFilterNetProfitPhase1.get(), '\n', \
-            'Forward Min. Exp. Payoff:', ForwardFilterExpectedPayoffPhase1.get(), '\n', \
-            'Forward Min. Profit Factor:', ForwardFilterProfitFactorPhase1.get(), '\n', \
-            'Forward Min. Custom:', ForwardFilterCustomPhase1.get(), '\n', \
-            'Forward Max. Equity DD:', ForwardFilterEquityDDPhase1.get(), '\n', \
-            'Forward Min. Trades:', ForwardFilterTradesPhase1.get(), '\n')
+        project_ratio = (project_count / total_count) * 100
+
+        self.print_filters.print_forward_filters()
         print('From a Total of :', total_count, 'backtests')
         print('Only', project_count, ' passed the filters.', round(project_ratio, ndigits=2), '%')
         print('Phase 2 Results Accotated in', round(time_result), 'minutes')
+
+
 
     def get_csv_list_back(self, pair, time_frame):
         tree = et.parse(os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'OptiResults-{}-{}-{}-Phase1.xml'.format(self.bot, pair, time_frame)))
@@ -202,8 +217,7 @@ class AccotateResultsPhase2:
 
         return csv_list
 
-
-    def movecol(self, df, cols_to_move=[], ref_col='', place='After'):
+    def movecol(self, df, cols_to_move, ref_col='', place='After'):
         cols = df.columns.tolist()
         if place == 'After':
             seg1 = cols[:list(cols).index(ref_col) + 1]
@@ -216,4 +230,3 @@ class AccotateResultsPhase2:
         seg3 = [pair for pair in cols if pair not in seg1 + seg2]
 
         return df[seg1 + seg2 + seg3]
-

@@ -3,19 +3,13 @@ import os
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
 
-OPTI_START_DATE = "2007.01.01" #YYYY.MM.DD
-OPTI_END_DATE = "2020.01.01" #YYYY.MM.DD
-FORWARD_DATE = "2019.01.01"
-
-INITIAL_DEPOSIT = 10000
-DEPOSIT_CURRENCY = "USD"
-
 class CreateIniPhase:
     """Creates a phase INIT file for every pair and timeframe selected"""
-    def __init__(self, bot, pairs, time_frames, phase):
-        self.bot = bot
-        self.pairs = pairs
-        self.time_frames = time_frames
+    def __init__(self, dto, phase):
+        self.dto = dto
+        self.bot = dto.bot
+        self.pairs = dto.pairs
+        self.time_frames = dto.time_frames
         self.phase = phase
 
     def run(self):
@@ -30,9 +24,7 @@ class CreateIniPhase:
         print('INITS for All Phase {} Created. Total'.format(self.phase), count, 'INIT files.')
 
     def create_init_file(self, pair, time_frame, optimization_criterion=6, model=2, optimization=2, shutdown_terminal=1, visual=0, leverage_value=33, replace_report=1, use_local=1, forward_mode=4, execution_mode=28):
-        """Creates the INIT file specific for a Phase  Optimization
-            TODO: Get opti_start_date, opti_end_date and forward_date by params
-        """
+        """Creates the INIT file specific for a Phase  Optimization"""
 
         file_name = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, pair, time_frame, self.phase)
         path = os.path.join(REPORT_PATH, self.bot, 'INITS', self.phase, file_name)
@@ -57,17 +49,17 @@ class CreateIniPhase:
         'ExecutionMode={}'.format(str(execution_mode)) + "\n" \
         'Optimization={}'.format(optimization) + "\n" \
         'OptimizationCriterion={}'.format(optimization_criterion) + "\n" \
-        'FromDate={}'.format(OPTI_START_DATE) + "\n" \
-        'ToDate={}'.format(OPTI_END_DATE) + "\n" \
+        'FromDate={}'.format(self.dto.opti_start_date) + "\n" \
+        'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
         'ForwardMode={}'.format(forward_mode) + "\n" \
-        'ForwardDate={}'.format(FORWARD_DATE) + "\n" \
+        'ForwardDate={}'.format(self.dto.forward_date) + "\n" \
         'Report=reports\\{}\\{}\\{}\OptiResults-{}-{}-{}-Phase{}'.format(self.bot, pair, time_frame, self.bot, pair, time_frame, self.phase) + "\n" \
         ';--- If the specified report already exists, it will be overwritten' + "\n" \
         'ReplaceReport={}'.format(replace_report) + "\n" \
         ';--- Set automatic platform shutdown upon completion of testing/optimization' + "\n" \
         'ShutdownTerminal={}'.format(shutdown_terminal) + "\n" \
-        'Deposit={}'.format(INITIAL_DEPOSIT) + "\n" \
-        'Currency={}'.format(DEPOSIT_CURRENCY) + "\n" \
+        'Deposit={}'.format(self.dto.initial_deposit) + "\n" \
+        'Currency={}'.format(self.dto.deposit_currency) + "\n" \
         ';Uses or refuses local network resources' + "\n" \
         'UseLocal={}'.format(use_local) + "\n" \
         ';Uses Visual test Mode' + "\n" \

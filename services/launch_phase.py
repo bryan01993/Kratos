@@ -6,8 +6,8 @@ REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
 MT5_PATH = "C:/Program Files/Darwinex MetaTrader 5/terminal64.exe"
 
 class LaunchPhase:
-    def __init__(self, bot, phase):
-        self.bot = bot
+    def __init__(self, dto, phase):
+        self.bot = dto.bot
         self.phase = phase
 
     def launch(self):
