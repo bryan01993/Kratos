@@ -1,14 +1,9 @@
 import os.path
-from tkinter import *
 import tkinter as tk
+from tkinter import Frame, Button, Label, Tk, Toplevel, Entry, IntVar, Checkbutton
 import subprocess
 import pandas as pd
-from bokeh.plotting import curdoc, figure
-from bokeh.models import Select, CustomJS
-from bokeh.layouts import row, column
-from bokeh.io import output_notebook
 
-from config import path
 from Dto import Dto
 from services.create_folders import CreateFolders
 from services.accotate_results_phase1 import AccotateResultsPhase1
@@ -18,17 +13,7 @@ from services.accotate_optisets_phase1 import AccotateOptisetsPhase1
 from services.accotate_optisets_phase2 import AccotateOptisetsPhase2
 from services.hill_climb_phase2 import HillClimbPhase2
 from services.bt_sets_for_phase3 import BTSetsForPhase3
-from services.accotate_results_phase2 import AccotateResultsPhase2
 from services.print_filters import PrintFilters
-
-
-#--------------------------------------------PATHS----------------------------------------------------------------------
-
-#Launch_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Launch'
-#Launch_folder_Init = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Launch/LAUNCH_INIT/'
-#Tom_Test_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Tom_Test/'
-#Tom_Test_Init_folder = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/Portfolios/Tom_Test/Tom_Test_INITS/'
-
 
 # CONSTANTS
 BOT_NAME = 'EA-B1v1'
@@ -66,7 +51,6 @@ PAIRS = {'GBPUSD':'01', 'EURUSD':'02', 'USDCAD':'03', 'USDCHF':'04', 'USDJPY':'0
 # Agregar 'D1', no parece obtener la data de M1 dentro del MT5.
 TIME_FRAMES = {'H4':'96', 'H1':'95', 'M30':'94', 'M15':'93', 'M5':'92', 'M1':'91'}
 
-
 def create_dto():
     """Creates DTO(data transfer object), in this object we get all the data needed for the services"""
 
@@ -101,7 +85,6 @@ def create_dto():
 
 def create_folder_phase1():
     """Creates Folders for Results, Optisets and INIT files"""
-
     service = CreateFolders(create_dto())
     service.run()
 
@@ -116,9 +99,7 @@ def launch_phase1():
     service.launch()
 
 def accotate_results_phase1():
-    """Filtrates the Results for Phase 1 Optimization and keeps the results that passes
-        PROCESS TO OBTAIN OPTISET VALUES FOR PHASE 2 --- CREATE CSV ACCOTATTED FROM XML AND FILTERS IT
-    """
+    """Filtrates the Results for Phase 1 Optimization and keeps the results that passes"""
     service = AccotateResultsPhase1(create_dto())
     service.run()
 
@@ -138,11 +119,9 @@ def launch_phase2():
     service.launch()
 
 def accotate_results_phase2():
-    """Executes in CMD the INIT file on MT5 for every pair and timeframe selected for Phase 2
-        PROCESS TO OBTAIN OPTISET VALUES FOR PHASE 3 --CREATE CSV ACCOTATTED FROM XML, JOINS BACK AND FORWARD AND FILTERS IT
-    """
-    service = AccotateResultsPhase2(create_dto())
-    service.launch()
+    """Filtrates the Results for Phase 1 Optimization and keeps the results that passes"""
+    service = AccotateResultsPhase1(create_dto())
+    service.run()
 
 def hill_climb_phase2():
     """PROCESS TO OBTAIN OPTISET VALUES FOR PHASE 3---(ONLY OPTISET)"""
@@ -231,9 +210,9 @@ Button(my_frame, text='Produce Sets and Inis for Phase 3', fg='black', bg='#34D7
 
 Button(my_frame, text='LAUNCH Phase 3', fg='black', bg='#E74C3C', borderwidth=0, command=launch_phase3).grid(row=13, column=2, padx=10, pady=10)
 
-Button(my_frame, text='LAUNCH HC', fg='black', bg='#E74C3C', borderwidth=0, command=hill_climb_phase2).grid(row=14, column=2, padx=10, pady=10)  # HILL CLIMBING TEST BUTTON
+Button(my_frame, text='LAUNCH HC', fg='black', bg='#E74C3C', borderwidth=0, command=hill_climb_phase2).grid(row=14, column=2, padx=10, pady=10)
 
-Label(my_frame, text="Pairs", fg='white', bg='#292524').grid(row=5, column=0, padx=10, pady=10) #Label Pairs
+Label(my_frame, text="Pairs", fg='white', bg='#292524').grid(row=5, column=0, padx=10, pady=10)
 
 
 pairGBPUSD = IntVar()

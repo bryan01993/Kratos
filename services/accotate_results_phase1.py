@@ -2,9 +2,9 @@ import time
 import os
 import xml.etree.ElementTree as et
 import pandas as pd
-from print_filters import PrintFilters
-from helpers import movecol
-from helpers import get_csv_list
+from .print_filters import PrintFilters
+from .helpers import movecol
+from .helpers import get_csv_list
 
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
@@ -160,6 +160,7 @@ class AccotateResultsPhase1:
         return df_forward
 
     def join_dataframes(self, df_backtest, df_forward, pair, time_frame):
+        """ Join the backtest and the forward date frame"""
         file_name = 'OptiResults-{}-{}-{}-Phase1.Complete-Filtered.csv'.format(self.bot, pair, time_frame)
         file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, file_name)
 
@@ -228,6 +229,7 @@ class AccotateResultsPhase1:
         return df_complete
 
     def get_csv_list_back(self, pair, time_frame):
+        """ get_csv_list_back """
         path = 'OptiResults-{}-{}-{}-Phase1.xml'.format(self.bot, pair, time_frame)
         path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, path)
         tree = et.parse(path)
@@ -235,6 +237,7 @@ class AccotateResultsPhase1:
         return get_csv_list(tree.getroot())
 
     def get_csv_list_forward(self, pair, time_frame):
+        """ get_csv_list_forward """
         path = 'OptiResults-{}-{}-{}-Phase1.forward.xml'.format(self.bot, pair, time_frame)
         path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, path)
         tree = et.parse(path)
