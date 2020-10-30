@@ -16,7 +16,7 @@ class CreateIniPhase:
         count = 0
         for pair in self.pairs:
             for time_frame in self.time_frames:
-                if self.pairs[pair].get() == 1 and self.time_frames[time_frame].get() == 1:
+                if self.pairs[pair] == 1 and self.time_frames[time_frame] == 1:
                     self.create_init_file(pair, time_frame)
                     count += 1
                     print(pair, time_frame, 'INIT Phase {} Created'.format(self.phase))
