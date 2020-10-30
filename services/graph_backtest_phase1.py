@@ -18,7 +18,7 @@ class GraphBacktestPhase2:
     def graph_backtest(self):
         for pair in self.pairs:
             for time_frame in self.time_frames:
-                if self.pairs[pair].get() == 1 and self.time_frames[time_frame].get() == 1:
+                if self.pairs[pair] == 1 and self.time_frames[time_frame] == 1:
                     path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'OptiResults-{}-{}-{}-Phase1.csv'.format(self.bot, pair, time_frame))
                     df = pd.read_csv(path)
                     print('Before')
