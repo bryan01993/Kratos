@@ -11,25 +11,23 @@ import matplotlib.dates as mdates
 from matplotlib.dates import (DateFormatter, WeekdayLocator, DayLocator, MONDAY)
 import numpy as np
 import pandas as pd
-#import pandas_datareader.data as web
+import pandas_datareader.data as web
 from sklearn.cluster import KMeans
 
-def get_open_normalised_prices(start, end):
+def get_open_normalised_prices(symbol, start, end):
     """
     Obtains a pandas DataFrame containing open normalised prices
     for high, low and close for a particular equities symbol
     from Yahoo Finance. That is, it creates High/Open, Low/Open
     and Close/Open columns.
     """
-    df = pd.read_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Moded Data/MODEURAUDMT5SHORT.csv',delimiter=',')
-    df["H/O"] = df["<HIGH>"]/df["<OPEN>"]
-    df["L/O"] = df["<LOW>"]/df["<OPEN>"]
-    df["C/O"] = df["<CLOSE>"]/df["<OPEN>"]
-    df['fechayhora'] = df['<DATE>'] + " " + df['<TIME>']
-    df['fechayhora'] = pd.to_datetime(df['fechayhora'])
-    #df.drop(["<OPEN>", "<HIGH>", "<LOW>","<CLOSE>", "<VOL>", "<SPREAD>"],axis=1, inplace=True)
+    df = web.DataReader(symbol, "yahoo", start, end)
+    df["H/O"] = df["High"]/df["Open"]
+    df["L/O"] = df["Low"]/df["Open"]
+    df["C/O"] = df["Close"]/df["Open"]
+    df.drop(
+    ["Open", "High", "Low","Close", "Volume", "Adj Close"],axis=1, inplace=True)
     return df
-
 def plot_candlesticks(data, since):
     """
     Plot a candlestick chart of the prices,
@@ -38,9 +36,9 @@ def plot_candlesticks(data, since):
     # Copy and reset the index of the dataframe
     # to only use a subset of the data for plotting
     df = copy.deepcopy(data)
-    #df = df[df.index >= since]
+    df = df[df.index >= since]
     df.reset_index(inplace=True)
-    df['date_fmt'] = df['fechayhora'].apply(lambda date: mdates.date2num(date.to_pydatetime()))
+    df['date_fmt'] = df['Date'].apply(lambda date: mdates.date2num(date.to_pydatetime()))
     # Set the axis formatting correctly for dates
     # with Mondays highlighted as a "major" tick
     mondays = WeekdayLocator(MONDAY)
@@ -53,7 +51,8 @@ def plot_candlesticks(data, since):
     ax.xaxis.set_major_formatter(weekFormatter)
     # Plot the candlestick OHLC chart using black for
     # up days and red for down days
-    csticks = candlestick_ohlc(ax, df[['date_fmt', '<OPEN>', '<HIGH>', '<LOW>', '<CLOSE>']].values, width=0.6,colorup='#000000', colordown='#ff0000')
+    csticks = candlestick_ohlc(
+    ax, df[['date_fmt', 'Open', 'High', 'Low', 'Close']].values, width=0.6,colorup='#000000', colordown='#ff0000')
     ax.set_facecolor((1,1,0.9))
     ax.xaxis_date()
     plt.setp(plt.gca().get_xticklabels(),rotation=45, horizontalalignment='right')
@@ -66,7 +65,10 @@ def plot_3d_normalised_candles(data):
     """
     fig = plt.figure(figsize=(12, 9))
     ax = Axes3D(fig, elev=21, azim=-136)
-    ax.scatter(data["H/O"], data["L/O"], data["C/O"],c=labels.astype(np.float))
+    ax.scatter(
+    data["H/O"], data["L/O"], data["C/O"],
+    c=labels.astype(np.float)
+    )
     ax.set_xlabel('High/Open')
     ax.set_ylabel('Low/Open')
     ax.set_zlabel('Close/Open')
@@ -82,7 +84,7 @@ def plot_cluster_ordered_candles(data):
     # correctly, particularly Monday as a major tick
     mondays = WeekdayLocator(MONDAY)
     alldays = DayLocator()
-    weekFormatter = DateFormatter('%W')
+    weekFormatter = DateFormatter("")
     fig, ax = plt.subplots(figsize=(16,4))
     ax.xaxis.set_major_locator(mondays)
     ax.xaxis.set_minor_locator(alldays)
@@ -97,13 +99,14 @@ def plot_cluster_ordered_candles(data):
     df["clust_change"] = df["Cluster"].diff()
     change_indices = df[df["clust_change"] != 0]
     # Plot the OHLC chart with cluster-ordered "candles"
-    csticks = candlestick_ohlc(ax, df[["clust_index", '<OPEN>', '<HIGH>', '<LOW>', '<CLOSE>']].values, width=0.5,colorup='#000000', colordown='#ff0000')
+    csticks = candlestick_ohlc(
+    ax, df[["clust_index", 'Open', 'High', 'Low', 'Close']].values, width=0.6,colorup='#000000', colordown='#ff0000')
     ax.set_facecolor((1,1,0.9))
     # Add each of the cluster boundaries as a blue dotted line
     for row in change_indices.iterrows():
         plt.axvline(row[1]["clust_index"],linestyle="dashed", c="blue")
-        plt.xlim(0, len(df))
-        plt.setp(plt.gca().get_xticklabels(),rotation=45, horizontalalignment='right')
+    plt.xlim(0, len(df))
+    plt.setp(plt.gca().get_xticklabels(),rotation=45, horizontalalignment='right')
     plt.show()
 
 def create_follow_cluster_matrix(data):
@@ -123,40 +126,28 @@ def create_follow_cluster_matrix(data):
     print(clust_mat)
 
 if __name__ == "__main__":
-    # Obtain S&P500 pricing data from Yahoo Finance
-    print('Started')
+    # Obtain S&P500 pricing data from Yahoo Finance ^GSPC (EURUSD=X)
     symbol = "^GSPC"
-    start = datetime.datetime(2007, 1, 1)
+    start = datetime.datetime(2013, 1, 1)
     end = datetime.datetime(2015, 12, 31)
-    sp500 = get_open_normalised_prices(start=start,end=end)
-    print('Check 1')
+    sp500 = web.DataReader(symbol, "yahoo", start, end)
     # Plot last year of price "candles"
     plot_candlesticks(sp500, datetime.datetime(2015, 1, 1))
-    print('Check 2')
     # Carry out K-Means clustering with five clusters on the
     # three-dimensional data H/O, L/O and C/O
-    sp500_norm = get_open_normalised_prices(start=start, end=end)
-    print('Check 3')
+    sp500_norm = get_open_normalised_prices(symbol, start, end)
     k = 5
     km = KMeans(n_clusters=k, random_state=42)
-    print('Check 3.5')
     km.fit(sp500_norm)
-    print('Check 4')
-    labels = km.labels
+    labels = km.labels_
     sp500["Cluster"] = labels
     # Plot the 3D normalised candles using H/O, L/O, C/O
     plot_3d_normalised_candles(sp500_norm)
-    print('Check 5')
     # Plot the full OHLC candles re-ordered
     # into their respective clusters
     plot_cluster_ordered_candles(sp500)
-    print('Check 6')
     # Create and output the cluster follow-on matrix
     create_follow_cluster_matrix(sp500)
-    print('Check 7')
-
-
-
 
 def simulated_data():
     if __name__ == "__main__":
