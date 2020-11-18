@@ -11,17 +11,17 @@ PORTFOLIO = 'AATROX'
 LOCATION = '/home/miguel/Proyectos/kratos/atrox/WARWICK_Portfolio.csv'
 
 dataframe = pd.read_csv(LOCATION)
-len(list(dataframe))
+
+le = preprocessing.LabelEncoder()
+strategy = le.fit_transform(list(dataframe['Strategy name (Global)']))
+balance = dataframe['Balance (Global)']
+size= dataframe['Size (Global)']
+
+dataframe = list(zip(balance, strategy, size))
 
 
-
-# model = keras.Sequential([
-#     keras.layers.Flatten(input_shape=(28,28)), # input layer
-#     keras.layers.Dense(128,activation="relu"), # hidden layer
-#     keras.layers.Dense(10,activation="softmax") # output layer
-# ])
-# model.compile(optimizer="adam",loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
-
-# model.fit(dataframe, epochs=5)#number of repetitions
-
-
+model = tf.keras.Sequential()
+model.add(tf.keras.Input(shape=(3,)))
+model.add(tf.keras.layers.Dense(8))
+model.compile(optimizer="adam",loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
+model.fit(dataframe, epochs=5) #number of repetitions
