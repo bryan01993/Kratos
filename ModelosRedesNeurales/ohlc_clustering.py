@@ -136,7 +136,7 @@ if __name__ == "__main__":
     # Carry out K-Means clustering with five clusters on the
     # three-dimensional data H/O, L/O and C/O
     sp500_norm = get_open_normalised_prices(symbol, start, end)
-    k = 5
+    k = 6
     km = KMeans(n_clusters=k, random_state=42)
     km.fit(sp500_norm)
     labels = km.labels_

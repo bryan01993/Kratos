@@ -7,7 +7,7 @@ import pandas as pd
 import subprocess
 
 # Slide Lists
-BotName = 'EA-T1v2'
+BotName = 'EA-B1v1'
 i = 'EURJPY'
 j = 'H4'
 SIZES = list(range(6, 28, 3))
