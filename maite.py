@@ -7,9 +7,7 @@ from sklearn import preprocessing
 import numpy as np
 import pandas as pd
 
-PORTFOLIO = 'AATROX'
-LOCATION = '/home/miguel/Proyectos/kratos/atrox/WARWICK_Portfolio.csv'
-
+LOCATION = './atrox/WARWICK_Portfolio.csv'
 dataframe = pd.read_csv(LOCATION)
 
 le = preprocessing.LabelEncoder()
@@ -19,9 +17,8 @@ size= dataframe['Size (Global)']
 
 dataframe = list(zip(balance, strategy, size))
 
-
 model = tf.keras.Sequential()
 model.add(tf.keras.Input(shape=(3,)))
 model.add(tf.keras.layers.Dense(8))
 model.compile(optimizer="adam",loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
-model.fit(dataframe, epochs=5) #number of repetitions
+model.fit(dataframe, epochs=5)
