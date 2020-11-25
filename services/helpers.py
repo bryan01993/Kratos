@@ -1,3 +1,6 @@
+from datetime import datetime
+import calendar
+
 def movecol(df, cols_to_move, ref_col, place='After'):
     cols = df.columns.tolist()
     if place == 'After':
@@ -22,4 +25,15 @@ def get_csv_list(root):
                         row_list.append(data.text)
 
     return csv_list
+
+def add_months(date, months):
+    if isinstance(date, str):
+        date = datetime.strptime(date, '%Y.%m.%d')
+
+    month = date.month - 1 + months
+    year = date.year + month
+    month = month % 12 + 1
+    day = min(date.day, calendar.monthrange(year, month)[1])
+
+    return datetime(year, month, day)
 

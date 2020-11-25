@@ -25,9 +25,12 @@ class CreateFolders:
         for pair in self.pairs:
             for time_frame in self.time_frames:
                 self.create_folder(os.path.join(REPORT_PATH, self.bot, pair, time_frame))
+                self.create_folder(os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Inits'))
+                self.create_folder(os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Results'))
         print("Path Folders for All Pairs and TimeFrames Have Been Created")
 
     def create_folder(self, path):
+        """Creates Folders for Results, Optisets and INIT files"""
         try:
             os.makedirs(path)
             print('path created: ', path)

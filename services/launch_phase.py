@@ -1,5 +1,6 @@
 import time
 import os
+import subprocess
 
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
@@ -10,18 +11,20 @@ class LaunchPhase:
         self.bot = dto.bot
         self.phase = phase
 
-    def launch(self):
+    def run(self):
         """Executes in CMD the INIT file on MT5 for every pair and timeframe selected for Phase 1"""
 
-        folder_launch = os.path.join(REPORT_PATH, self.bot, 'INITS', 'Phase{}'.format(self.bot))
+        folder_launch = os.path.join(REPORT_PATH, self.bot, self.dto.pair, 'Phase{}'.format(self.bot))
+
+        print(folder_launch)
 
         start = time.time()
         for file in os.listdir(folder_launch):
+            print('INUIIIIII')
             start = time.time()
-            print(str((MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + "reports/{}/INITS/Phase{}/{}".format(self.bot, self.phase, file))))
-            process = subprocess.call(MT5_PATH + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal"
-                                                "\\6C3C6A11D1C3791DD4DBF45421BF8028\\reports\\{}\\INITS\\Phase{}\{}"
-                                    .format(self.bot, self.phase, file))
+            report_file_name = "reports/{}/INITS/Phase{}/{}".format(self.bot, self.phase, file)
+            print(MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + report_file_name)
+            subprocess.call(MT5_PATH + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\6C3C6A11D1C3791DD4DBF45421BF8028\\" + report_file_name)
             end = time.time()
             duration = (end - start) / 60
             print('Duration for Phase {} on'.format(self.phase), self.bot, 'was of', duration, 'minutes')

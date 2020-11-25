@@ -57,8 +57,10 @@ def create_dto():
     bot = bot_name.get() or BOT_NAME
 
     dto = Dto(bot)
-    dto.pairs = PAIRS
-    dto.time_frames = TIME_FRAMES
+    # dto.pairs = PAIRS
+    # dto.time_frames = TIME_FRAMES
+    dto.pairs = ['GBPUSD', 'EURUSD', 'USDCAD', 'USDCHF', 'USDJPY', 'GBPJPY', 'EURAUD', 'EURGBP', 'EURJPY', 'EURCHF']
+    dto.time_frames = ['H4', 'H1', 'M30', 'M15', 'M5', 'M1']
     dto.filter_net_profit_phase1 = FilterNetProfitPhase1.get() or FILTER_NET_PROFIT_PHASE1
     dto.filter_expected_payoff_phase1 = FilterExpectedPayoffPhase1.get() or FILTER_EXPECTED_PAYOFF_PHASE1
     dto.filter_profit_factor_phase1 = filter_profit_factor_phase1.get() or FILTER_PROFIT_FACTOR_PHASE1
