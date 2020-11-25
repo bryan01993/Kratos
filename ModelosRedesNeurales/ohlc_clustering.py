@@ -127,7 +127,7 @@ def create_follow_cluster_matrix(data):
 
 if __name__ == "__main__":
     # Obtain S&P500 pricing data from Yahoo Finance ^GSPC (EURUSD=X)
-    symbol = "^GSPC"
+    symbol = "EURUSD=X"
     start = datetime.datetime(2013, 1, 1)
     end = datetime.datetime(2015, 12, 31)
     sp500 = web.DataReader(symbol, "yahoo", start, end)
