@@ -57,7 +57,19 @@ def create_dto():
     dto.initial_deposit = INITIAL_DEPOSIT
     dto.deposit_currency = DEPOSIT_CURRENCY
     dto.optimized_variables = OPTIMIZED_VARIABLES
-
+    dto.filter_net_profit_phase1 = FILTER_NET_PROFIT_PHASE1
+    dto.filter_expected_payoff_phase1 = FILTER_EXPECTED_PAYOFF_PHASE1
+    dto.filter_profit_factor_phase1 = FILTER_PROFIT_FACTOR_PHASE1
+    dto.filter_custom_phase1 = FILTER_CUSTOM_PHASE1
+    dto.filter_equitity_dd_phase1 = FILTER_EQUITITY_DD_PHASE1
+    dto.filter_trades_phase1 = FILTER_TRADES_PHASE1
+    dto.forward_filter_net_profit_phase1 = FORWARD_FILTER_NET_PROFIT_PHASE1
+    dto.forward_filter_expected_payoff_phase1 = FORWARD_FILTER_EXPECTED_PAYOFF_PHASE1
+    dto.forward_filter_profit_factor_phase1 = FORWARD_FILTER_PROFIT_FACTOR_PHASE1
+    dto.forward_filter_custom_phase1 = FORWARD_FILTER_CUSTOM_PHASE1
+    dto.forward_filter_equitity_dd_phase1 = FORWARD_FILTER_EQUITY_DD_PHASE1
+    dto.forward_filter_trades_phase1 = FORWARD_FILTER_TRADES_PHASE1
+    
     return dto
 
 ForwardWalk(create_dto()).run()

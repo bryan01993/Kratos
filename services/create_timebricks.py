@@ -28,8 +28,11 @@ def count_months(startdate=OPTI_START_DATE,enddate=OPTI_END_DATE):
     print('months diff between dates',count_months_months)
     print('Total months difference:',total_months)
     return total_months
-def add_init_cuts(start=OPTI_START_DATE,brick=brick,brick_IS=brick_IS,brick_OOS=brick_OOS,brick_REAL=brick_REAL,end=OPTI_END_DATE):
 
+def cast_list_to_string_date(date):
+    return str(date[0]) + '.' + str(date[1]) + '.' + str(date[2])
+
+def add_init_cuts(start=OPTI_START_DATE,brick=brick,brick_IS=brick_IS,brick_OOS=brick_OOS,brick_REAL=brick_REAL,end=OPTI_END_DATE):
     start = split_date(OPTI_START_DATE)
     def add_months_Start(brickindex=0,brickvalue=brick,date=start):
         bricks=brickvalue*brickindex
@@ -81,15 +84,21 @@ def add_init_cuts(start=OPTI_START_DATE,brick=brick,brick_IS=brick_IS,brick_OOS=
     print(max_iterations)
     print('This is what the iteration list would look like:')
 
+    lists = []
     for i in range(int(max_iterations-1)):
         iterator += 1
         the_start_date = add_months_Start(i)
         the_IS_date = add_months_IS(date=the_start_date)
         the_OOS_date = add_months_OOS(date=the_IS_date)
         the_REAL_date = add_months_Real(date=the_OOS_date)
-        print('start date',the_start_date,'forward date ',the_IS_date,'end date ',the_OOS_date,'REAL',the_REAL_date)
-    print('Max iterations are',iterator)
-    return print(':) *happy noises*')
+        lists.append([
+            cast_list_to_string_date(the_start_date), 
+            cast_list_to_string_date(the_IS_date), 
+            cast_list_to_string_date(the_OOS_date), 
+            cast_list_to_string_date(the_REAL_date)
+        ])
 
-#print(init_dates_list)
-print(add_init_cuts())
+        print('start date',the_start_date,'forward date ',the_IS_date,'end date ',the_OOS_date,'REAL',the_REAL_date)
+    print('Max iterations are', iterator)
+
+    return lists

@@ -5,6 +5,7 @@ from .helpers import add_months
 from .create_ini_fw import CreateIniWF
 from .launch_phase_wf import LaunchPhaseWF
 from .accotate_results_fw import AccotateResultsFw
+from .create_timebricks import add_init_cuts
 
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
@@ -26,21 +27,25 @@ class ForwardWalk:
         self.time_frames = ['H4', 'H1', 'M30', 'M15', 'M5', 'M1']
 
     def run(self):
+        list_bricks = add_init_cuts()
         for pair in self.pairs:
             for time_frame in self.time_frames:
-                self.iteration(self.in_sample_end_date, pair, time_frame)
+                for bricks in list_bricks:
+                    self.iteration(self.in_sample_end_date, pair, time_frame, bricks)
     
-    def iteration(self, in_sample_start_date, pair, time_frame):
+    def iteration(self, in_sample_start_date, pair, time_frame, bricks):
+
         in_sample_end_date = add_months(in_sample_start_date, self.time_brick * self.ratio)
         forward_date = add_months(in_sample_end_date, 1)
 
         dto = self.dto
-        dto.opti_start_date = in_sample_start_date
-        dto.opti_end_date = in_sample_end_date
-        dto.forward_date = forward_date
+        dto.opti_start_date = bricks[0]
+        dto.opti_end_date = bricks[2]
+        dto.forward_date = bricks[1]
         dto.pair = pair
         dto.time_frame = time_frame
 
         CreateIniWF(self.dto, 1).create_init_file(pair, time_frame)
         LaunchPhaseWF(self.dto, pair, time_frame).run()
         AccotateResultsFw(self.dto).run()
+
