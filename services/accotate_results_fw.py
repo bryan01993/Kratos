@@ -28,14 +28,16 @@ class AccotateResultsFw:
         df_forward = self.create_forward_file(self.pair, self.time_frame)
 
         # Join DATAFRAMES
-        df_complete = self.join_dataframes(df_backtest, df_forward, pair, time_frame)
+        df_complete = self.join_dataframes(df_backtest, df_forward, self.pair, self.time_frame)
 
+        # Filter and generate csv
+        self.filter(df_complete, self.pair, self.time_frame)
 
         # Pick the best
 
     def create_backtest_file(self, pair, time_frame):
         """CREATE BACKTEST FILE AND APPLY NORMALIZATION"""
-        csv_file_name_back = 'OptiWFResults-{}-{}-{}.xml'.format(self.bot, pair, time_frame)
+        csv_file_name_back = 'OptiWFResults-{}-{}-{}.csv'.format(self.bot, pair, time_frame)
         csv_file_name_back = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', csv_file_name_back)
         csv_list_back = self.get_csv_list_back(pair, time_frame)
 
@@ -73,6 +75,7 @@ class AccotateResultsFw:
         dfforward_columns_name = csv_list_forward[self.null_values_columns]
         df_forward.columns = dfforward_columns_name
         df_forward['Forward Lots'] = 0.1
+        df_forward['Forward Lots'] = 0.1
         df_forward['Forward Average Loss'] = df_forward['Forward Result']
         df_forward['Forward Win Ratio'] = df_forward['Forward Result']
         df_forward['Forward Average Loss'] = df_forward['Forward Average Loss'].str.slice(start=-6, stop=-3)
@@ -87,42 +90,22 @@ class AccotateResultsFw:
         df_forward.sort_values(by=['Pass'], ascending=False, inplace=True)
         df_forward.reset_index(inplace=True)
         df_forward.to_csv(csv_file_name_forward, sep=',', index=False)
-        columns = {
-            'Profit': 'Forward Profit',
-            'Expected Payoff': 'Forward Expected Payoff',
-            'Profit Factor': 'Forward Profit Factor',
-            'Recovery Factor': 'Forward Recovery Factor',
-            'Sharpe Ratio': 'Forward Sharpe Ratio',
-            'Custom': 'Forward Custom',
-            'Equity DD %': 'Forward Equity DD %',
-            'Trades': 'Forward Trades'
-        }
-        df_forward.rename(columns=columns, inplace=True)
+
         print('Done Forward Results for:', pair, time_frame)
 
         return df_forward
 
     def join_dataframes(self, df_backtest, df_forward, pair, time_frame):
         """ Join the backtest and the forward date frame"""
-        file_name = 'OptiResults-{}-{}-{}-Phase1.Complete-Filtered.csv'.format(self.bot, pair, time_frame)
-        file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, file_name)
+        file_name = 'OptiWFResults-{}-{}-{}-Complete.csv'.format(self.bot, pair, time_frame)
+        file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', file_name)
 
-        df_complete = pd.concat([df_backtest, df_forward], axis=1)
-        df_complete = df_complete.loc[:, ~df_complete.columns.duplicated()]
-        df_complete = movecol(df_complete, ['Forward Result'], 'Result')
-        df_complete = movecol(df_complete, ['Forward Profit'], 'Profit')
-        df_complete = movecol(df_complete, ['Forward Expected Payoff'], 'Expected Payoff')
-        df_complete = movecol(df_complete, ['Forward Profit Factor'], 'Profit Factor')
-        df_complete = movecol(df_complete, ['Forward Recovery Factor'], 'Recovery Factor')
-        df_complete = movecol(df_complete, ['Forward Sharpe Ratio'], 'Sharpe Ratio')
-        df_complete = movecol(df_complete, ['Forward Custom'], 'Custom')
-        df_complete = movecol(df_complete, ['Forward Average Loss'], 'Average Loss')
-        df_complete = movecol(df_complete, ['Forward Equity DD %'], 'Equity DD %')
-        df_complete = movecol(df_complete, ['Forward Absolute DD'], 'Absolute DD')
-        df_complete = movecol(df_complete, ['Forward Trades'], 'Trades')
-        df_complete = movecol(df_complete, ['Forward Win Ratio'], 'Win Ratio')
-        df_complete = movecol(df_complete, ['Forward Lots'], 'Lots')
-        df_complete = df_complete.drop(['Back Result'], axis=1)
+        df_backtest.sort_values(by=['Profit'], ascending=False,inplace=True)
+        df_backtest['Rank'] = range(0,len(df_backtest))
+        df_forward.sort_values(by=['Profit'], ascending=False,inplace=True)
+        df_forward['Rank Forward'] = range(0, len(df_forward))
+
+        df_complete = df_backtest.merge(df_forward, on='Pass', suffixes=('', 'Forward'))
         df_complete.to_csv(file_name, sep=',', index=False)
 
         return df_complete
@@ -131,13 +114,9 @@ class AccotateResultsFw:
         """ get_csv_list_back """
         path = 'OptiWFResults-{}-{}-{}.xml'.format(self.bot, pair, time_frame)
         path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', path)
-        try:
-            tree = et.parse(path)
-            return get_csv_list(tree.getroot())
-        except:
-            print(path)
-            raise Exception("lo q sea")
-
+        tree = et.parse(path)
+            
+        return get_csv_list(tree.getroot())
 
     def get_csv_list_forward(self, pair, time_frame):
         """ get_csv_list_forward """
@@ -146,3 +125,13 @@ class AccotateResultsFw:
         tree = et.parse(path)
 
         return get_csv_list(tree.getroot())
+
+    def filter(self, df_complete, pair, time_frame):
+        """ Filter the best row and save like csv"""
+        file_name = 'OptiWFResults-{}-{}-{}-Complete-Filtered.csv'.format(self.bot, pair, time_frame)
+        file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', file_name)
+
+        df_complete['Total Score'] = (df_complete['Rank'] * 3) + df_complete['Rank Forward']
+
+        df_complete_filtered = df_complete[(df_complete['Total Score'] == df_complete['Total Score'].min())]
+        df_complete_filtered.to_csv(file_name, sep=',', index=False)
