@@ -22,25 +22,31 @@ class BTSetsForwardWalk:
 
     def run(self):
         total_sets = 0
-        start = time.time()
+        #start = time.time()
+        #ini_created = self.create_ini_by_dataframe(self.pair,self.time_frame)
+        #try:
+        file_name = 'OptiWFResults-{}-{}-{}-{}-{}-Complete-Filtered.csv'.format(self.bot, self.pair, self.time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
+        file_name = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Report', file_name)
+        self.create_ini_by_dataframe(self.pair, self.time_frame)
+        total_sets += 1
+        #except FileNotFoundError:
+        #print('this is filename outside def',file_name)
+        print('This Pair and Timeframe has no File', self.pair, self.time_frame)
 
-        try:
-            self.create_ini_by_dataframe(self.pair, self.time_frame)
-        except FileNotFoundError:
-            print('This Pair and Timeframe has no File', self.pair, self.time_frame)
 
-        end = time.time()
-        time = end - start
-        print('Done All Pairs and TimeFrames BT Sets Created in:', round(time, ndigits=2), 'seconds')
+        #end = time.time()
+        #time = end - start
+        print('Done All Pairs and TimeFrames BT Sets Created',total_sets)
 
     def create_ini_by_dataframe(self, pair, time_frame):
     
-        file_name = 'OptiWFResults-{}-{}-{}-Complete-Filtered.csv'.format(self.bot, pair, time_frame)
+        file_name = 'OptiWFResults-{}-{}-{}-{}-{}-Complete-Filtered.csv'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', file_name)
+        print('this is file_name',file_name)
         dataframe = pd.read_csv(file_name)
 
-        file_a = os.path.join(FOLDER_PATH, 'MQL5/Profiles/Tester/Phase1-{}-{}-{}.set'.format(self.bot, pair, time_frame))
-
+        file_a = os.path.join(FOLDER_PATH, 'MQL5/Profiles/Tester/Phase1-{}.set'.format(self.bot))
+        total_sets = 0
         if (len(dataframe) < 1):
             return
 
@@ -71,7 +77,7 @@ class BTSetsForwardWalk:
 
     def create_ini(self, pair, time_frame, optimization_criterion=0, model=2, optimization=0, shutdown=1, visual=0, leverage=33, replace_report=1, use_local=1, forward_mode=0, execution_mode=28, phase=3, tail_number=0):
         file_name = 'INIT-BT-{}-{}-{}-Phase{}-{}.ini'.format(self.bot, pair, time_frame, phase, tail_number)
-        path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Results', 'INITS', file_name)
+        path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Inits', file_name)
         file = open(path, "w")
 
         file.write(';[Common]' + "\n" \
@@ -85,7 +91,7 @@ class BTSetsForwardWalk:
         '\n' \
         '[Tester]' + "\n" \
         'Expert=Advisors\{}'.format(self.bot) + "\n" \
-        'ExpertParameters=\{}\Phase3-{}-{}-{}-{}.set'.format(self.bot, self.bot, pair, time_frame, tail_number) + "\n" \
+        'ExpertParameters=\{}\WF-Phase3-{}-{}-{}-{}.set'.format(self.bot, self.bot, pair, time_frame, tail_number) + "\n" \
         'Symbol={}'.format(pair) + 'MT5' + "\n" \
         'Period={}'.format(time_frame) + "\n" \
         ';Login=XXXXXX' + "\n" \
@@ -93,11 +99,11 @@ class BTSetsForwardWalk:
         'ExecutionMode={}'.format(str(execution_mode)) + "\n" \
         'Optimization={}'.format(optimization) + "\n" \
         'OptimizationCriterion={}'.format(optimization_criterion) + "\n" \
-        'FromDate={}'.format(self.dto.opti_start_date) + "\n" \
-        'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
+        'FromDate={}'.format(self.dto.opti_end_date) + "\n" \
+        'ToDate={}'.format(self.dto.real_date) + "\n" \
         ';ForwardMode={}'.format(forward_mode) + "\n" \
         ';ForwardDate={}'.format(self.dto.forward_date) + "\n" \
-        'Report=reports\{}\SETS\Phase3-{}-{}-{}-{}'.format(self.bot, self.bot, pair, time_frame, tail_number) + "\n" \
+        'Report=reports\{}\{}\{}\WF_Results\WF-Phase3-{}-{}-{}-{}-{}'.format(self.bot, pair, time_frame, self.bot, pair, time_frame,self.dto.opti_end_date,self.dto.real_date) + "\n" \
         ';--- If the specified report already exists, it will be overwritten' + "\n" \
         'ReplaceReport={}'.format(replace_report) + "\n" \
         ';--- Set automatic platform shutdown upon completion of testing/optimization' + "\n" \

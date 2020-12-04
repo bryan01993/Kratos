@@ -37,7 +37,7 @@ class AccotateResultsFw:
 
     def create_backtest_file(self, pair, time_frame):
         """CREATE BACKTEST FILE AND APPLY NORMALIZATION"""
-        csv_file_name_back = 'OptiWFResults-{}-{}-{}.csv'.format(self.bot, pair, time_frame)
+        csv_file_name_back = 'OptiWFResults-{}-{}-{}-{}-{}.csv'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         csv_file_name_back = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', csv_file_name_back)
         csv_list_back = self.get_csv_list_back(pair, time_frame)
 
@@ -66,7 +66,7 @@ class AccotateResultsFw:
     def create_forward_file(self, pair, time_frame):
         """CREATE FORWARD FILE"""
 
-        csv_file_name_forward = 'OptiWFResults-{}-{}-{}.forward.csv'.format(self.bot, pair, time_frame)
+        csv_file_name_forward = 'OptiWFResults-{}-{}-{}-{}-{}.forward.csv'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         csv_file_name_forward = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', csv_file_name_forward)
         csv_list_forward = self.get_csv_list_forward(pair, time_frame)
 
@@ -97,7 +97,7 @@ class AccotateResultsFw:
 
     def join_dataframes(self, df_backtest, df_forward, pair, time_frame):
         """ Join the backtest and the forward date frame"""
-        file_name = 'OptiWFResults-{}-{}-{}-Complete.csv'.format(self.bot, pair, time_frame)
+        file_name = 'OptiWFResults-{}-{}-{}-{}-{}-Complete.csv'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', file_name)
 
         df_backtest.sort_values(by=['Profit'], ascending=False,inplace=True)
@@ -112,7 +112,7 @@ class AccotateResultsFw:
     
     def get_csv_list_back(self, pair, time_frame):
         """ get_csv_list_back """
-        path = 'OptiWFResults-{}-{}-{}.xml'.format(self.bot, pair, time_frame)
+        path = 'OptiWFResults-{}-{}-{}-{}-{}.xml'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', path)
         tree = et.parse(path)
             
@@ -120,7 +120,7 @@ class AccotateResultsFw:
 
     def get_csv_list_forward(self, pair, time_frame):
         """ get_csv_list_forward """
-        path = 'OptiWFResults-{}-{}-{}.forward.xml'.format(self.bot, pair, time_frame)
+        path = 'OptiWFResults-{}-{}-{}-{}-{}.forward.xml'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', path)
         tree = et.parse(path)
 
@@ -128,7 +128,7 @@ class AccotateResultsFw:
 
     def filter(self, df_complete, pair, time_frame):
         """ Filter the best row and save like csv"""
-        file_name = 'OptiWFResults-{}-{}-{}-Complete-Filtered.csv'.format(self.bot, pair, time_frame)
+        file_name = 'OptiWFResults-{}-{}-{}-{}-{}-Complete-Filtered.csv'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', file_name)
 
         df_complete['Total Score'] = (df_complete['Rank'] * 3) + df_complete['Rank Forward']

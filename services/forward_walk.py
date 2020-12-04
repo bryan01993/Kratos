@@ -6,6 +6,7 @@ from .create_ini_fw import CreateIniWF
 from .launch_phase_wf import LaunchPhaseWF
 from .accotate_results_fw import AccotateResultsFw
 from .create_timebricks import add_init_cuts
+from .bt_sets_forward_walk import BTSetsForwardWalk
 
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
@@ -42,10 +43,13 @@ class ForwardWalk:
         dto.opti_start_date = bricks[0]
         dto.opti_end_date = bricks[2]
         dto.forward_date = bricks[1]
+        dto.real_date = bricks[3]
         dto.pair = pair
         dto.time_frame = time_frame
 
         CreateIniWF(self.dto, 1).create_init_file(pair, time_frame)
         LaunchPhaseWF(self.dto, pair, time_frame).run()
         AccotateResultsFw(self.dto).run()
+        BTSetsForwardWalk(self.dto,pair,time_frame).run()
+        LaunchPhaseWF(self.dto,pair,time_frame).run()
 

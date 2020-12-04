@@ -37,7 +37,7 @@ class CreateIniWF(CreateIniPhase):
         'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
         'ForwardMode={}'.format(forward_mode) + "\n" \
         'ForwardDate={}'.format(self.dto.forward_date) + "\n" \
-        'Report=reports\\{}\\{}\\{}\\{}\OptiWFResults-{}-{}-{}'.format(self.bot, pair, time_frame, 'WF_Report', self.bot, pair, time_frame) + "\n" \
+        'Report=reports\\{}\\{}\\{}\\{}\OptiWFResults-{}-{}-{}-{}-{}'.format(self.bot, pair, time_frame, 'WF_Report', self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date) + "\n" \
         ';--- If the specified report already exists, it will be overwritten' + "\n" \
         'ReplaceReport={}'.format(replace_report) + "\n" \
         ';--- Set automatic platform shutdown upon completion of testing/optimization' + "\n" \
