@@ -24,8 +24,10 @@ class CreateIniPhase:
 
     def create_init_file(self, pair, time_frame, optimization_criterion=6, model=2, optimization=2, shutdown_terminal=1, visual=0, leverage_value=33, replace_report=1, use_local=1, forward_mode=4, execution_mode=28):
         """Creates the INIT file specific for a Phase  Optimization"""
+        phase = 'Phase{}'.format(self.phase)
+
         file_name = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, pair, time_frame, self.phase)
-        path = os.path.join(REPORT_PATH, self.bot, 'INITS', self.phase, file_name)
+        path = os.path.join(REPORT_PATH, self.bot, 'INITS', phase, file_name)
         file = open(path, "w")
 
         file.write(';[Common]' + "\n" \

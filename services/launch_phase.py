@@ -9,18 +9,17 @@ MT5_PATH = "C:/Program Files/Darwinex MetaTrader 5/terminal64.exe"
 class LaunchPhase:
     def __init__(self, dto, phase):
         self.bot = dto.bot
+        self.dto = dto
         self.phase = phase
 
     def run(self):
         """Executes in CMD the INIT file on MT5 for every pair and timeframe selected for Phase 1"""
 
-        folder_launch = os.path.join(REPORT_PATH, self.bot, self.dto.pair, 'Phase{}'.format(self.bot))
-
-        print(folder_launch)
+        phase = 'Phase{}'.format(self.phase)
+        folder_launch = os.path.join(REPORT_PATH, self.bot, 'INITS', phase)
 
         start = time.time()
         for file in os.listdir(folder_launch):
-            print('INUIIIIII')
             start = time.time()
             report_file_name = "reports/{}/INITS/Phase{}/{}".format(self.bot, self.phase, file)
             print(MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + report_file_name)

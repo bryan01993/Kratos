@@ -94,7 +94,7 @@ def create_dto():
     return dto
 
 
-def create_folder_phase1():
+def create_folders():
     """Creates Folders for Results, Optisets and INIT files"""
     service = CreateFolders(create_dto())
     service.run()
@@ -198,7 +198,7 @@ def iterations_function():
     print('EA to analize:', dto.bot, 'Total:', count, 'Optimizations')
 
 
-Button(my_frame, text="Create ALL Folders", fg='black', bg='#34D7DF', borderwidth=0, command=create_folder_phase1).grid(row=2, column=2, padx=10, pady=10)
+Button(my_frame, text="Create ALL Folders", fg='black', bg='#34D7DF', borderwidth=0, command=create_folders).grid(row=2, column=2, padx=10, pady=10)
 Button(my_frame, text="Create Ini Files For Phase 1", fg='black', bg='#34D7DF', borderwidth=0, command=create_ini_phase1).grid(row=4, column=2, padx=10, pady=10)
 Button(my_frame, text='LAUNCH Phase 1', fg='black', bg='#E74C3C', borderwidth=0, command=launch_phase1).grid(row=5, column=2, padx=10, pady=10)
 Button(my_frame, text="Accotate Results from Phase 1", fg='black', bg='#34D7DF', borderwidth=0, command=accotate_results_phase1).grid(row=6, column=2, padx=10, pady=10)
