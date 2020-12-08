@@ -18,8 +18,7 @@ class GraphBacktestPhase2:
     def graph_backtest_phase2(self):
         for pair in self.pairs:
             for time_frame in self.time_frames:
-                if self.pairs[pair] == 1 and self.time_frames[time_frame] == 1:
-                    self.graph(pair, time_frame)
+                self.graph(pair, time_frame)
 
 
     def graph(self, pair, time_frame):

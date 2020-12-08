@@ -8,7 +8,6 @@ OPTIMIZED_VARIABLES = 4
 
 class AccotateOptisetsPhase2:
     """Generates the Optiset for the Results that passed the previous filter"""
-
     def __init__(self, dto):
         self.bot = dto.bot
         self.pairs = dto.pairs

@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import Frame, Button, Label, Tk, Toplevel, Entry, IntVar, Checkbutton
 import subprocess
 import pandas as pd
+import sys
 
 from Dto import Dto
 from services.create_folders import CreateFolders
@@ -56,11 +57,19 @@ def create_dto():
 
     bot = bot_name.get() or BOT_NAME
 
+    pairs = []
+    for key, value in PairListTest.items():
+        if value.get() == 1:
+            pairs.append(key)
+
+    times_frames = []
+    for key, value in TimeFrameListTest.items():
+        if value.get() == 1:
+            times_frames.append(key)
+
     dto = Dto(bot)
-    # dto.pairs = PAIRS
-    # dto.time_frames = TIME_FRAMES
-    dto.pairs = ['GBPUSD', 'EURUSD', 'USDCAD', 'USDCHF', 'USDJPY', 'GBPJPY', 'EURAUD', 'EURGBP', 'EURJPY', 'EURCHF']
-    dto.time_frames = ['H4', 'H1', 'M30', 'M15', 'M5', 'M1']
+    dto.pairs = pairs
+    dto.time_frames = times_frames
     dto.filter_net_profit_phase1 = FilterNetProfitPhase1.get() or FILTER_NET_PROFIT_PHASE1
     dto.filter_expected_payoff_phase1 = FilterExpectedPayoffPhase1.get() or FILTER_EXPECTED_PAYOFF_PHASE1
     dto.filter_profit_factor_phase1 = filter_profit_factor_phase1.get() or FILTER_PROFIT_FACTOR_PHASE1
@@ -98,7 +107,7 @@ def create_ini_phase1():
 def launch_phase1():
     """Executes in CMD the INIT file on MT5 for every pair and timeframe selected for Phase 1"""
     service = LaunchPhase(create_dto(), 1)
-    service.launch()
+    service.run()
 
 def accotate_results_phase1():
     """Filtrates the Results for Phase 1 Optimization and keeps the results that passes"""
@@ -118,7 +127,7 @@ def create_ini_phase2():
 def launch_phase2():
     """Executes in CMD the INIT file on MT5 for every pair and timeframe selected for Phase 2"""
     service = LaunchPhase(create_dto(), 2)
-    service.launch()
+    service.run()
 
 def accotate_results_phase2():
     """Filtrates the Results for Phase 1 Optimization and keeps the results that passes"""
@@ -138,7 +147,7 @@ def bt_set_for_phase3():
 def launch_phase3():
     """ LAUNCHES INIT FILES IN CMD FOR PHASE 3------SET GENERATION"""
     service = LaunchPhase(create_dto(), 3)
-    service.launch()
+    service.run()
 
 #-----------------------------------------------------COMIENZA INTERFACE--------------------------------------
 class Application(tk.Frame):
@@ -184,38 +193,24 @@ def iterations_function():
     count = 0
     for pair in dto.pairs:
         for time_frame in dto.time_frames:
-            if dto.pairs[pair] == 1 and dto.time_frames[time_frame] == 1:
-                count += 1
-                print(pair, time_frame)
+            count += 1
+            print(pair, time_frame)
     print('EA to analize:', dto.bot, 'Total:', count, 'Optimizations')
 
 
 Button(my_frame, text="Create ALL Folders", fg='black', bg='#34D7DF', borderwidth=0, command=create_folder_phase1).grid(row=2, column=2, padx=10, pady=10)
-
 Button(my_frame, text="Create Ini Files For Phase 1", fg='black', bg='#34D7DF', borderwidth=0, command=create_ini_phase1).grid(row=4, column=2, padx=10, pady=10)
-
 Button(my_frame, text='LAUNCH Phase 1', fg='black', bg='#E74C3C', borderwidth=0, command=launch_phase1).grid(row=5, column=2, padx=10, pady=10)
-
 Button(my_frame, text="Accotate Results from Phase 1", fg='black', bg='#34D7DF', borderwidth=0, command=accotate_results_phase1).grid(row=6, column=2, padx=10, pady=10)
-
 Button(my_frame, text="Accotate Optisets for Phase 2", fg='black', bg='#34D7DF', borderwidth=0, command=accotate_optisets_phase1).grid(row=7, column=2, padx=10, pady=10)
-
 Button(my_frame, text="Create Ini Files for Phase 2", fg='black', bg='#34D7DF', borderwidth=0, command=create_ini_phase2).grid(row=8, column=2, padx=10, pady=10)
-
 Button(my_frame, text='LAUNCH Phase 2', fg='black', bg='#E74C3C', borderwidth=0, command=launch_phase2).grid(row=9, column=2, padx=10, pady=10)
-
 Button(my_frame, text='Join Results and Filter for Phase 3', fg='black', bg='#34D7DF', borderwidth=0, command=accotate_results_phase2).grid(row=10, column=2, padx=10, pady=10)
-
 Button(my_frame, text='Accotate Optisets for Phase 3 TO FIX', fg='black', bg='#34D7DF', borderwidth=0, command=AccotateOptisetsPhase2).grid(row=11, column=2, padx=10, pady=10)
-
 Button(my_frame, text='Produce Sets and Inis for Phase 3', fg='black', bg='#34D7DF', borderwidth=0, command=bt_set_for_phase3).grid(row=12, column=2, padx=10, pady=10)
-
 Button(my_frame, text='LAUNCH Phase 3', fg='black', bg='#E74C3C', borderwidth=0, command=launch_phase3).grid(row=13, column=2, padx=10, pady=10)
-
 Button(my_frame, text='LAUNCH HC', fg='black', bg='#E74C3C', borderwidth=0, command=hill_climb_phase2).grid(row=14, column=2, padx=10, pady=10)
-
 Label(my_frame, text="Pairs", fg='white', bg='#292524').grid(row=5, column=0, padx=10, pady=10)
-
 
 pairGBPUSD = IntVar()
 Checkbutton(my_frame, text="GBPUSD", fg='black', bg='#68E552', variable=pairGBPUSD, onvalue=1, offvalue=0).grid(row=6, column=0)
