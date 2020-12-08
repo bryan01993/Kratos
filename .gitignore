@@ -4,3 +4,4 @@ imgs
 __pycache__
 .vscode
 C:/
+.env
