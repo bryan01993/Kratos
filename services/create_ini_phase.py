@@ -1,7 +1,7 @@
 import os
-
-FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
-REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import path
 
 class CreateIniPhase:
     """Creates a phase INIT file for every pair and timeframe selected"""
@@ -27,8 +27,8 @@ class CreateIniPhase:
         phase = 'Phase{}'.format(self.phase)
 
         file_name = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, pair, time_frame, self.phase)
-        path = os.path.join(REPORT_PATH, self.bot, 'INITS', phase, file_name)
-        file = open(path, "w")
+        file_name = os.path.join(path.REPORT_PATH, self.bot, 'INITS', phase, file_name)
+        file = open(file_name, "w")
 
         file.write(';[Common]' + "\n" \
         ';Login=40539843' + "\n" \
