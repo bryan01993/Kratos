@@ -21,7 +21,7 @@ class LaunchPhase:
         start = time.time()
         for file in os.listdir(folder_launch):
             start = time.time()
-            report_file_name = "reports/{}/INITS/Phase{}/{}".format(self.bot, self.phase, file)
+            report_file_name = "reports\\{}\\INITS\\Phase{}\\{}".format(self.bot, self.phase, file)
             print(MT5_PATH + " /config:" + "{}/".format(FOLDER_PATH) + report_file_name)
             subprocess.call(MT5_PATH + " /config:C:\\Users\\bryan\\AppData\\Roaming\\MetaQuotes\\Terminal\\6C3C6A11D1C3791DD4DBF45421BF8028\\" + report_file_name)
             end = time.time()
