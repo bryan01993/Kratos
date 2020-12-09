@@ -41,9 +41,12 @@ class AccotateResultsPhase1:
 
                     # Join DATAFRAMES
                     df_complete = self.join_dataframes(df_backtest, df_forward, pair, time_frame)
+                    total_count = len(df_complete)
+                    print('total count', total_count)
 
                     # AFTER UNION FILTER
                     df_complete = self.filter(df_complete, pair, time_frame)
+                    project_count = len(df_complete)
 
                     try:
                         df_complete.drop(columns=['index'], inplace=True)
@@ -57,13 +60,15 @@ class AccotateResultsPhase1:
                     print("Filtered Dataframe saved")
                 except FileNotFoundError:
                     pass
+                project_total_ration = -1
+                if total_count:
+                    project_total_ration = (project_count / total_count) * 100
+                print('From a Total of :', total_count, 'backtests')
+                print('Only', project_count, ' passed the filters.', round(project_total_ration, ndigits=2), '%')
+
+        self.print_filters.print_forward_filters()
         phase2_end = time.time()
         time_result = (phase2_end - phase_start) / 60
-        project_total_ration = (project_count / total_count) * 100
-        self.print_filters.print_forward_filters()
-
-        print('From a Total of :', total_count, 'backtests')
-        print('Only', project_count, ' passed the filters.', round(project_total_ration, ndigits=2), '%')
         print('Phase 1 Results Accotated in', round(time_result), 'minutes')
 
     def create_backtest_file(self, pair, time_frame):
@@ -99,7 +104,7 @@ class AccotateResultsPhase1:
         for index, row in df_backtest.iterrows():
             try:
                 avg_loss_norm = 100 / row['Average Loss']
-                absolute_dd_norm = float(self.dto.filter_equitity_dd_phase1) / row['Absolute DD']
+                absolute_dd_norm = float(self.dto.filter_equity_dd_phase1) / row['Absolute DD']
                 normalize_row = float(min(avg_loss_norm, absolute_dd_norm))
                 row['Lots'] = float(round(row['Lots'] * normalize_row, 2))
                 lot_ration = row['Lots'] / 0.1
@@ -188,10 +193,11 @@ class AccotateResultsPhase1:
         """ Filter complete dataframe"""
 
         print('Before filtering the len of Complete DataFrame for', pair, time_frame, 'is:', len(df_complete))
+        total_count = 0
         for index, row in df_complete.iterrows():
             total_count += 1
             avg_loss_norm = 100 / row['Average Loss']
-            absolute_dd_norm = float(self.dto.filter_equitity_dd_phase1) / row['Absolute DD']
+            absolute_dd_norm = float(self.dto.filter_equity_dd_phase1) / row['Absolute DD']
             normalize_row = float(min(avg_loss_norm, absolute_dd_norm))
             row['Lots'] = float(round(row['Lots'] * normalize_row, 2))
             lot_ration = row['Lots'] / 0.1
@@ -211,13 +217,13 @@ class AccotateResultsPhase1:
                         and row['Expected Payoff'] >= float(self.dto.filter_expected_payoff_phase1)
                         and row['Profit Factor'] >= float(self.dto.filter_profit_factor_phase1)
                         and row['Custom'] >= float(self.dto.filter_custom_phase1)
-                        and row['Absolute DD'] <= float(self.dto.filter_equitity_dd_phase1) + 100
+                        and row['Absolute DD'] <= float(self.dto.filter_equity_dd_phase1) + 100
                         and row['Trades'] >= int(self.dto.filter_trades_phase1)
                         and row['Forward Profit'] >= int(self.bot.forward_filter_net_profit_phase1)
                         and row['Forward Expected Payoff'] >= float(self.dto.forward_filter_expected_payoff_phase1)
                         and row['Forward Profit Factor'] >= float(self.dto.forward_filter_profit_factor_phase1)
                         and row['Forward Custom'] >= float(self.dto.forward_filtler_custom_phase1)
-                        and row['Forward Absolute DD'] <= float(self.dto.forward_filter_equitity_dd_phase1) + 100
+                        and row['Forward Absolute DD'] <= float(self.dto.forward_filter_equity_dd_phase1) + 100
                         and row['Forward Trades'] >= int(self.dto.forward_filter_trades_phase1)):
                     project_count += 1
                 else:

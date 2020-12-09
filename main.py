@@ -27,7 +27,7 @@ FILTER_NET_PROFIT_PHASE1 = 7000
 FILTER_EXPECTED_PAYOFF_PHASE1 = 8
 FILTER_PROFIT_FACTOR_PHASE1 = 1.29
 FILTER_CUSTOM_PHASE1 = -0.5
-FILTER_EQUITITY_DD_PHASE1 = 1500 #Esta en valor absoluto, se encuentra despejando del Recovery Factor.
+FILTER_EQUITY_DD_PHASE1 = 1500 #Esta en valor absoluto, se encuentra despejando del Recovery Factor.
 FILTER_TRADES_PHASE1 = 200
 FORWARD_FILTER_NET_PROFIT_PHASE1 = 700
 FORWARD_FILTER_EXPECTED_PAYOFF_PHASE1 = 10
@@ -74,13 +74,13 @@ def create_dto():
     dto.filter_expected_payoff_phase1 = FilterExpectedPayoffPhase1.get() or FILTER_EXPECTED_PAYOFF_PHASE1
     dto.filter_profit_factor_phase1 = filter_profit_factor_phase1.get() or FILTER_PROFIT_FACTOR_PHASE1
     dto.filter_custom_phase1 = filter_custom_phase1.get() or FILTER_CUSTOM_PHASE1
-    dto.filter_equitity_dd_phase1 = filter_equity_dd_phase1.get() or FILTER_EQUITITY_DD_PHASE1
+    dto.filter_equity_dd_phase1 = filter_equity_dd_phase1.get() or FILTER_EQUITY_DD_PHASE1
     dto.filter_trades_phase1 = filter_trades_phase1.get() or FILTER_TRADES_PHASE1
     dto.forward_filter_net_profit_phase1 = forward_filter_net_profit_phase1.get() or FORWARD_FILTER_NET_PROFIT_PHASE1
     dto.forward_filter_expected_payoff_phase1 = forward_filter_expected_payoff_phase1.get() or FORWARD_FILTER_EXPECTED_PAYOFF_PHASE1
     dto.forward_filter_profit_factor_phase1 = forward_filter_profit_factor_phase1.get() or FORWARD_FILTER_PROFIT_FACTOR_PHASE1
     dto.forward_filter_custom_phase1 = forward_filter_custom_phase1.get() or FORWARD_FILTER_CUSTOM_PHASE1
-    dto.forward_filter_equitity_dd_phase1 = forward_filter_equity_dd_phase1.get() or FORWARD_FILTER_EQUITY_DD_PHASE1
+    dto.forward_filter_equity_dd_phase1 = forward_filter_equity_dd_phase1.get() or FORWARD_FILTER_EQUITY_DD_PHASE1
     dto.forward_filter_trades_phase1 = forward_filter_trades_phase1.get() or FORWARD_FILTER_TRADES_PHASE1
     dto.opti_start_date = opti_start_date.get() or OPTI_START_DATE
     dto.opti_end_date = opti_end_date.get() or OPTI_END_DATE
@@ -88,8 +88,6 @@ def create_dto():
     dto.initial_deposit = INITIAL_DEPOSIT
     dto.deposit_currency = DEPOSIT_CURRENCY
     dto.optimized_variables = OPTIMIZED_VARIABLES
-
-    print(dto.forward_filter_equitity_dd_phase1)
 
     return dto
 
