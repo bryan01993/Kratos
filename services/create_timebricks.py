@@ -3,8 +3,8 @@ from datetime import datetime
 OPTI_START_DATE = "2007.01.01" #YYYY.MM.DD
 OPTI_END_DATE = "2020.05.01" #YYYY.MM.DD
 #FORWARD_DATE = "2019.01.01" #YYYY.MM.DD Only if ForwardModeList = 4
-brick = 6
-brick_IS = brick * 5
+brick = 12
+brick_IS = brick * 4
 brick_OOS = brick
 brick_REAL = brick
 init_dates_list=[]

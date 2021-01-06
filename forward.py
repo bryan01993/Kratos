@@ -8,7 +8,7 @@ from Dto import Dto
 from services.forward_walk import ForwardWalk
 
 # CONSTANTS
-BOT_NAME = 'EA-B1v1'
+BOT_NAME = 'Simple-EA-MeanReversal'
 
 OPTI_START_DATE = "2007.01.01" #YYYY.MM.DD
 OPTI_END_DATE = "2020.01.01" #YYYY.MM.DD

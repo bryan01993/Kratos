@@ -13,7 +13,7 @@ from hmmlearn.hmm import GaussianHMM
 from matplotlib import cm, pyplot as plt
 from matplotlib.dates import YearLocator, MonthLocator
 from collections import deque
-from qstrader.event import (SignalEvent, EventType,OrderEvent)
+#from qstrader.event import (SignalEvent, EventType,OrderEvent)
 #from qstrader.strategy.base import AbstractStrategy
 #from qstrader.event import OrderEvent
 #from qstrader.price_parser import PriceParser

@@ -211,7 +211,7 @@ class AccotateResultsPhase1:
             df_complete.loc[index, 'Forward Absolute DD'] = row['Forward Absolute DD']
             df_complete.loc[index, 'Forward Average Loss'] = row['Forward Average Loss']
             df_complete.loc[index, 'Forward Lots'] = row['Forward Lots']
-
+            project_count = 0
             try:
                 if (row['Profit'] >= int(self.dto.filter_net_profit_phase1)
                         and row['Expected Payoff'] >= float(self.dto.filter_expected_payoff_phase1)
@@ -219,10 +219,10 @@ class AccotateResultsPhase1:
                         and row['Custom'] >= float(self.dto.filter_custom_phase1)
                         and row['Absolute DD'] <= float(self.dto.filter_equity_dd_phase1) + 100
                         and row['Trades'] >= int(self.dto.filter_trades_phase1)
-                        and row['Forward Profit'] >= int(self.bot.forward_filter_net_profit_phase1)
+                        and row['Forward Profit'] >= int(self.dto.forward_filter_net_profit_phase1)
                         and row['Forward Expected Payoff'] >= float(self.dto.forward_filter_expected_payoff_phase1)
                         and row['Forward Profit Factor'] >= float(self.dto.forward_filter_profit_factor_phase1)
-                        and row['Forward Custom'] >= float(self.dto.forward_filtler_custom_phase1)
+                        and row['Forward Custom'] >= float(self.dto.forward_filter_custom_phase1)
                         and row['Forward Absolute DD'] <= float(self.dto.forward_filter_equity_dd_phase1) + 100
                         and row['Forward Trades'] >= int(self.dto.forward_filter_trades_phase1)):
                     project_count += 1

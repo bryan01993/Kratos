@@ -6,7 +6,7 @@ import matplotlib.cm as cm
 plt.rcParams['figure.figsize'] = [16,12]
 plt.rcParams.update({'font.size':18})
 # Import Data
-df = pd.read_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Moded Data/MODEURUSDMT5TRAIN.csv')
+df = pd.read_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Moded Data/DayData.csv')
 #df = pd.read_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Data/EURUSDMT5.csv')
 
 df['Audio'] = df['<CLOSE>'] - df['<OPEN>']

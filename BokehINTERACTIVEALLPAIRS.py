@@ -8,42 +8,42 @@ import subprocess
 # THIS SHALL BE Graph Phase 2 Button
 
 # Slide Lists
-BotName = 'EA-1v2'
+BotName = 'Simple-EA-MeanReversal'
 EURUSD = 'EURUSD'
 GBPUSD = 'GBPUSD'
 USDCAD = 'USDCAD'
 USDCHF = 'USDCHF'
 USDJPY = 'USDJPY'
-TimeFrame = 'M15'
+TimeFrame = 'H4'
 Phase='1'
 SIZES = list(range(6, 28, 3))
 COLORS = Inferno256
 N_SIZES = len(SIZES)
 N_COLORS = len(COLORS)
-
+#Complete-Filtered.
 dfp1 = pd.read_csv(
-    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.csv'.format(
+    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
         BotName, EURUSD, TimeFrame, BotName, EURUSD, TimeFrame,Phase))
 # Execution
 def Interactive_Graph():
     print('Interactive Graph for Phase {} for {} on All Pairs at {}'.format(Phase,BotName,TimeFrame))
     dfp1 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.csv'.format(
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
             BotName, EURUSD, TimeFrame, BotName, EURUSD, TimeFrame,Phase))
     dfp2 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.csv'.format(
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
             BotName, GBPUSD, TimeFrame, BotName, GBPUSD, TimeFrame,Phase))
 
     dfp3 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.csv'.format(
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
             BotName, USDCAD, TimeFrame, BotName, USDCAD, TimeFrame,Phase))
 
     dfp4 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.csv'.format(
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
             BotName, USDCHF, TimeFrame, BotName, USDCHF, TimeFrame,Phase))
 
     dfp5 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.csv'.format(
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
             BotName, USDJPY, TimeFrame, BotName, USDJPY, TimeFrame,Phase))
 
     columns = sorted(dfp1.columns)

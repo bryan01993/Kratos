@@ -15,10 +15,10 @@ from services.create_folders import CreateFolders
 from Dto import Dto
 
 # CONSTANTS
-BOT_NAME = 'EA-S5v1'
+BOT_NAME = 'TestEMD'
 
 #---------------------------------------------------VARIABLES PARA EL LANZAMIENTO ----------------------------------------------------
-BotName = 'EA-S5v1'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
+BotName = 'TestEMD'                           # EA Name OMITIR espacios en blancos, usar como simbolo solamente el "-".
 BotMagicNumberSeries = '01'   # should be last numbers of the EA 09 for S3
 UserSeries = '01' #01 La Opti la hizo bryan, 02 la hizo richard
 #--------------------------------------------PATHS----------------------------------------------------------------------

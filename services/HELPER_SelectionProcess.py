@@ -1,21 +1,21 @@
 import pandas as pd
+import os
 
-CSVTOTAL = 'C:/Users/bryan/OneDrive/Desktop/Prueba de Seleccion/TOTAL-OptiResults-EA-T1v2-EURGBP-M5-Phase1.csv'
-dfback = pd.read_csv('C:/Users/bryan/OneDrive/Desktop/Prueba de Seleccion/OptiResults-EA-T1v2-EURGBP-M5-Phase1.csv')
-dfforward = pd.read_csv('C:/Users/bryan/OneDrive/Desktop/Prueba de Seleccion/OptiResults-EA-T1v2-EURGBP-M5-Phase1.forward.csv')
-dfback.sort_values(by=['Profit'],ascending=False,inplace=True)
-dfback['Rank'] = range(0,len(dfback))
-dfforward.sort_values(by=['Profit'],ascending=False,inplace=True)
-dfforward['Rank Forward'] = range(0,len(dfforward))
-dffull = dfback.join(dfforward,on=dfback['Pass'],rsuffix='Forward')
-dffull['Total Score'] = dffull['Rank'] + (dffull['Rank Forward'])*3
-dffull.to_csv(CSVTOTAL, sep=',', index=False)
-selection = dffull['Total Score'].min()
+pairlist = ['GBPUSD', 'EURUSD', 'USDCAD', 'USDCHF', 'USDJPY', 'GBPJPY', 'EURAUD', 'EURGBP', 'EURJPY', 'EURCHF']
 
-newdf = dffull[(dffull['Total Score'] == dffull['Total Score'].min())]
+for pair in pairlist:
+    dfback = pd.read_csv('C:/Users/bryan/OneDrive/Desktop/Prueba de Seleccion/OptiResults-Simple-EA-MeanReversal-{}-H4-Phase1.csv'.format(pair))
+    dfforward = pd.read_csv('C:/Users/bryan/OneDrive/Desktop/Prueba de Seleccion/OptiResults-Simple-EA-MeanReversal-{}-H4-Phase1.forward.csv'.format(pair))
 
-print(newdf)
+    dfbackpositive =dfback[dfback['Profit'] > 0]
+    ProbISPositive = round((len(dfbackpositive)/ len(dfback))*100,2)
 
-print(selection)
-#print(dfback)
-#print(dfforward)
+    dfforwardpositive = dfforward[dfforward['Profit'] > 0]
+    ProbOOSPositive = round((len(dfforwardpositive)/ len(dfforward))*100,2)
+
+
+    #print(dfback)
+    print(pair)
+    print(ProbISPositive,'% of IS is positive' )
+    #print(dfforward)
+    print(ProbOOSPositive,'% of OOS is positive' )
