@@ -24,8 +24,8 @@ class ForwardWalk:
         # 5 In Sample time brick, 1 time brick outSample, and 1 time brick for real
         self.ratio = 4
 
-        self.pairs = ['GBPUSD', 'EURUSD', 'USDCAD', 'USDCHF', 'USDJPY', 'GBPJPY', 'EURAUD', 'EURGBP', 'EURJPY', 'EURCHF']
-        self.time_frames = ['H4', 'H1', 'M30', 'M15', 'M5']
+        self.pairs = dto.pairs
+        self.time_frames = dto.time_frames
 
     def run(self):
         list_bricks = add_init_cuts()

@@ -91,7 +91,7 @@ class BTSetsForwardWalk:
         '\n' \
         '[Tester]' + "\n" \
         'Expert=Advisors\{}'.format(self.bot) + "\n" \
-        'ExpertParameters=\{}\WF-Phase3-{}-{}-{}-{}.set'.format(self.bot, self.bot, pair, time_frame, tail_number) + "\n" \
+        'ExpertParameters=\{}\WF-{}-{}-{}-{}.set'.format(self.bot, self.bot, pair, time_frame, tail_number) + "\n" \
         'Symbol={}'.format(pair) + 'MT5' + "\n" \
         'Period={}'.format(time_frame) + "\n" \
         ';Login=XXXXXX' + "\n" \
@@ -99,8 +99,8 @@ class BTSetsForwardWalk:
         'ExecutionMode={}'.format(str(execution_mode)) + "\n" \
         'Optimization={}'.format(optimization) + "\n" \
         'OptimizationCriterion={}'.format(optimization_criterion) + "\n" \
-        'FromDate={}'.format(self.dto.opti_end_date) + "\n" \
-        'ToDate={}'.format(self.dto.real_date) + "\n" \
+        'FromDate={}'.format(self.dto.forward_date) + "\n" \
+        'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
         ';ForwardMode={}'.format(forward_mode) + "\n" \
         ';ForwardDate={}'.format(self.dto.forward_date) + "\n" \
         'Report=reports\{}\{}\{}\WF_Results\WF-Phase3-{}-{}-{}-{}-{}'.format(self.bot, pair, time_frame, self.bot, pair, time_frame,self.dto.opti_end_date,self.dto.real_date) + "\n" \

@@ -15,6 +15,7 @@ from services.accotate_optisets_phase2 import AccotateOptisetsPhase2
 from services.hill_climb_phase2 import HillClimbPhase2
 from services.bt_sets_for_phase3 import BTSetsForPhase3
 from services.print_filters import PrintFilters
+from services.forward_walk import ForwardWalk
 
 # CONSTANTS
 BOT_NAME = 'EA-B1v1'
@@ -147,6 +148,11 @@ def launch_phase3():
     service = LaunchPhase(create_dto(), 3)
     service.run()
 
+def launch_walkforward():
+    """ LAUNCHES WALK FORWARD COMPLETELY------SET GENERATION"""
+    service = ForwardWalk(create_dto())
+    service.run()
+
 #-----------------------------------------------------COMIENZA INTERFACE--------------------------------------
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -207,7 +213,7 @@ Button(my_frame, text='Join Results and Filter for Phase 3', fg='black', bg='#34
 Button(my_frame, text='Accotate Optisets for Phase 3 TO FIX', fg='black', bg='#34D7DF', borderwidth=0, command=AccotateOptisetsPhase2).grid(row=11, column=2, padx=10, pady=10)
 Button(my_frame, text='Produce Sets and Inis for Phase 3', fg='black', bg='#34D7DF', borderwidth=0, command=bt_set_for_phase3).grid(row=12, column=2, padx=10, pady=10)
 Button(my_frame, text='LAUNCH Phase 3', fg='black', bg='#E74C3C', borderwidth=0, command=launch_phase3).grid(row=13, column=2, padx=10, pady=10)
-Button(my_frame, text='LAUNCH HC', fg='black', bg='#E74C3C', borderwidth=0, command=hill_climb_phase2).grid(row=14, column=2, padx=10, pady=10)
+Button(my_frame, text='LAUNCH WF', fg='black', bg='#E74C3C', borderwidth=0, command=launch_walkforward).grid(row=14, column=2, padx=10, pady=10)
 Label(my_frame, text="Pairs", fg='white', bg='#292524').grid(row=5, column=0, padx=10, pady=10)
 
 pairGBPUSD = IntVar()
