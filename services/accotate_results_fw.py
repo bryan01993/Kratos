@@ -131,7 +131,9 @@ class AccotateResultsFw:
         file_name = 'OptiWFResults-{}-{}-{}-{}-{}-Complete-Filtered.csv'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', file_name)
 
-        df_complete['Total Score'] = (df_complete['Rank'] * 3) + df_complete['Rank Forward']
+        #df_complete['Total Score'] = (df_complete['Rank'] * 3) + df_complete['Rank Forward']
 
-        df_complete_filtered = df_complete[(df_complete['Total Score'] == df_complete['Total Score'].min())]
+        #df_complete_filtered = df_complete[(df_complete['Total Score'] == df_complete['Total Score'].min())]
+        df_complete_filtered = df_complete[(df_complete['Result'] == (df_complete['Result']).max())]
+        df_complete_filtered = df_complete_filtered[:1]
         df_complete_filtered.to_csv(file_name, sep=',', index=False)

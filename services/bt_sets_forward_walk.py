@@ -103,7 +103,7 @@ class BTSetsForwardWalk:
         'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
         ';ForwardMode={}'.format(forward_mode) + "\n" \
         ';ForwardDate={}'.format(self.dto.forward_date) + "\n" \
-        'Report=reports\{}\{}\{}\WF_Results\WF-Phase3-{}-{}-{}-{}-{}'.format(self.bot, pair, time_frame, self.bot, pair, time_frame,self.dto.opti_end_date,self.dto.real_date) + "\n" \
+        'Report=reports\{}\{}\{}\WF_Results\WF-Phase3-{}-{}-{}-{}-{}'.format(self.bot, pair, time_frame, self.bot, pair, time_frame,self.dto.forward_date,self.dto.opti_end_date) + "\n" \
         ';--- If the specified report already exists, it will be overwritten' + "\n" \
         'ReplaceReport={}'.format(replace_report) + "\n" \
         ';--- Set automatic platform shutdown upon completion of testing/optimization' + "\n" \

@@ -1,8 +1,7 @@
 from datetime import datetime
 
 OPTI_START_DATE = "2007.01.01" #YYYY.MM.DD
-OPTI_END_DATE = "2020.05.01" #YYYY.MM.DD
-#FORWARD_DATE = "2019.01.01" #YYYY.MM.DD Only if ForwardModeList = 4
+OPTI_END_DATE = "2020.01.01" #YYYY.MM.DD
 brick = 12
 brick_IS = brick * 4
 brick_OOS = brick
@@ -23,7 +22,7 @@ def count_months(startdate=OPTI_START_DATE,enddate=OPTI_END_DATE):
 
     count_months_year = (enddate[0]-startdate[0])*12
     count_months_months = (enddate[1]-startdate[1])
-    total_months=count_months_year+count_months_months
+    total_months = count_months_year + count_months_months
     print('years in months',count_months_year)
     print('months diff between dates',count_months_months)
     print('Total months difference:',total_months)
@@ -80,8 +79,8 @@ def add_init_cuts(start=OPTI_START_DATE,brick=brick,brick_IS=brick_IS,brick_OOS=
         return date
 
     iterator = 0
-    max_iterations = count_months()/7
-    print(max_iterations)
+    max_iterations = (count_months()-brick_IS + brick)/brick
+    print('This is the number of steps trought the WF: ',round(max_iterations,ndigits=0)-1)
     print('This is what the iteration list would look like:')
 
     lists = []
@@ -90,15 +89,13 @@ def add_init_cuts(start=OPTI_START_DATE,brick=brick,brick_IS=brick_IS,brick_OOS=
         the_start_date = add_months_Start(i)
         the_IS_date = add_months_IS(date=the_start_date)
         the_OOS_date = add_months_OOS(date=the_IS_date)
-        the_REAL_date = add_months_Real(date=the_OOS_date)
         lists.append([
             cast_list_to_string_date(the_start_date), 
             cast_list_to_string_date(the_IS_date), 
-            cast_list_to_string_date(the_OOS_date), 
-            cast_list_to_string_date(the_REAL_date)
+            cast_list_to_string_date(the_OOS_date),
         ])
 
-        print('start date',the_start_date,'forward date ',the_IS_date,'end date ',the_OOS_date,'REAL',the_REAL_date)
+        print('start date',the_start_date,'forward date ',the_IS_date,'end date ',the_OOS_date)
     print('Max iterations are', iterator)
 
     return lists

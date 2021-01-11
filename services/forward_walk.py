@@ -43,7 +43,6 @@ class ForwardWalk:
         dto.opti_start_date = bricks[0]
         dto.opti_end_date = bricks[2]
         dto.forward_date = bricks[1]
-        dto.real_date = bricks[3]
         dto.pair = pair
         dto.time_frame = time_frame
 

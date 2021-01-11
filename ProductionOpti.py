@@ -532,7 +532,7 @@ def AccotateResultsPhase2():
                     for Section in child:
                         for Row in Section:
                             Row_list_back = []
-                            csv_list_back.append(Row_list_back)
+                            csv_list_back.append(Row_list_back)Dto
                             for Cell in Row:
                                 for Data in Cell:
                                     Row_list_back.append(Data.text)
