@@ -52,6 +52,7 @@ class BTSetsForwardWalk:
 
         with open(file_a, 'r', encoding='utf-16') as file:
             var_name_list = []
+            var_value_list= []
             for index, row in dataframe.iterrows():
                 file_b = os.path.join(TESTER_PATH, self.bot, 'WF-{}-{}-{}-{}.set'.format(self.bot, pair, time_frame, index))
                 shutil.copyfile(file_a, file_b)
@@ -62,12 +63,16 @@ class BTSetsForwardWalk:
                             continue
                         column_name = line.split('=')
                         var_name_list.append(column_name[0])
-                    for x in var_name_list:
+                        var_value_list.append(column_name[1])
+                    for x,z in zip(var_name_list, var_value_list):
+                        print('Iteration of x and z',x,z)
                         try:
                             value_spot = dataframe.iloc[index][x]
+                            opti_format = "{}={}||1000||1000||2000||N \n".format(x,value_spot)  # a esta altura es donde ocurren los calculos
                         except KeyError:
-                            continue
-                        opti_format = "{}={}||1000||1000||2000||N \n".format(x, value_spot)  # a esta altura es donde ocurren los calculos
+                            opti_format = "{}={}\n".format(x, z)
+                            print("This is z",z)
+                        print('This line will be copied:',opti_format)
                         file1.write('{} \n'.format(opti_format))
                     magic_start_line = 'MagicStart={}{}{}{}{}||1000||1000||2000||N \n'.format(BOT_MAGIC_NUMBER_SERIES, USER_SERIES, self.pair, self.time_frame, index)
                     file1.write(magic_start_line)
