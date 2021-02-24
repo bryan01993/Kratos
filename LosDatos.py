@@ -16,4 +16,4 @@ for file in os.listdir(Meta5DataFolder):
  print('Processing Now:',file)
  CleanData(file)
  DataCount += 1
-print('Done the Data', DataCount,' Files were processed.')
+print('Done the Data:', DataCount,' Files were processed.')
