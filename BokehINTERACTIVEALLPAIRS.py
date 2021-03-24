@@ -22,29 +22,22 @@ N_SIZES = len(SIZES)
 N_COLORS = len(COLORS)
 #Complete-Filtered.
 dfp1 = pd.read_csv(
-    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
-        BotName, EURUSD, TimeFrame, BotName, EURUSD, TimeFrame,Phase))
+    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1/EURUSD/H4/WF_Report/OptiWFResults-EA-B1v1-EURUSD-H4-2007.1.1-2012.1.1-Complete.csv')
 # Execution
 def Interactive_Graph():
     print('Interactive Graph for Phase {} for {} on All Pairs at {}'.format(Phase,BotName,TimeFrame))
     dfp1 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
-            BotName, EURUSD, TimeFrame, BotName, EURUSD, TimeFrame,Phase))
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1/EURUSD/H4/WF_Report/OptiWFResults-EA-B1v1-EURUSD-H4-2007.1.1-2012.1.1-Complete.csv')
     dfp2 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
-            BotName, GBPUSD, TimeFrame, BotName, GBPUSD, TimeFrame,Phase))
-
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1/EURUSD/H4/WF_Report/OptiWFResults-EA-B1v1-EURUSD-H4-2007.1.1-2012.1.1-Complete.csv')
     dfp3 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
-            BotName, USDCAD, TimeFrame, BotName, USDCAD, TimeFrame,Phase))
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1/EURUSD/H4/WF_Report/OptiWFResults-EA-B1v1-EURUSD-H4-2007.1.1-2012.1.1-Complete.csv')
 
     dfp4 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
-            BotName, USDCHF, TimeFrame, BotName, USDCHF, TimeFrame,Phase))
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1/EURUSD/H4/WF_Report/OptiWFResults-EA-B1v1-EURUSD-H4-2007.1.1-2012.1.1-Complete.csv')
 
     dfp5 = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/{}/{}/{}/OptiResults-{}-{}-{}-Phase{}.forward.csv'.format(
-            BotName, USDJPY, TimeFrame, BotName, USDJPY, TimeFrame,Phase))
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1/EURUSD/H4/WF_Report/OptiWFResults-EA-B1v1-EURUSD-H4-2007.1.1-2012.1.1-Complete.csv')
 
     columns = sorted(dfp1.columns)
     discrete = [x for x in columns if dfp1[x].dtype == object]
@@ -333,7 +326,7 @@ def Interactive_Graph():
     output_notebook()
     curdoc().title = "Phase {} All Pairs on {}".format(Phase, TimeFrame),
 
-    process = subprocess.call('bokeh serve --show BokehINTERACTIVEALLPAIRS.py')
+    process = subprocess.call(['bokeh serve --show BokehINTERACTIVEALLPAIRS.py','bokeh serve --show BokehINTERACTIVE.py'])
 Interactive_Graph()
 
 
