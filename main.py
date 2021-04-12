@@ -43,7 +43,6 @@ INITIAL_DEPOSIT = 10000 #Default Value es 10000 para todos los analisis
 DEPOSIT_CURRENCY = "USD" #Default Currency para todos los  analisis
 REAL_CURRENCY = "EUR" #Default Currency para Prueba de Tom
 
-
 USER_SERIES = '01' #01 La Opti la hizo bryan, 02 la hizo richard
 BOT_MAGIC_NUMBER_SERIES = '01'   # should be last numbers of the EA 09 for S3
 

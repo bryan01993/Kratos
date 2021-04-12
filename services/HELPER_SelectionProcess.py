@@ -5,9 +5,9 @@ import openpyxl as pxl
 from openpyxl import load_workbook
 from pandas import ExcelWriter
 
-botname = 'EA-TR1v1'
+botname = 'TendencialNuevo'
 pairlist = ['GBPUSD', 'EURUSD', 'USDCAD', 'USDCHF', 'USDJPY', 'GBPJPY', 'EURAUD', 'EURGBP', 'EURJPY', 'EURCHF']
-timeframes = [ 'H4', 'H1', 'M30', 'M15']
+timeframes = [ 'H4', 'H1', 'M30', 'M15','M5']
 
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')

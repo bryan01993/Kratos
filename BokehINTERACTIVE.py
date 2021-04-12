@@ -15,13 +15,13 @@ COLORS = Inferno256
 N_SIZES = len(SIZES)
 N_COLORS = len(COLORS)
 df = pd.read_csv(
-    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Optimizaciones Listas/Data encadenada/EA-TS1v2 on GBPUSD on H1.csv')
+    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Optimizaciones Listas/Data encadenada/EA-TS1v2 on GBPJPY on M5.csv')
 
 # Execution
 def Interactive_Graph(BotName,df,i,j):
     print('Interactive Graph for Phase 1 for {} on {} at {}'.format(BotName,i,j))
     df = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Optimizaciones Listas/Data encadenada/EA-TS1v2 on GBPUSD on H1.csv')
+        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Optimizaciones Listas/Data encadenada/EA-TS1v2 on GBPJPY on M5.csv')
     columns = sorted(df.columns)
     discrete = [x for x in columns if df[x].dtype == object]
     continuous = [x for x in columns if x not in discrete]
