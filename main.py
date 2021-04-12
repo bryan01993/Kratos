@@ -8,7 +8,7 @@ import sys
 from Dto import Dto
 from services.create_folders import CreateFolders
 from services.accotate_results_phase1 import AccotateResultsPhase1
-from services.create_ini_phase import CreateIniPhase
+#from services.create_ini_phase import CreateIniPhase
 from services.launch_phase import LaunchPhase
 from services.accotate_optisets_phase1 import AccotateOptisetsPhase1
 from services.accotate_optisets_phase2 import AccotateOptisetsPhase2
