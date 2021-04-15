@@ -38,3 +38,15 @@ def add_months(date, months):
 
     return datetime(year, month, day)
 
+def split_date(date):
+    """Splits string date to integers and returns a tuple"""
+    date_to_split = date.split('.')
+    date_year = int(date_to_split[0])
+    date_month = int(date_to_split[1])
+    date_day = int(date_to_split[2])
+    date_list = [date_year, date_month, date_day]
+    return (date_list)
+
+def cast_list_to_string_date(date):
+    """Returns a given tuple date to a string"""
+    return str(date[0]) + '.' + str(date[1]) + '.' + str(date[2])

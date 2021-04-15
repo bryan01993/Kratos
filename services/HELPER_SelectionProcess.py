@@ -94,11 +94,4 @@ def run_all():
                 print('This pair: {} and timeframe {} has no file.'.format(pair,timeframe))
 
 
-
 run_all()
-
-
-"""PASOS
-1) crear los 3 dataframes vacios y llenarles las columnas (periodos) y filas(pares) LISTO
-1.5) 1er Dataframe para %positivoIS, 2do dataframe para #positivoOOS, 3er dataframe para %Bayespositivo top 10%. LISTO
- 2) al iterar en un timeframe guardar todos los resultados en la pestana adecuada"""

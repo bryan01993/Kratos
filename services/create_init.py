@@ -7,61 +7,44 @@ REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
 
 class CreateInit:
     """Creates INIT files for optimization and/or backtesting"""
-    def __init__(self, dto, phase):
+    def __init__(self, dto, pair, time_frame, process, mode, phase):
         self.dto = dto
         self.bot = dto.bot
         self.pairs = dto.pairs
+        self.pair = pair
+        self.time_frame = time_frame
         self.phase = phase
         self.time_frames = dto.time_frames
+        #self.tail_number = tail_number
 
-    def create_init_simple(self, pair, time_frame, optimization_criterion=6, model=2, optimization=2, shutdown_terminal=1, visual=0, leverage_value=33, replace_report=1, use_local=1, forward_mode=4, execution_mode=28):
-        """Creates the INIT file specific for a simple Phase  Optimization"""
-        phase = 'Phase{}'.format(self.phase)
-        file_name = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, pair, time_frame, self.phase)
-        file_name = os.path.join(path.REPORT_PATH, self.bot, 'INITS', phase, file_name)
-        file = open(file_name, "w")
-        file.write(';[Common]' + "\n" \
-        ';Login=40539843' + "\n" \
-        ';Password=jPHIWVnmZUFn' + "\n"  \
-        ';[Charts]' + "\n" \
-        ';[Experts]' + "\n" \
-        'AllowLiveTrading=1' + "\n" \
-        'AllowDllImport=1' + "\n" \
-        'Enabled=1' + "\n" \
-        '\n' \
-        '[Tester]' + "\n" \
-        'Expert=Advisors\\{}'.format(self.bot) + "\n" \
-        'ExpertParameters=Phase{}-{}.set'.format(self.phase, self.bot) + "\n" \
-        'Symbol={}'.format(pair) + 'MT5' + "\n" \
-        'Period={}'.format(time_frame) + "\n" \
-        ';Login=XXXXXX' + "\n" \
-        'Model={}'.format(model) + "\n" \
-        'ExecutionMode={}'.format(str(execution_mode)) + "\n" \
-        'Optimization={}'.format(optimization) + "\n" \
-        'OptimizationCriterion={}'.format(optimization_criterion) + "\n" \
-        'FromDate={}'.format(self.dto.opti_start_date) + "\n" \
-        'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
-        'ForwardMode={}'.format(forward_mode) + "\n" \
-        'ForwardDate={}'.format(self.dto.forward_date) + "\n" \
-        'Report=reports\\{}\\{}\\{}\OptiResults-{}-{}-{}-Phase{}'.format(self.bot, pair, time_frame, self.bot, pair, time_frame, self.phase) + "\n" \
-        ';--- If the specified report already exists, it will be overwritten' + "\n" \
-        'ReplaceReport={}'.format(replace_report) + "\n" \
-        ';--- Set automatic platform shutdown upon completion of testing/optimization' + "\n" \
-        'ShutdownTerminal={}'.format(shutdown_terminal) + "\n" \
-        'Deposit={}'.format(self.dto.initial_deposit) + "\n" \
-        'Currency={}'.format(self.dto.deposit_currency) + "\n" \
-        ';Uses or refuses local network resources' + "\n" \
-        'UseLocal={}'.format(use_local) + "\n" \
-        ';Uses Visual test Mode' + "\n" \
-        ';Visual={}'.format(visual) + "\n" \
-        'ProfitInPips=0' + "\n" \
-        'Leverage={}'.format(str(leverage_value)) + "\n")
-        file.close()
+        if process == 'simple':
+            self.init_path = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, self.pair, self.time_frame, self.phase)
+            self.init_path = os.path.join(path.REPORT_PATH, self.bot, 'INITS', phase, self.init_path)
+            if mode == 'opti':
+                self.optimization = 2
+                self.optiset = 'Phase{}-{}.set'.format(self.phase, self.bot)
+                self.results = 'reports\\{}\\{}\\{}\OptiResults-{}-{}-{}-Phase{}'.format(self.bot, self.pair, self.time_frame, self.bot, self.pair, self.time_frame, self.phase)
+            elif mode == 'set':
+                self.optimization = 0
+                self.optiset = '\{}\Phase3-{}-{}-{}-{}.set'.format(self.bot, self.bot, self.pair, self.time_frame, tail_number)
+                self.results = 'reports\{}\SETS\Phase3-{}-{}-{}-{}'.format(self.bot, self.bot, self.pair, self.time_frame, tail_number)
 
-    def create_init_wf(self, pair, time_frame, optimization_criterion=6, model=2, optimization=2, shutdown_terminal=1, visual=0, leverage_value=33, replace_report=1, use_local=1, forward_mode=4, execution_mode=28):
+        elif process == 'WF' :
+            self.init_path = 'WF-INIT-{}-{}-{}.ini'.format(self.bot, self.pair, self.time_frame)
+            self.init_path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Inits', self.init_path)
+            if mode == 'opti':
+                self.optimization = 2
+                self.optiset = 'Phase{}-{}.set'.format(self.phase, self.bot)
+                self.results = 'reports\\{}\\{}\\{}\\{}\OptiWFResults-{}-{}-{}-{}-{}'.format(self.bot, self.pair, self.time_frame, 'WF_Report', self.bot, self.pair, self.time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
+            elif mode == 'set':
+                self.optimization = 0
+                self.optiset = '\{}\WF-{}-{}-{}.set'.format(self.bot, self.bot, self.pair, self.time_frame)
+                self.results = 'reports\{}\{}\{}\WF_Results\WF-Phase3-{}-{}-{}-{}-{}'.format(self.bot, self.pair, self.time_frame, self.bot, self.pair, self.time_frame,self.dto.forward_date,self.dto.opti_end_date) + "\n" \
+
+
+    def create_init(self, optimization_criterion=6, model=2, shutdown_terminal=1, visual=0, leverage_value=33, replace_report=1, use_local=1, forward_mode=4, execution_mode=28):
         """Creates the INIT file specific for a Walk Forward Optimization"""
-        file_name = 'WF-INIT-{}-{}-{}.ini'.format(self.bot, pair, time_frame)
-        path = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Inits', file_name)
+        path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Inits', self.init_path)
         file = open(path, "w")
         file.write(';[Common]' + "\n" \
         ';Login=40539843' + "\n" \
@@ -74,19 +57,19 @@ class CreateInit:
         '\n' \
         '[Tester]' + "\n" \
         'Expert=Advisors\\{}'.format(self.bot) + "\n" \
-        'ExpertParameters=Phase{}-{}.set'.format(self.phase, self.bot) + "\n" \
-        'Symbol={}'.format(pair) + 'MT5' + "\n" \
-        'Period={}'.format(time_frame) + "\n" \
+        'ExpertParameters={}'.format(self.optiset) + "\n" \
+        'Symbol={}'.format(self.pair) + 'MT5' + "\n" \
+        'Period={}'.format(self.time_frame) + "\n" \
         ';Login=XXXXXX' + "\n" \
         'Model={}'.format(model) + "\n" \
         'ExecutionMode={}'.format(str(execution_mode)) + "\n" \
-        'Optimization={}'.format(optimization) + "\n" \
+        'Optimization={}'.format(self.optimization) + "\n" \
         'OptimizationCriterion={}'.format(optimization_criterion) + "\n" \
         'FromDate={}'.format(self.dto.opti_start_date) + "\n" \
         'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
         'ForwardMode={}'.format(forward_mode) + "\n" \
         'ForwardDate={}'.format(self.dto.forward_date) + "\n" \
-        'Report=reports\\{}\\{}\\{}\\{}\OptiWFResults-{}-{}-{}-{}-{}'.format(self.bot, pair, time_frame, 'WF_Report', self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date) + "\n" \
+        'Report={}'.format(self.results) + "\n" \
         ';--- If the specified report already exists, it will be overwritten' + "\n" \
         'ReplaceReport={}'.format(replace_report) + "\n" \
         ';--- Set automatic platform shutdown upon completion of testing/optimization' + "\n" \

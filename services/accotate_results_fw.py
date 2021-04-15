@@ -1,10 +1,8 @@
-import time
 import os
 import xml.etree.ElementTree as et
 import pandas as pd
 from .print_filters import PrintFilters
-from .helpers import movecol
-from .helpers import get_csv_list
+from .helpers import movecol, get_csv_list
 
 FOLDER_PATH = "C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028"
 REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
@@ -91,8 +89,6 @@ class AccotateResultsFw:
         df_forward.reset_index(inplace=True)
         df_forward.to_csv(csv_file_name_forward, sep=',', index=False)
 
-        print('Done Forward Results for:', pair, time_frame)
-
         return df_forward
 
     def join_dataframes(self, df_backtest, df_forward, pair, time_frame):
@@ -131,9 +127,7 @@ class AccotateResultsFw:
         file_name = 'OptiWFResults-{}-{}-{}-{}-{}-Complete-Filtered.csv'.format(self.bot, pair, time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
         file_name = os.path.join(REPORT_PATH, self.bot, pair, time_frame, 'WF_Report', file_name)
 
-        #df_complete['Total Score'] = (df_complete['Rank'] * 3) + df_complete['Rank Forward']
 
-        #df_complete_filtered = df_complete[(df_complete['Total Score'] == df_complete['Total Score'].min())]
         df_complete_filtered = df_complete[(df_complete['Result'] == (df_complete['Result']).max())]
         df_complete_filtered = df_complete_filtered[:1]
         df_complete_filtered.to_csv(file_name, sep=',', index=False)

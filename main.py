@@ -8,7 +8,7 @@ import sys
 from Dto import Dto
 from services.create_folders import CreateFolders
 from services.accotate_results_phase1 import AccotateResultsPhase1
-#from services.create_ini_phase import CreateIniPhase
+from services.create_init import CreateInit
 from services.launch_phase import LaunchPhase
 from services.accotate_optisets_phase1 import AccotateOptisetsPhase1
 from services.accotate_optisets_phase2 import AccotateOptisetsPhase2
@@ -99,7 +99,7 @@ def create_folders():
 
 def create_ini_phase1():
     """Creates INIT files for all pairs and timeframes selected"""
-    service = CreateIniPhase(create_dto(), 1)
+    service = CreateInit(create_dto(), 1)
     service.run()
 
 def launch_phase1():
@@ -119,7 +119,7 @@ def accotate_optisets_phase1():
 
 def create_ini_phase2():
     """Creates a Phase 2 INIT file for every pair and timeframe selected"""
-    service = CreateIniPhase(create_dto(), 2)
+    service = CreateInit(create_dto(), 2)
     service.run()
 
 def launch_phase2():

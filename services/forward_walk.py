@@ -18,31 +18,27 @@ class ForwardWalk:
         self.in_sample_end_date = dto.forward_date
         self.dto = dto
 
-        # In month These variables are NOT INSIDE THE DTO, must add them
+        # In months These variables are NOT INSIDE THE DTO, must add them
         self.time_step = 12
-        self.IS_ratio = 4
-        self.OOS_ratio = 1
-        self.REAL_ratio = 1
-        self.IS_steps = self.time_step * self.IS_ratio
-        self.OOS_steps = self.time_step * self.OOS_ratio
-        self.REAL_steps = self.time_step * self.REAL_ratio
+        self.is_ratio = 4
+        self.oos_ratio = 1
+        self.real_ratio = 1
+        self.is_steps = self.time_step * self.is_ratio
+        self.oos_steps = self.time_step * self.oos_ratio
+        self.real_steps = self.time_step * self.real_ratio
 
         self.pairs = dto.pairs
         self.time_frames = dto.time_frames
 
     def run(self):
-        #list_bricks = add_init_cuts()
-        list_bricks = CreateTimebricks(self.opti_start_date, self.time_step, self.IS_steps, self.OOS_steps, self.REAL_steps, self.opti_end_date)
+        list_bricks = CreateTimebricks(self.opti_start_date, self.time_step, self.is_steps, self.oos_steps, self.real_steps, self.opti_end_date)
         list_bricks = list_bricks.run()
         for pair in self.pairs:
             for time_frame in self.time_frames:
                 for bricks in list_bricks:
-                    self.iteration(self.in_sample_end_date, pair, time_frame, bricks)
+                    self.iteration(pair, time_frame, bricks)
     
-    def iteration(self, in_sample_start_date, pair, time_frame, bricks):
-
-        in_sample_end_date = add_months(in_sample_start_date, self.time_step * self.IS_ratio)
-        forward_date = add_months(in_sample_end_date, 1)
+    def iteration(self, pair, time_frame, bricks):
 
         dto = self.dto
         dto.opti_start_date = bricks[0]
@@ -51,7 +47,7 @@ class ForwardWalk:
         dto.pair = pair
         dto.time_frame = time_frame
 
-        CreateInit(self.dto, 1).create_init_wf(pair, time_frame)
+        CreateInit(self.dto, pair, time_frame, 'WF', 'opti', 1).create_init()
         LaunchPhaseWF(self.dto, pair, time_frame).run()
         AccotateResultsFw(self.dto).run()
         BTSetsForwardWalk(self.dto,pair,time_frame).run()
