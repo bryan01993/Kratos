@@ -47,7 +47,7 @@ class ForwardWalk:
         dto.pair = pair
         dto.time_frame = time_frame
 
-        CreateInit(self.dto, pair, time_frame, 'WF', 'opti', 1).create_init()
+        CreateInit(self.dto, pair, time_frame, 1).create_init_wf_opti()
         LaunchPhaseWF(self.dto, pair, time_frame).run()
         AccotateResultsFw(self.dto).run()
         BTSetsForwardWalk(self.dto,pair,time_frame).run()

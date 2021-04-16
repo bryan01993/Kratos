@@ -7,39 +7,45 @@ REPORT_PATH = os.path.join(FOLDER_PATH, 'reports')
 
 class CreateInit:
     """Creates INIT files for optimization and/or backtesting"""
-    def __init__(self, dto, pair, time_frame, process, mode, phase):
+    def __init__(self, dto, pair, time_frame, phase):
         self.dto = dto
         self.bot = dto.bot
-        self.pairs = dto.pairs
         self.pair = pair
         self.time_frame = time_frame
         self.phase = phase
-        self.time_frames = dto.time_frames
-        #self.tail_number = tail_number
 
-        if process == 'simple':
-            self.init_path = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, self.pair, self.time_frame, self.phase)
-            self.init_path = os.path.join(path.REPORT_PATH, self.bot, 'INITS', phase, self.init_path)
-            if mode == 'opti':
-                self.optimization = 2
-                self.optiset = 'Phase{}-{}.set'.format(self.phase, self.bot)
-                self.results = 'reports\\{}\\{}\\{}\OptiResults-{}-{}-{}-Phase{}'.format(self.bot, self.pair, self.time_frame, self.bot, self.pair, self.time_frame, self.phase)
-            elif mode == 'set':
-                self.optimization = 0
-                self.optiset = '\{}\Phase3-{}-{}-{}-{}.set'.format(self.bot, self.bot, self.pair, self.time_frame, tail_number)
-                self.results = 'reports\{}\SETS\Phase3-{}-{}-{}-{}'.format(self.bot, self.bot, self.pair, self.time_frame, tail_number)
 
-        elif process == 'WF' :
-            self.init_path = 'WF-INIT-{}-{}-{}.ini'.format(self.bot, self.pair, self.time_frame)
-            self.init_path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Inits', self.init_path)
-            if mode == 'opti':
-                self.optimization = 2
-                self.optiset = 'Phase{}-{}.set'.format(self.phase, self.bot)
-                self.results = 'reports\\{}\\{}\\{}\\{}\OptiWFResults-{}-{}-{}-{}-{}'.format(self.bot, self.pair, self.time_frame, 'WF_Report', self.bot, self.pair, self.time_frame,self.dto.opti_start_date,self.dto.opti_end_date)
-            elif mode == 'set':
-                self.optimization = 0
-                self.optiset = '\{}\WF-{}-{}-{}.set'.format(self.bot, self.bot, self.pair, self.time_frame)
-                self.results = 'reports\{}\{}\{}\WF_Results\WF-Phase3-{}-{}-{}-{}-{}'.format(self.bot, self.pair, self.time_frame, self.bot, self.pair, self.time_frame,self.dto.forward_date,self.dto.opti_end_date) + "\n" \
+    def create_init_simple_opti(self):
+        self.init_path = self.init_path = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, self.pair, self.time_frame, self.phase)
+        self.init_path = os.path.join(path.REPORT_PATH, self.bot, 'INITS', self.phase, self.init_path)
+        self.optimization = 2
+        self.optiset = 'Phase{}-{}.set'.format(self.phase, self.bot)
+        self.results = 'reports\\{}\\{}\\{}\OptiResults-{}-{}-{}-Phase{}'.format(self.bot, self.pair, self.time_frame,self.bot, self.pair, self.time_frame,self.phase)
+        return self.create_init()
+
+    def create_init_simple_set(self):
+        self.init_path = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, self.pair, self.time_frame, self.phase)
+        self.init_path = os.path.join(path.REPORT_PATH, self.bot, 'INITS', self.phase, self.init_path)
+        self.optimization = 0
+        self.optiset = '\{}\Phase3-{}-{}-{}-{}.set'.format(self.bot, self.bot, self.pair, self.time_frame, tail_number)
+        self.results = 'reports\{}\SETS\Phase3-{}-{}-{}-{}'.format(self.bot, self.bot, self.pair, self.time_frame, tail_number)
+        return self.create_init()
+
+    def create_init_wf_opti(self):
+        self.init_path = 'WF-INIT-{}-{}-{}.ini'.format(self.bot, self.pair, self.time_frame)
+        self.init_path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Inits', self.init_path)
+        self.optimization = 2
+        self.optiset = 'Phase{}-{}.set'.format(self.phase, self.bot)
+        self.results = 'reports\\{}\\{}\\{}\\{}\OptiWFResults-{}-{}-{}-{}-{}'.format(self.bot, self.pair, self.time_frame, 'WF_Report', self.bot, self.pair, self.time_frame, self.dto.opti_start_date, self.dto.opti_end_date)
+        return self.create_init()
+
+    def create_init_wf_set(self):
+        self.init_path = 'WF-INIT-{}-{}-{}.ini'.format(self.bot, self.pair, self.time_frame)
+        self.init_path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Inits', self.init_path)
+        self.optimization = 0
+        self.optiset = '\{}\WF-{}-{}-{}.set'.format(self.bot, self.bot, self.pair, self.time_frame)
+        self.results = 'reports\{}\{}\{}\WF_Results\WF-Phase3-{}-{}-{}-{}-{}'.format(self.bot, self.pair,self.time_frame, self.bot,self.pair, self.time_frame,self.dto.forward_date,self.dto.opti_end_date)
+        return self.create_init()
 
 
     def create_init(self, optimization_criterion=6, model=2, shutdown_terminal=1, visual=0, leverage_value=33, replace_report=1, use_local=1, forward_mode=4, execution_mode=28):
