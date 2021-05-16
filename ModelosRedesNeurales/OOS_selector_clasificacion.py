@@ -5,10 +5,13 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 print('Tensorflow Version:',tf.__version__)
-# Datos de Prueba
-base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1Train/GBPUSD/H4/WF_Report'
-save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1Train/GBPUSD/H4/'
+# Datos de Prueba Personal
+#base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1Train/GBPUSD/H4/WF_Report'
+#save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1Train/GBPUSD/H4/'
 
+# Datos de Prueba en Laptop
+base_dir = 'C:/Users/bryan.aleixo/EA-B1v1Train/GBPUSD/H4/WF_Report'
+save_dir = 'C:/Users/bryan.aleixo/EA-B1v1Train/GBPUSD/H4/'
 
 def create_steps_list(directory=base_dir):
     steps_list = []
@@ -25,7 +28,6 @@ def create_steps_list(directory=base_dir):
 
 def create_benchmark_list(directory=base_dir, steps_list=create_steps_list()):
     dataframe_list = []
-
     # Create the dataframes to concatenate and join the benchmark
     for file in os.listdir(directory):
         if "Complete-Filtered" in file:
@@ -77,19 +79,13 @@ def prepare_target_file(stepstart,stepend):
                 target_dataframe['Target'] = target_dataframe['Target'].astype(int)
                 return target_dataframe
 
-def get_compiled_model(inputtrain,inputtarget,firstlayer=60,secondlayer=10,thirdlayer=1):
+def get_compiled_model(inputtrain,inputtarget,firstlayer=100,secondlayer=50,thirdlayer=1):
   model = tf.keras.Sequential([
     tf.keras.layers.Dense(firstlayer,input_shape=(inputtrain.shape[1], ),name='First_Layer'),
     tf.keras.layers.Dense(secondlayer, activation='sigmoid',name='Second_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation='sigmoid', name='Third_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation='sigmoid', name='Fourth_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation='sigmoid', name='Fifth_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation='sigmoid', name='Sixth_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation='sigmoid', name='Seventh_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation='sigmoid', name='Eighth_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation='sigmoid', name='Nineth_Layer'),
-    tf.keras.layers.Dense(thirdlayer, activation = 'sigmoid',name='Output_Layer')
+    tf.keras.layers.Dense(thirdlayer, activation='sigmoid', name='Third_Layer'),
   ])
+  #model = tf.keras.models.Model(inputs= firstlayer, outputs = thirdlayer)
   model.compile(optimizer='sgd',
                 loss='binary_crossentropy',
                 metrics=['accuracy'])
@@ -105,19 +101,27 @@ def training_steps():
         Fitting_Train = Fitting_Train.append(Train_Dataframe)
         Target_Dataframe = prepare_target_file(stepstart =step_start_date, stepend=step_end_date)
         Fitting_Target = Fitting_Target.append(Target_Dataframe)
+    #Fitting_Train = Fitting_Train.merge(Fitting_Target, on='index', suffixes=('', 'Forward'))
+    Fitting_Train = pd.concat([Fitting_Train, Fitting_Target], axis=1)
+    print('Before dropping nans:', Fitting_Train.shape[0])
+    Fitting_Train.dropna(inplace=True)
     #Fitting_Target.to_csv(save_dir + '/' + 'FitTarget.csv')
-    target = Fitting_Target.pop('Target')
+    Fitting_Train.to_csv(save_dir + '/' + 'FitTrain.csv')
+    print('After dropping nans:', Fitting_Train.shape[0])
+    target = Fitting_Train.pop('Target')
     nptrain = Fitting_Train.values
     nptarget = target.values
     #nptrain = nptrain.reshape((21,1))
     model = get_compiled_model(inputtrain=nptrain,inputtarget=nptarget)
-    model.fit(x=nptrain,y=nptarget,batch_size= 10 , epochs=3, verbose =1,shuffle=False)
-    #model.summary()
-    #pesos = model.get_weights()
+    pesos = model.get_weights()
+    print('this is pesos before',pesos)
+    model.fit(x=nptrain,y=nptarget,batch_size= 10 , epochs=10, verbose =1,shuffle=True)
+    model.summary()
     #print('Train shape', nptrain.shape)
     #print('Train shape', nptrain.shape)
     #print('Target shape', nptarget.shape)
-    #print(pesos)
+    pesos = model.get_weights()
+    print('this is pesos after',pesos)
 
 steps_tested = create_steps_list()
 print("This is the Step List:", steps_tested)

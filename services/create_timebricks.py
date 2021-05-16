@@ -4,12 +4,12 @@ from .helpers import split_date, cast_list_to_string_date
 class CreateTimebricks:
     """Creates time steps for iterations on wf or data analysis"""
     def __init__(self,start_date, time_step, is_steps, oos_steps, real_steps, end_date):
-        self.start_date = start_date
-        self.time_step = time_step
-        self.end_date = end_date
-        self.is_steps = is_steps
-        self.oos_steps = oos_steps
-        self.real_steps = real_steps
+        self.start_date = start_date   # YYYY.MM.DD
+        self.time_step = time_step   # in months
+        self.end_date = end_date   # YYYY.MM.DD
+        self.is_steps = is_steps  # in months
+        self.oos_steps = oos_steps  # in months
+        self.real_steps = real_steps  # in months
 
     def count_months(self):
         """Counts months between the start and end date"""
@@ -69,6 +69,7 @@ class CreateTimebricks:
             year_added = year_added + 1
         date = [year_added, month_added, 1]
         return date
+
 
     def run(self):
         """Standard Process of the class"""
