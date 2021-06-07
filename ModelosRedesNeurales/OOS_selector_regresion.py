@@ -13,21 +13,22 @@ from keras.callbacks import TensorBoard
 import matplotlib.pyplot as plt
 print('Tensorflow Version:',tf.__version__)
 # Datos de Prueba Personal
-#base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1Train/GBPUSD/H4/WF_Report'
-#save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v1Train/GBPUSD/H4/'
+base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/WF_Report'
+save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/'
 
 # Datos de Prueba en Laptop
-base_dir = 'C:/Users/bryan.aleixo/EA-B1v1Train/GBPUSD/H4/WF_Report'
-save_dir = 'C:/Users/bryan.aleixo/EA-B1v1Train/GBPUSD/H4/'
+#base_dir = 'C:/Users/bryan.aleixo/EA-B1v1Train/GBPUSD/H4/WF_Report'
+#save_dir = 'C:/Users/bryan.aleixo/EA-B1v1Train/GBPUSD/H4/'
 
 train_from = '2007.01.01'
 test_from = '2015.01.01'
-test_finish = '2020.01.01'
-test_runs = 3
-total_bricks = CreateTimebricks(train_from,12,48,12,0,test_finish)
+test_finish = '2020.12.01'
+test_runs = 30
+total_bricks = CreateTimebricks(train_from,1,48,12,0,test_finish)
 total_list = total_bricks.run()
 train_list = total_list[:len(total_list)-test_runs]
 test_list = total_list[-test_runs:]
+print(test_list)
 
 def prepare_training(start):
     """Concatenates all the training data and adds the dates from the optimization up to the end of training."""
@@ -38,7 +39,7 @@ def prepare_training(start):
             dataframe = pd.read_csv(base_dir + '/' + file)
             dataframe['Range'] = start_date + ' to ' + end_date
             dataframe = movecol(dataframe,['Range'],'Pass',place='Before')
-    return dataframe
+            return dataframe
 
 def prepare_test(start):
     """Concatenates all the training data and adds the dates from the optimization up to the end of testing."""
@@ -49,7 +50,7 @@ def prepare_test(start):
             dataframe = pd.read_csv(base_dir + '/' + file)
             dataframe['Range'] = start_date + ' to ' + end_date
             dataframe = movecol(dataframe,['Range'],'Pass',place='Before')
-    return dataframe
+            return dataframe
 
 def get_training():
     training_dataframe = pd.DataFrame()
@@ -75,7 +76,7 @@ def get_testing():
         testing_dataframe = testing_dataframe.append(prepare_test(step[0]))
     testing_dataframe = testing_dataframe.dropna()  # drop nan values
     testing_dataframe = testing_dataframe.apply(preprocessing.LabelEncoder().fit_transform)
-    norm_num_dataframe = testing_dataframe.select_dtypes(include=[np.number])
+    norm_num_dataframe = testing_dataframe.select_dtypes(include=[np.number, np.float])
     testing_dataframe = (norm_num_dataframe - norm_num_dataframe.min()) / (norm_num_dataframe.max() - norm_num_dataframe.min())
     testing_target = testing_dataframe.pop('Rank Forward')  # extract targets
     columns_list = list(testing_dataframe)
@@ -89,7 +90,7 @@ def get_testing():
 
 
 
-def create_model(inputtrain, optimizer='adam', firstlayer=100, secondlayer=50, thirdlayer=20, finallayer=1, activation='sigmoid', init_mode='uniform'):
+def create_model(inputtrain, optimizer='adam', firstlayer=200, secondlayer=200, thirdlayer=200, finallayer=1, activation='tanh', init_mode='uniform'):
   model = tf.keras.Sequential([
     tf.keras.layers.Dense(firstlayer, input_shape=(inputtrain.shape[1], ), kernel_initializer=init_mode, activation=activation, name='First_Layer'),
     tf.keras.layers.Dense(secondlayer, activation=activation, kernel_initializer=init_mode, name='Second_Layer'),
@@ -97,7 +98,7 @@ def create_model(inputtrain, optimizer='adam', firstlayer=100, secondlayer=50, t
     tf.keras.layers.Dense(thirdlayer, activation=activation, kernel_initializer=init_mode, name='Fourth_Layer'),
     tf.keras.layers.Dense(finallayer, kernel_initializer=init_mode, name='Fifth_Layer'),
   ])
-  model.compile(optimizer=optimizer, loss='mse', metrics=['mse'])
+  model.compile(optimizer=optimizer, loss='mse', metrics=['mse'], learning_rate=0.1)
   return model
 
 
@@ -117,7 +118,7 @@ def run_model():
     model.summary()
     pesos = model.get_weights()
     #print('this is pesos before', pesos)
-    #history = model.fit(x=np_training_dataframe,y=np_training_target, batch_size=50, epochs=150, verbose=1, shuffle=False, validation_data=(np_testing_dataframe, np_testing_target))
+    #history = model.fit(x=np_training_dataframe,y=np_training_target, batch_size=100, epochs=150, verbose=2, shuffle=False, validation_data=(np_testing_dataframe, np_testing_target))
     #prediction = model.predict()
 
     def grid_search():
@@ -138,14 +139,14 @@ def run_model():
         print('Reached Here')
         #print('Best Score:', grid_result.best_score_)
     grid_search()
-    #plt.figure(1)
-    #plt.plot(np.sqrt(history.history['loss']))
-    #plt.plot(np.sqrt(history.history['val_loss']))
-    #plt.title('Perdidas de Modelo')
-    #plt.ylabel('Perdidas')
-    #plt.xlabel('Epochs')
-    #plt.legend(['Train', 'Test'], loc='upper left')
-    #plt.show()
+    plt.figure(1)
+    plt.plot(np.sqrt(history.history['loss']))
+    plt.plot(np.sqrt(history.history['val_loss']))
+    plt.title('Perdidas de Modelo')
+    plt.ylabel('Perdidas')
+    plt.xlabel('Epochs')
+    plt.legend(['Train', 'Test'], loc='upper left')
+    plt.show()
 
 run_model()
 print('Final Print')

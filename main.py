@@ -1,9 +1,5 @@
-import os.path
 import tkinter as tk
 from tkinter import Frame, Button, Label, Tk, Toplevel, Entry, IntVar, Checkbutton
-import subprocess
-import pandas as pd
-import sys
 
 from Dto import Dto
 from services.create_folders import CreateFolders

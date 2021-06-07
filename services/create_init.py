@@ -13,6 +13,7 @@ class CreateInit:
         self.pair = pair
         self.time_frame = time_frame
         self.phase = phase
+        self.forward_mode = 4
 
 
     def create_init_simple_opti(self):
@@ -27,6 +28,7 @@ class CreateInit:
         self.init_path = 'INIT-{}-{}-{}-Phase{}.ini'.format(self.bot, self.pair, self.time_frame, self.phase)
         self.init_path = os.path.join(path.REPORT_PATH, self.bot, 'INITS', self.phase, self.init_path)
         self.optimization = 0
+        self.forward_mode = 0
         self.optiset = '\{}\Phase3-{}-{}-{}-{}.set'.format(self.bot, self.bot, self.pair, self.time_frame, tail_number)
         self.results = 'reports\{}\SETS\Phase3-{}-{}-{}-{}'.format(self.bot, self.bot, self.pair, self.time_frame, tail_number)
         return self.create_init()
@@ -40,15 +42,17 @@ class CreateInit:
         return self.create_init()
 
     def create_init_wf_set(self):
-        self.init_path = 'WF-INIT-{}-{}-{}.ini'.format(self.bot, self.pair, self.time_frame)
+        self.init_path = 'INIT-BT-{}-{}-{}.ini'.format(self.bot, self.pair, self.time_frame)
         self.init_path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Inits', self.init_path)
         self.optimization = 0
+        self.forward_mode = 0
+        self.dto.opti_start_date = self.dto.forward_date
         self.optiset = '\{}\WF-{}-{}-{}.set'.format(self.bot, self.bot, self.pair, self.time_frame)
         self.results = 'reports\{}\{}\{}\WF_Results\WF-Phase3-{}-{}-{}-{}-{}'.format(self.bot, self.pair,self.time_frame, self.bot,self.pair, self.time_frame,self.dto.forward_date,self.dto.opti_end_date)
         return self.create_init()
 
 
-    def create_init(self, optimization_criterion=6, model=2, shutdown_terminal=1, visual=0, leverage_value=33, replace_report=1, use_local=1, forward_mode=4, execution_mode=28):
+    def create_init(self, optimization_criterion=6, model=2, shutdown_terminal=1, visual=0, leverage_value=33, replace_report=1, use_local=1, execution_mode=28):
         """Creates the INIT file specific for a Walk Forward Optimization"""
         path = os.path.join(REPORT_PATH, self.bot, self.pair, self.time_frame, 'WF_Inits', self.init_path)
         file = open(path, "w")
@@ -73,7 +77,7 @@ class CreateInit:
         'OptimizationCriterion={}'.format(optimization_criterion) + "\n" \
         'FromDate={}'.format(self.dto.opti_start_date) + "\n" \
         'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
-        'ForwardMode={}'.format(forward_mode) + "\n" \
+        'ForwardMode={}'.format(self.forward_mode) + "\n" \
         'ForwardDate={}'.format(self.dto.forward_date) + "\n" \
         'Report={}'.format(self.results) + "\n" \
         ';--- If the specified report already exists, it will be overwritten' + "\n" \
