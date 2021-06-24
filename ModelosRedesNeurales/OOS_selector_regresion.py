@@ -2,24 +2,27 @@ import numpy as np
 import pandas as pd
 import os
 import tensorflow as tf
+import sys
 from sklearn.model_selection import GridSearchCV
 from tensorflow.python.keras.wrappers.scikit_learn import KerasRegressor
-
 from services.create_timebricks import CreateTimebricks
 from services.helpers import movecol
 from sklearn import preprocessing
-from tensorflow import keras
-from keras.callbacks import TensorBoard
+from tensorboard.plugins.hparams import api as hp
 import matplotlib.pyplot as plt
-print('Tensorflow Version:',tf.__version__)
-# Datos de Prueba Personal
+
+### Print of Tensorflow version and GPU availability
+#print('Tensorflow Version:',tf.__version__)
+#print(tf.test.is_built_with_cuda())
+#print('GPU available?', tf.test.is_gpu_available())
+#print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+
+### Rutas a los directorios de data, de guardado de resultados y de tensores para TensorBoard
 base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/WF_Report'
 save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/'
+tensor_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/Tensorlogs/'
 
-# Datos de Prueba en Laptop
-#base_dir = 'C:/Users/bryan.aleixo/EA-B1v1Train/GBPUSD/H4/WF_Report'
-#save_dir = 'C:/Users/bryan.aleixo/EA-B1v1Train/GBPUSD/H4/'
-
+### Fechas de Entrenamiento y Validacion, cortes en uso de clase TimeBricks
 train_from = '2007.01.01'
 test_from = '2015.01.01'
 test_finish = '2020.12.01'
@@ -28,7 +31,6 @@ total_bricks = CreateTimebricks(train_from,1,48,12,0,test_finish)
 total_list = total_bricks.run()
 train_list = total_list[:len(total_list)-test_runs]
 test_list = total_list[-test_runs:]
-print(test_list)
 
 def prepare_training(start):
     """Concatenates all the training data and adds the dates from the optimization up to the end of training."""
@@ -53,57 +55,87 @@ def prepare_test(start):
             return dataframe
 
 def get_training():
+    """Data Treatment, Normalization and Separation of Properties and Target for Training"""
     training_dataframe = pd.DataFrame()
     for step in train_list:
         training_dataframe = training_dataframe.append(prepare_training(step[0]))
     training_dataframe = training_dataframe.dropna()  # drop nan values
     training_dataframe = training_dataframe.apply(preprocessing.LabelEncoder().fit_transform)
-    norm_num_dataframe = training_dataframe.select_dtypes(include= [np.number])
-    training_dataframe = (norm_num_dataframe - norm_num_dataframe.min()) / (norm_num_dataframe.max() - norm_num_dataframe.min())
-    training_target = training_dataframe.pop('Rank Forward')  # extract targets
+    norm_num_dataframe = training_dataframe.select_dtypes(include= [np.number, np.float])
+    #training_dataframe = (norm_num_dataframe - norm_num_dataframe.min()) / (norm_num_dataframe.max() - norm_num_dataframe.min())      # Normalize Max-Min
+    training_dataframe = (norm_num_dataframe-norm_num_dataframe.mean())/norm_num_dataframe.std()     # Normalize in Standard Deviations
+    training_dataframe.to_csv(save_dir + '/' + '{}-Training_data_norm.csv'.format(step))
+    training_target = training_dataframe.pop('CustomForward')  # extract targets
+    training_target.to_csv(save_dir + '/' + '{}-Training_target_norm.csv'.format(step))
     columns_list = list(training_dataframe)
     forward_columns = [c for c in columns_list if 'Forward' in c]
     training_dataframe = training_dataframe.drop(columns=forward_columns)  # drop forward columns
     training_dataframe = training_dataframe.drop(columns='Back Result')  # drop back result is irrelevant
     training_dataframe = training_dataframe.dropna(axis=1, how='all')  # reassure no empty columns
-    #training_dataframe.to_csv(save_dir + '/' + 'Training_data.csv')
-    #training_target.to_csv(save_dir + '/' + 'Training_target.csv')
+
     return training_dataframe, training_target
 
 def get_testing():
+    """Data Treatment, Normalization and Separation of Properties and Target for Validation"""
     testing_dataframe = pd.DataFrame()
     for step in test_list:
         testing_dataframe = testing_dataframe.append(prepare_test(step[0]))
     testing_dataframe = testing_dataframe.dropna()  # drop nan values
     testing_dataframe = testing_dataframe.apply(preprocessing.LabelEncoder().fit_transform)
     norm_num_dataframe = testing_dataframe.select_dtypes(include=[np.number, np.float])
-    testing_dataframe = (norm_num_dataframe - norm_num_dataframe.min()) / (norm_num_dataframe.max() - norm_num_dataframe.min())
-    testing_target = testing_dataframe.pop('Rank Forward')  # extract targets
+    #testing_dataframe = (norm_num_dataframe - norm_num_dataframe.min()) / (norm_num_dataframe.max() - norm_num_dataframe.min())    # Normalize Max-Min
+    testing_dataframe = (norm_num_dataframe - norm_num_dataframe.mean()) / norm_num_dataframe.std()        # Normalize in Standard Deviations
+    testing_dataframe.to_csv(save_dir + '/' + '{}-Testing_data_norm.csv'.format(step))
+    testing_target = testing_dataframe.pop('CustomForward')  # extract targets
+    testing_target.to_csv(save_dir + '/' + '{}-Testing_target_norm.csv'.format(step))
     columns_list = list(testing_dataframe)
     forward_columns = [c for c in columns_list if 'Forward' in c]
     testing_dataframe = testing_dataframe.drop(columns=forward_columns)  # drop forward columns
     testing_dataframe = testing_dataframe.drop(columns='Back Result')  # drop back result is irrelevant
     testing_dataframe = testing_dataframe.dropna(axis=1, how='all')  # reassure no empty columns
-    #testing_dataframe.to_csv(save_dir + '/' + 'Testing_data.csv')
-    #testing_target.to_csv(save_dir + '/' + 'Testing_target.csv')
+
     return testing_dataframe, testing_target
 
+def data_sequester(csvpath):
+    """Extraction of Data Outside of Training and Validation for True OOS Testing"""
+    sequest_dataframe = pd.read_csv(csvpath)
+    print('Testing len before drop:', len(sequest_dataframe))
+    sequest_dataframe = sequest_dataframe.dropna()  # drop nan values
+    print('Testing len after drop:', len(sequest_dataframe))
+    print(sequest_dataframe)
+    sequest_dataframe = sequest_dataframe.apply(preprocessing.LabelEncoder().fit_transform)
+    norm_num_dataframe = sequest_dataframe.select_dtypes(include=[np.number, np.float])
+    sequest_dataframe = (norm_num_dataframe - norm_num_dataframe.min()) / (norm_num_dataframe.max() - norm_num_dataframe.min())
+    sequest_dataframe['Range'] = 0
+    sequest_dataframe = movecol(sequest_dataframe, ['Range'], 'Pass', place='Before')
+    sequest_target = sequest_dataframe.pop('Rank Forward')  # extract targets
+    columns_list = list(sequest_dataframe)
+    forward_columns = [c for c in columns_list if 'Forward' in c]
+    sequest_dataframe = sequest_dataframe.drop(columns=forward_columns)  # drop forward columns
+    sequest_dataframe = sequest_dataframe.drop(columns='Back Result')  # drop back result is irrelevant
+    sequest_dataframe = sequest_dataframe.dropna(axis=1, how='all')  # reassure no empty columns
+    sequest_dataframe.to_csv(save_dir + '/' + 'Sequest_data.csv')
+    sequest_target.to_csv(save_dir + '/' + 'Sequest_target.csv')
+    print(sequest_dataframe)
+    return sequest_dataframe, sequest_target
 
-
-def create_model(inputtrain, optimizer='adam', firstlayer=200, secondlayer=200, thirdlayer=200, finallayer=1, activation='tanh', init_mode='uniform'):
+def create_model(inputtrain, optimizer='adam', firstlayer=5000, secondlayer=2000, thirdlayer=1000, finallayer=1, activation='tanh', init_mode='uniform'):
+  """Creates the Model, to be HyperParametrized and tested"""
   model = tf.keras.Sequential([
-    tf.keras.layers.Dense(firstlayer, input_shape=(inputtrain.shape[1], ), kernel_initializer=init_mode, activation=activation, name='First_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation=activation, kernel_initializer=init_mode, name='Second_Layer'),
-    tf.keras.layers.Dense(secondlayer, activation=activation, kernel_initializer=init_mode, name='Third_Layer'),
-    tf.keras.layers.Dense(thirdlayer, activation=activation, kernel_initializer=init_mode, name='Fourth_Layer'),
-    tf.keras.layers.Dense(finallayer, kernel_initializer=init_mode, name='Fifth_Layer'),
+    tf.keras.layers.Dense(600, input_shape=(inputtrain.shape[1], ), activation=activation, name='First_Layer'),
+    tf.keras.layers.Dense(500, name='Second_Layer'),
+    tf.keras.layers.Dense(400, name='Third_Layer'),
+    tf.keras.layers.Dense(300, name='a'),
+    tf.keras.layers.Dense(200, name='b'),
+    tf.keras.layers.Dense(100, name='c'),
+    tf.keras.layers.Dense(50, name='Fourth_Layer'),
+    tf.keras.layers.Dense(1, kernel_initializer=init_mode, name='Fifth_Layer'),
   ])
-  model.compile(optimizer=optimizer, loss='mse', metrics=['mse'], learning_rate=0.1)
+  model.compile(optimizer=optimizer, loss='mae', metrics=['mae'])
   return model
 
-
-print('B4')
 def run_model():
+    """Feeds data to the model and fits the model, manages callbacks"""
     print('Run model')
     training_dataframe = get_training()[0]
     np_training_dataframe = training_dataframe.values
@@ -117,11 +149,17 @@ def run_model():
     model = create_model(inputtrain=np_training_dataframe,optimizer='adam')
     model.summary()
     pesos = model.get_weights()
-    #print('this is pesos before', pesos)
-    #history = model.fit(x=np_training_dataframe,y=np_training_target, batch_size=100, epochs=150, verbose=2, shuffle=False, validation_data=(np_testing_dataframe, np_testing_target))
+    callback_path = save_dir + 'savedmodel.ckpt'
+    save_model_path = save_dir + 'saved_model.h5'
+    tensorboard = tf.keras.callbacks.TensorBoard(log_dir=tensor_dir + 'logs', histogram_freq=1)
+    # ejecutar con tensorboard --logdir C:\Users\bryan\AppData\Roaming\MetaQuotes\Terminal\6C3C6A11D1C3791DD4DBF45421BF8028\reports\EA-B1v2\GBPJPY\M15\Tensorlogs\logs en CMD
+    model_callbacks = tf.keras.callbacks.ModelCheckpoint(filepath=callback_path, save_best_only=True, verbose=2)
+    history = model.fit(x=np_training_dataframe,y=np_training_target, batch_size=1000, epochs=200, verbose=2, shuffle=False, validation_data=(np_testing_dataframe, np_testing_target), callbacks=[tensorboard, model_callbacks])
+    model.save(save_model_path)
     #prediction = model.predict()
 
     def grid_search():
+        """HyperParameter Optimization"""
         print('start grid search')
         batch_size_grid = [20, 50, 100]
         epochs_grid = [50, 150]
@@ -138,7 +176,9 @@ def run_model():
         grid_result = grid.fit(X=train, y=target)
         print('Reached Here')
         #print('Best Score:', grid_result.best_score_)
-    grid_search()
+
+
+    ### Plots the Training and Validation
     plt.figure(1)
     plt.plot(np.sqrt(history.history['loss']))
     plt.plot(np.sqrt(history.history['val_loss']))
@@ -147,8 +187,72 @@ def run_model():
     plt.xlabel('Epochs')
     plt.legend(['Train', 'Test'], loc='upper left')
     plt.show()
+def run_trained_model():
+    """Shows Predictions for a Validation Slice of data"""
+    print('Run Previously Trained Model')
+    testing_dataframe = get_testing()[0]
+    np_testing_dataframe = testing_dataframe.values
+    training_target = get_training()[1]
+    np_training_target = training_target.values
+    maximo = np.max(np_training_target)
+    testing_target = get_testing()[1]
+    np_testing_target = testing_target.values
+    print('np_testing_target', np_testing_target)
+    save_model_path = save_dir + 'saved_model.h5'
+    new_model = tf.keras.models.load_model(save_model_path)
+    new_model.summary()
+    simple_test = new_model.predict(testing_dataframe)
+    simple_test_df = pd.DataFrame(simple_test)
+    simple_result = testing_target
+    save_dataframe = pd.DataFrame(simple_test)
+    print('here', simple_result, simple_test_df)
+    tempo_path = save_dir + '/' + 'simpleresult.csv'
+    simple_result.to_csv(tempo_path)
+    tempo_path_test = save_dir + '/' + 'simpletest.csv'
+    simple_test_df.to_csv(tempo_path_test)
+    simple_result.index = simple_test_df.index
+    print('shapes', simple_test_df.index, simple_result.index)
+    saveable_dataframe = pd.concat([simple_test_df,simple_result], axis=1, ignore_index=True)
+    print(saveable_dataframe.head())
+    save_dataframe_predictions = save_dir + '/' + 'predictions.csv'
+    saveable_dataframe.to_csv(save_dataframe_predictions)
+    print('this is saveable dataframe', saveable_dataframe)
+
+
+def run_trained_model_sequest(datafile):
+    """Runs the model for predictions on Sequestered Data"""
+    print('Run Previously Trained Model on sequestered data')
+    testing_dataframe = datafile[0]
+    np_testing_dataframe = testing_dataframe.values
+    testing_target = datafile[1]
+    np_testing_target = testing_target.values
+    print('np_testing_target', np_testing_target)
+    save_model_path = save_dir + 'saved_model.h5'
+    new_model = tf.keras.models.load_model(save_model_path)
+    new_model.summary()
+    simple_test = new_model.predict(testing_dataframe)
+    simple_test_df = pd.DataFrame(simple_test)
+    simple_result = testing_target
+    save_dataframe = pd.DataFrame(simple_test)
+    print('here', simple_result, simple_test_df)
+    tempo_path = save_dir + '/' + 'simpleresult.csv'
+    simple_result.to_csv(tempo_path)
+    tempo_path_test = save_dir + '/' + 'simpletest.csv'
+    simple_test_df.to_csv(tempo_path_test)
+    simple_result.index = simple_test_df.index
+    print('shapes', simple_test_df.index, simple_result.index)
+    saveable_dataframe = pd.concat([simple_test_df,simple_result], axis=1, ignore_index=True)
+    print(saveable_dataframe.head())
+    save_dataframe_predictions = save_dir + '/' + 'predictions.csv'
+    saveable_dataframe.to_csv(save_dataframe_predictions)
+    print('this is saveable dataframe', saveable_dataframe)
+
 
 run_model()
+run_trained_model()
+first_sequester = base_dir + '/' + 'OptiWFResults-EA-B1v2-GBPJPY-M15-2016.1.1-2021.1.1-Complete.csv'
+datafile = data_sequester(first_sequester)
+run_trained_model_sequest(datafile)
 print('Final Print')
 
 
