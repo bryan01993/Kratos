@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 from tensorflow.keras import regularizers
 #from tensorflow.keras.backend import backend as K
@@ -29,7 +30,6 @@ train_start = '2007.01.01'
 test_start = '2015.01.01'
 sequest_start = '2020.12.01'
 train_steps = 30
-
 #### TO DO
 # Create a list separated by bricks to split training and validation (not sequestered) DONE
 # Load the Optimization Data for training and validation (not sequestered) DONE
@@ -94,16 +94,40 @@ class SelectorRegression:
             print("Select a normalization type between Median and MaxMin")
         return raw_dataframe
 
-    def create_model(self):
+    def basic_model(self, input_dimension):
         """Here the Model is created"""
+        self.optimizer = 'adam'
+        self.init_mode = 'uniform'
+        self.activation = 'tanh'
+        self.dropout_rate = 0.5
+        self.wd = 1e-5   # do not remember what this was, weight something
+        self.model = tf.keras.Sequential([
+            tf.keras.layers.Dense(1200, input_shape=(input_dimension, ), kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='First_Layer'),
+            tf.keras.layers.Dense(1000, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='Second_Layer'),
+            tf.keras.layers.Dropout(self.dropout_rate),
+            tf.keras.layers.Dense(800, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='Third_Layer'),
+            tf.keras.layers.Dense(600, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='a'),
+            tf.keras.layers.Dropout(self.dropout_rate),
+            tf.keras.layers.Dense(400, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='b'),
+            tf.keras.layers.Dense(200, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='c'),
+            tf.keras.layers.Dropout(self.dropout_rate),
+            tf.keras.layers.Dense(100, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='Fourth_Layer'),
+            tf.keras.layers.Dense(1, kernel_initializer=self.init_mode, name='Fifth_Layer'),
+        ])
+        self.model.compile(optimizer=self.optimizer, loss='mae', metrics='mae')
+        self.model.optimizer.learning_rate.assign(0.001)
+        return self.model
 
     def run(self):
         test_run = self.split_train_test_sequest_bricks()
-        some_dataframe = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")
-        #some_dataframe[0].to_csv(save_dir + '/ some_concatenated_data.csv')     #  For Debugging
-        #some_dataframe[1].to_csv(save_dir + '/ some_concatenated_target.csv')   #  For Debugging
-        some_norm_dataframe = self.normalize_dataframe(some_dataframe[0], 'Median')
-        #some_norm_dataframe.to_csv(save_dir + '/ some_norm_data.csv')    #  For Debugging
+        self.train_dataframe = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[0]
+        #print(len(self.train_dataframe.columns))
+        self.train_target = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[1]
+        #self.train_dataframe[0].to_csv(save_dir + '/ some_concatenated_data.csv')     #  For Debugging
+        #self.train_dataframe[1].to_csv(save_dir + '/ some_concatenated_target.csv')   #  For Debugging
+        self.norm_train_dataframe = self.normalize_dataframe(self.train_dataframe, 'Median')
+        self.norm_train_target = self.normalize_dataframe(self.train_target, 'Median')
+        #self.norm_train_dataframe.to_csv(save_dir + '/ some_norm_data.csv')    #  For Debugging
         print('train done')
         some_other_dataframe = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")
         #some_other_dataframe[0].to_csv(save_dir + '/ other_concatenated_data.csv')   #  For Debugging
@@ -111,6 +135,10 @@ class SelectorRegression:
         other_norm_dataframe = self.normalize_dataframe(some_other_dataframe[0], 'Median')
         #other_norm_dataframe.to_csv(save_dir + '/ some_other_norm_data.csv')   #  For Debugging
         print('testing done')
+        print('Enter basic model')
+        some_model = self.basic_model(input_dimension=len(self.train_dataframe.columns))
+        print('Exited basic model')
+
 
 smth = SelectorRegression(train_start,test_start,sequest_start,train_steps)
 smth.run()

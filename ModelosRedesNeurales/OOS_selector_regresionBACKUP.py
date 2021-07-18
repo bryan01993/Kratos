@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 #import keras
 import tensorflow as tf
 from tensorflow.keras import regularizers
@@ -160,6 +161,7 @@ def create_model(inputtrain, optimizer='adam', firstlayer=5000, secondlayer=2000
 
 def create_regulated_model( inputtrain, wd, rate, optimizer='adam', activation='tanh', init_mode='uniform'):    #weight decay and dropout rate
     """Creates the Model with L2 and dropout regulators , to be HyperParametrized and tested"""
+    print('This is inputtrain shape[1]', inputtrain.shape[1])
     model = tf.keras.Sequential([
     tf.keras.layers.Dense(1200, input_shape=(inputtrain.shape[1], ),kernel_regularizer=regularizers.l2(wd), activation=activation, name='First_Layer'),
     tf.keras.layers.Dense(1000,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Second_Layer'),
