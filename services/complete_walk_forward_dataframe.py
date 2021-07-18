@@ -4,7 +4,7 @@ import os
 
 folder_name = 'EA-B1v2'
 folder_pair = 'USDJPY'
-folder_timeframe = 'H4'
+folder_timeframe = 'M15'
 data_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/'
 store_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Optimizaciones Listas/Data encadenada/'
 

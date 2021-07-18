@@ -1,17 +1,19 @@
 import numpy as np
 import pandas as pd
 import os
+#import keras
 import tensorflow as tf
 from tensorflow.keras import regularizers
-#from tensorflow.keras.backend import backend as K
-#from tensorflow.keras.layers import Dropout
+from tensorflow.keras.backend import backend as K
+from tensorflow.keras.layers import Dropout
 from sklearn.model_selection import GridSearchCV
 from tensorflow.python.keras.wrappers.scikit_learn import KerasRegressor
 from services.create_timebricks import CreateTimebricks
 from services.helpers import movecol
 from sklearn import preprocessing
-#from tensorboard.plugins.hparams import api as hp
+from tensorboard.plugins.hparams import api as hp
 import matplotlib.pyplot as plt
+
 
 ### Print of Tensorflow version and GPU availability
 #print('Tensorflow Version:',tf.__version__)
@@ -25,106 +27,26 @@ save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD
 tensor_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/Tensorlogs/'
 
 ### Fechas de Entrenamiento y Validacion, cortes en uso de clase TimeBricks
-train_start = '2007.01.01'
-test_start = '2015.01.01'
-sequest_start = '2020.12.01'
-train_steps = 30
+train_from = '2007.01.01'
+test_from = '2015.01.01'
+test_finish = '2020.12.01'
+test_runs = 30
+total_bricks = CreateTimebricks(train_from,1,48,12,0,test_finish)
+total_list = total_bricks.run()
+train_list = total_list[:len(total_list)-test_runs]
+test_list = total_list[-test_runs:]
+
 
 #### TO DO
-# Create a list separated by bricks to split training and validation (not sequestered) DONE
-# Load the Optimization Data for training and validation (not sequestered) DONE
-# Add Optimization Range to all csv files from optimization includes validation (not sequestered) DONE
-# Concatenate training data in a file, and concatenate validation data in a file (not sequestered) DONE
-# Preprocessing and Normalization for training and validation DONE
+# Create a list separated by bricks to split training and validation (not sequestered)
+# Load the Optimization Data for training and validation (not sequestered)
+# Add Optimization Range to all csv files from optimization includes validation (not sequestered)
+# Concatenate training data in a file, and concatenate validation data in a file
+# Normalize data for training and validation
 # Create Tensorflow model
 # Train model   OR    Grid search train    (both with validation)
 # Graph Results and callbacks
-#
-class SelectorRegression:
-    """DNN to Forecast the best possibility of high walk forward values"""
-
-    def __init__(self,train_start, test_start, sequest_start, train_steps):
-        self.train_start = train_start
-        self.test_start = test_start
-        self.sequest_start = sequest_start
-        self.train_steps = train_steps
-
-    def split_train_test_sequest_bricks(self):
-        """Creates the timelist that is used to split train, test and sequestered"""
-        self.total_bricks = CreateTimebricks(self.train_start, 1, 48, 12, 0, self.sequest_start)
-        self.split_train_test_sequest_list = self.total_bricks.run()
-        self.train_list = self.split_train_test_sequest_list[:len(self.split_train_test_sequest_list) - self.train_steps]
-        self.test_list = self.split_train_test_sequest_list[-self.train_steps:]
-        return self.split_train_test_sequest_list
-
-    def add_range(self, look_start):
-        """Adds the Range of dates that the optimization used"""
-        for file in os.listdir(base_dir):
-            self.file_start_date = file.split('-')[5]
-            self.file_end_date = file.split('-')[6]
-            if 'Complete' in file and 'Filtered' not in file and self.file_start_date == look_start:
-                self.dataframe = pd.read_csv(base_dir + '/' + file)
-                self.dataframe['Range'] = self.file_start_date + ' to ' + self.file_end_date
-                self.dataframe = movecol(self.dataframe, ['Range'], 'Pass', place='Before')
-                #self.dataframe.to_csv(save_dir + '/' + '{} {}_data_last_step.csv'.format(look_start,phase_split))   # For debugging purposes
-                return self.dataframe
-
-    def concatenate_phase(self,phase_list,Target):
-        """Concatenates the phase and pops the target value"""
-        concatenated_dataframe = pd.DataFrame()
-        for step in phase_list:
-            concatenated_dataframe = concatenated_dataframe.append(self.add_range(step[0]))
-        concatenated_dataframe = concatenated_dataframe.dropna(axis=1, how='all')    #drop nan values
-        concatenated_target = concatenated_dataframe.pop(Target)
-        le = preprocessing.LabelEncoder()
-        concatenated_dataframe['Range'] = le.fit_transform(concatenated_dataframe['Range'])
-        columns_list = list(concatenated_dataframe)
-        forward_columns = [c for c in columns_list if 'Forward' in c]
-        concatenated_dataframe = concatenated_dataframe.drop(columns=forward_columns) # drop forward columns to prevent look ahead bias
-        concatenated_dataframe = concatenated_dataframe.drop(columns='Back Result')  # drop back result is irrelevant
-        return concatenated_dataframe, concatenated_target
-
-    def normalize_dataframe(self,raw_dataframe, norm_type):
-        """Applies a Normalization to the dataframe to pass to the model"""
-        if norm_type == 'Median':
-            raw_dataframe = (raw_dataframe-raw_dataframe.mean())/raw_dataframe.std()
-        elif norm_type == 'MaxMin':
-            raw_dataframe = (raw_dataframe - raw_dataframe.min()) / (raw_dataframe.max() - raw_dataframe.min())
-        else:
-            print("Select a normalization type between Median and MaxMin")
-        return raw_dataframe
-
-    def create_model(self):
-        """Here the Model is created"""
-
-    def run(self):
-        test_run = self.split_train_test_sequest_bricks()
-        some_dataframe = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")
-        #some_dataframe[0].to_csv(save_dir + '/ some_concatenated_data.csv')     #  For Debugging
-        #some_dataframe[1].to_csv(save_dir + '/ some_concatenated_target.csv')   #  For Debugging
-        some_norm_dataframe = self.normalize_dataframe(some_dataframe[0], 'Median')
-        #some_norm_dataframe.to_csv(save_dir + '/ some_norm_data.csv')    #  For Debugging
-        print('train done')
-        some_other_dataframe = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")
-        #some_other_dataframe[0].to_csv(save_dir + '/ other_concatenated_data.csv')   #  For Debugging
-        #some_other_dataframe[1].to_csv(save_dir + '/other_concatenated_target.csv')  #  For Debugging
-        other_norm_dataframe = self.normalize_dataframe(some_other_dataframe[0], 'Median')
-        #other_norm_dataframe.to_csv(save_dir + '/ some_other_norm_data.csv')   #  For Debugging
-        print('testing done')
-
-smth = SelectorRegression(train_start,test_start,sequest_start,train_steps)
-smth.run()
-
-
-
-
-
-
-
-
-
-
-
+# 
 def prepare_training(start):
     """Concatenates all the training data and adds the dates from the optimization up to the end of training."""
     for file in os.listdir(base_dir):
@@ -160,8 +82,12 @@ def get_training():
     training_dataframe.to_csv(save_dir + '/' + '1-{}-Training_data_norm.csv'.format(step))
     training_target = training_dataframe.pop('CustomForward')
     training_target.to_csv(save_dir + '/' + '2-{}-Training_target_norm.csv'.format(step))
+    #training_dataframe = training_dataframe.apply(preprocessing.LabelEncoder().fit_transform)
+    #training_dataframe.to_csv(save_dir + '/' + '1.5TransformendLabelEncoder-{}-Training_data_norm.csv'.format(step))
     norm_num_dataframe = training_dataframe.select_dtypes(include= [np.number, np.float])
     training_dataframe = (norm_num_dataframe-norm_num_dataframe.mean())/norm_num_dataframe.std()     # Normalize in Standard Deviations
+    #training_target = training_dataframe.pop('CustomForward')  # extract targets, you select the target column here
+    #training_target.to_csv(save_dir + '/' + '2-{}-Training_target_norm.csv'.format(step))
     columns_list = list(training_dataframe)
     forward_columns = [c for c in columns_list if 'Forward' in c]
     training_dataframe = training_dataframe.drop(columns=forward_columns)  # drop forward columns
@@ -203,7 +129,7 @@ def data_sequester(csvpath):
     #sequest_dataframe['Range'] = le.fit_transform(sequest_dataframe['Range'])
     #sequest_dataframe = sequest_dataframe.apply(preprocessing.LabelEncoder().fit_transform)
     norm_num_dataframe = sequest_dataframe.select_dtypes(include=[np.number, np.float])
-    sequest_dataframe = (norm_num_dataframe - norm_num_dataframe.min()) / (norm_num_dataframe.max() - norm_num_dataframe.min())  # Normalize in Standard Deviations
+    sequest_dataframe = (norm_num_dataframe - norm_num_dataframe.min()) / (norm_num_dataframe.max() - norm_num_dataframe.min())  # Normalize in MaxMIN
     sequest_dataframe['Range'] = 0
     sequest_dataframe = movecol(sequest_dataframe, ['Range'], 'Pass', place='Before')
     sequest_target = sequest_dataframe.pop('CustomForward')  # extract targets
@@ -235,16 +161,16 @@ def create_model(inputtrain, optimizer='adam', firstlayer=5000, secondlayer=2000
 def create_regulated_model( inputtrain, wd, rate, optimizer='adam', activation='tanh', init_mode='uniform'):    #weight decay and dropout rate
     """Creates the Model with L2 and dropout regulators , to be HyperParametrized and tested"""
     model = tf.keras.Sequential([
-    tf.keras.layers.Dense(600, input_shape=(inputtrain.shape[1], ),kernel_regularizer=regularizers.l2(wd), activation=activation, name='First_Layer'),
-    tf.keras.layers.Dense(500,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Second_Layer'),
+    tf.keras.layers.Dense(1200, input_shape=(inputtrain.shape[1], ),kernel_regularizer=regularizers.l2(wd), activation=activation, name='First_Layer'),
+    tf.keras.layers.Dense(1000,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Second_Layer'),
     tf.keras.layers.Dropout(rate),
-    tf.keras.layers.Dense(400,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Third_Layer'),
-    tf.keras.layers.Dense(300,kernel_regularizer=regularizers.l2(wd), activation=activation, name='a'),
+    tf.keras.layers.Dense(800,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Third_Layer'),
+    tf.keras.layers.Dense(600,kernel_regularizer=regularizers.l2(wd), activation=activation, name='a'),
     tf.keras.layers.Dropout(rate),
-    tf.keras.layers.Dense(200,kernel_regularizer=regularizers.l2(wd), activation=activation, name='b'),
-    tf.keras.layers.Dense(100,kernel_regularizer=regularizers.l2(wd), activation=activation, name='c'),
+    tf.keras.layers.Dense(400,kernel_regularizer=regularizers.l2(wd), activation=activation, name='b'),
+    tf.keras.layers.Dense(200,kernel_regularizer=regularizers.l2(wd), activation=activation, name='c'),
     tf.keras.layers.Dropout(rate),
-    tf.keras.layers.Dense(50,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Fourth_Layer'),
+    tf.keras.layers.Dense(100,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Fourth_Layer'),
     tf.keras.layers.Dense(1, kernel_initializer=init_mode, name='Fifth_Layer'),
     ])
     model.compile(optimizer=optimizer, loss='mae', metrics='mae')
@@ -366,12 +292,12 @@ def run_trained_model_sequest(datafile):
     print('this is saveable dataframe', saveable_dataframe)
 
 
-#run_model()
+run_model()
 #run_trained_model()
-#first_sequester = base_dir + '/' + 'OptiWFResults-EA-B1v2-GBPJPY-M15-2016.1.1-2021.1.1-Complete.csv'
-#datafile = data_sequester(first_sequester)
-#run_trained_model_sequest(datafile)
-#print('Final Print')
+first_sequester = base_dir + '/' + 'OptiWFResults-EA-B1v2-GBPJPY-M15-2016.1.1-2021.1.1-Complete.csv'
+datafile = data_sequester(first_sequester)
+run_trained_model_sequest(datafile)
+print('Final Print')
 
 
 

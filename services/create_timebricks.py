@@ -76,7 +76,7 @@ class CreateTimebricks:
         start_on_date = split_date(self.start_date)
         iterator = 0
         max_iterations = (CreateTimebricks.count_months(self) - self.is_steps + self.time_step) / self.time_step
-        print('This is the iteration list:')
+        #print('This is the iteration list:')
         lists = []
         for i in range(int(max_iterations - 1)):
             the_start_date = CreateTimebricks.add_months_start(self,iterator,start_on_date)
@@ -88,7 +88,7 @@ class CreateTimebricks:
                 cast_list_to_string_date(the_oos_date),
             ])
             iterator += 1
-            print('start date', the_start_date, 'forward date ', the_is_date, 'end date ', the_oos_date)
-        print('Max iterations is', iterator)
+            #print('start date', the_start_date, 'forward date ', the_is_date, 'end date ', the_oos_date)
+        #print('Max iterations is', iterator)
         return lists
 
