@@ -1,29 +1,29 @@
 import numpy as np
 import pandas as pd
 import os
+import sys
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(CURRENT_DIR))
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 import tensorflow as tf
 from tensorflow.keras import regularizers
-#from tensorflow.keras.backend import backend as K
-#from tensorflow.keras.layers import Dropout
 from sklearn.model_selection import GridSearchCV
 from tensorflow.python.keras.wrappers.scikit_learn import KerasRegressor
 from services.create_timebricks import CreateTimebricks
 from services.helpers import movecol
 from sklearn import preprocessing
-#from tensorboard.plugins.hparams import api as hp
 import matplotlib.pyplot as plt
 
-### Print of Tensorflow version and GPU availability
-#print('Tensorflow Version:',tf.__version__)
-#print(tf.test.is_built_with_cuda())
-#print('GPU available?', tf.test.is_gpu_available())
-#print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 ### Rutas a los directorios de data, de guardado de resultados y de tensores para TensorBoard
-base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/WF_Report'
-save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/'
-tensor_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/Tensorlogs/'
+# base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/WF_Report'
+# save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/'
+# tensor_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/Tensorlogs/'
+save_dir = '/home/miguel/Proyectos/kratos/Data/GBPJPY/M15/'
+base_dir = os.path.join(save_dir, 'WF_Report')
+tensor_dir = os.path.join(save_dir, 'Tensorlogs')
+
 
 ### Fechas de Entrenamiento y Validacion, cortes en uso de clase TimeBricks
 train_start = '2007.01.01'
@@ -69,13 +69,18 @@ class SelectorRegression:
                 #self.dataframe.to_csv(save_dir + '/' + '{} {}_data_last_step.csv'.format(look_start,phase_split))   # For debugging purposes
                 return self.dataframe
 
-    def concatenate_phase(self,phase_list,Target):
+    def concatenate_phase(self, phase_list, Target):
         """Concatenates the phase and pops the target value"""
         concatenated_dataframe = pd.DataFrame()
         for step in phase_list:
             concatenated_dataframe = concatenated_dataframe.append(self.add_range(step[0]))
         concatenated_dataframe = concatenated_dataframe.dropna(axis=1, how='all')    #drop nan values
-        concatenated_target = concatenated_dataframe.pop(Target)
+        try:
+            concatenated_target = concatenated_dataframe.pop(Target)
+        except:
+            print(Target)
+
+
         le = preprocessing.LabelEncoder()
         concatenated_dataframe['Range'] = le.fit_transform(concatenated_dataframe['Range'])
         columns_list = list(concatenated_dataframe)
@@ -94,7 +99,7 @@ class SelectorRegression:
             print("Select a normalization type between Median and MaxMin")
         return raw_dataframe
 
-    def basic_model(self, input_dimension):
+    def create_basic_model(self, input_dimension):
         """Here the Model is created"""
         self.optimizer = 'adam'
         self.init_mode = 'uniform'
@@ -116,7 +121,6 @@ class SelectorRegression:
         ])
         self.model.compile(optimizer=self.optimizer, loss='mae', metrics='mae')
         self.model.optimizer.learning_rate.assign(0.001)
-        return self.model
 
     def run(self):
         test_run = self.split_train_test_sequest_bricks()
@@ -129,18 +133,44 @@ class SelectorRegression:
         self.norm_train_target = self.normalize_dataframe(self.train_target, 'Median')
         #self.norm_train_dataframe.to_csv(save_dir + '/ some_norm_data.csv')    #  For Debugging
         print('train done')
-        some_other_dataframe = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")
+        validation_dataframe = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[0]
+        validation_targets = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[1]
         #some_other_dataframe[0].to_csv(save_dir + '/ other_concatenated_data.csv')   #  For Debugging
         #some_other_dataframe[1].to_csv(save_dir + '/other_concatenated_target.csv')  #  For Debugging
-        other_norm_dataframe = self.normalize_dataframe(some_other_dataframe[0], 'Median')
+        # other_norm_dataframe = self.normalize_dataframe(some_other_dataframe[0], 'Median')
         #other_norm_dataframe.to_csv(save_dir + '/ some_other_norm_data.csv')   #  For Debugging
         print('testing done')
         print('Enter basic model')
-        some_model = self.basic_model(input_dimension=len(self.train_dataframe.columns))
-        print('Exited basic model')
+        self.create_basic_model(input_dimension=len(self.train_dataframe.columns))
+
+        callback_path = os.path.join(save_dir + 'savedmodel.ckpt')
+
+        tensorboard = tf.keras.callbacks.TensorBoard(log_dir=tensor_dir + 'logs', histogram_freq=1)
+        model_callbacks = tf.keras.callbacks.ModelCheckpoint(filepath=callback_path, save_best_only=True, verbose=2)
+
+        history = self.model.fit(
+            x=self.train_dataframe,
+            y=self.train_target,
+            batch_size=5000,
+            epochs=15,
+            verbose=2,
+            shuffle=False,
+            validation_data=(validation_dataframe, validation_targets),
+            callbacks=[tensorboard, model_callbacks]
+        )
+
+        ### Plots the Training and Validation
+        plt.figure(1)
+        plt.plot(np.sqrt(history.history['loss']))
+        plt.plot(np.sqrt(history.history['val_loss']))
+        plt.title('Perdidas de Modelo')
+        plt.ylabel('Perdidas')
+        plt.xlabel('Epochs')
+        plt.legend(['Train', 'Test'], loc='upper left')
+        plt.show()
 
 
-smth = SelectorRegression(train_start,test_start,sequest_start,train_steps)
+smth = SelectorRegression(train_start, test_start, sequest_start, train_steps)
 smth.run()
 
 
