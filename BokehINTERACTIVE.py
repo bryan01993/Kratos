@@ -7,21 +7,23 @@ import pandas as pd
 import subprocess
 
 # Slide Lists
-BotName = 'EA-B1v1'
-i = 'EURJPY'
-j = 'H4'
+BotName = 'EA-B1v2'
+i = 'GBPJPY'
+j = 'M15'
 SIZES = list(range(6, 28, 3))
 COLORS = Inferno256
 N_SIZES = len(SIZES)
 N_COLORS = len(COLORS)
+base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Optimizaciones Listas/Data encadenada'
+first_sequester = base_dir + '/' + 'EA-B1v2 on USDJPY on M15.csv'
 df = pd.read_csv(
-    'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Optimizaciones Listas/Data encadenada/EA-TS1v2 on GBPUSD on H1.csv')
+    first_sequester)
 
 # Execution
 def Interactive_Graph(BotName,df,i,j):
     print('Interactive Graph for Phase 1 for {} on {} at {}'.format(BotName,i,j))
     df = pd.read_csv(
-        'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/Optimizaciones Listas/Data encadenada/EA-TS1v2 on GBPUSD on H1.csv')
+        first_sequester)
     columns = sorted(df.columns)
     discrete = [x for x in columns if df[x].dtype == object]
     continuous = [x for x in columns if x not in discrete]
@@ -68,9 +70,9 @@ def Interactive_Graph(BotName,df,i,j):
         #Var_color_mapper = LinearColorMapper(palette="Inferno256",low=min(df[color.value]),high=max(df[color.value]))  # arreglar Maximo y minimo para que agarren el valor
         GraphTicker = AdaptiveTicker(base=50,desired_num_ticks=10,num_minor_ticks=20,max_interval=1000)
         Color_legend = ColorBar(color_mapper=Var_color_mapper,ticker =GraphTicker,label_standoff=12, border_line_color=None,location=(0, 0)) #arreglar LogTicker para que muestre por al escala del color
-        p.circle(x=xs, y=ys, color=c, size=sz, line_color="white", alpha=0.6, hover_color='white', hover_alpha=0.5)
+        p.circle(x=xs, y=ys, color=c, size=sz, line_color="white", alpha=0.1, hover_color='white', hover_alpha=0.1)
         p.add_layout(Color_legend,'right')
-        p.circle(x=xs, y=ys, color=c, size=sz, line_color="white", alpha=0.6, hover_color='white', hover_alpha=0.5)
+        p.circle(x=xs, y=ys, color=c, size=sz, line_color="white", alpha=0.1, hover_color='white', hover_alpha=0.1)
         return p
 
 

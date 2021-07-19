@@ -1,14 +1,10 @@
-import os.path
 import tkinter as tk
 from tkinter import Frame, Button, Label, Tk, Toplevel, Entry, IntVar, Checkbutton
-import subprocess
-import pandas as pd
-import sys
 
 from Dto import Dto
 from services.create_folders import CreateFolders
 from services.accotate_results_phase1 import AccotateResultsPhase1
-from services.create_ini_phase import CreateIniPhase
+from services.create_init import CreateInit
 from services.launch_phase import LaunchPhase
 from services.accotate_optisets_phase1 import AccotateOptisetsPhase1
 from services.accotate_optisets_phase2 import AccotateOptisetsPhase2
@@ -42,7 +38,6 @@ OPTIMIZED_VARIABLES = 4
 INITIAL_DEPOSIT = 10000 #Default Value es 10000 para todos los analisis
 DEPOSIT_CURRENCY = "USD" #Default Currency para todos los  analisis
 REAL_CURRENCY = "EUR" #Default Currency para Prueba de Tom
-
 
 USER_SERIES = '01' #01 La Opti la hizo bryan, 02 la hizo richard
 BOT_MAGIC_NUMBER_SERIES = '01'   # should be last numbers of the EA 09 for S3
@@ -100,7 +95,7 @@ def create_folders():
 
 def create_ini_phase1():
     """Creates INIT files for all pairs and timeframes selected"""
-    service = CreateIniPhase(create_dto(), 1)
+    service = CreateInit(create_dto(), 1)
     service.run()
 
 def launch_phase1():
@@ -120,7 +115,7 @@ def accotate_optisets_phase1():
 
 def create_ini_phase2():
     """Creates a Phase 2 INIT file for every pair and timeframe selected"""
-    service = CreateIniPhase(create_dto(), 2)
+    service = CreateInit(create_dto(), 2)
     service.run()
 
 def launch_phase2():

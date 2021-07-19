@@ -1,4 +1,3 @@
-import time
 import os
 import pandas as pd
 import shutil
@@ -68,47 +67,3 @@ class BTSetsForPhase3:
                 self.create_ini(pair, time_frame, tail_number=g)
                 print('INIT FILE for :', pair, time_frame, g, 'created')
 
-
-    def create_ini(self, pair, time_frame, optimization_criterion=0, model=2, optimization=0, shutdown=1, visual=0, leverage=33, replace_report=1, use_local=1, forward_mode=0, execution_mode=28, phase=3, tail_number=0):
-        file_name = 'INIT-BT-{}-{}-{}-Phase{}-{}.ini'.format(self.bot, pair, time_frame, phase, tail_number)
-        path = os.path.join(REPORT_PATH, self.bot, 'INITS', 'Phase3', file_name)
-        file = open(path, "w")
-
-        file.write(';[Common]' + "\n" \
-        ';Login=40539843' + "\n" \
-        ';Password=jPHIWVnmZUFn' + "\n"  \
-        ';[Charts]' + "\n" \
-        ';[Experts]' + "\n" \
-        'AllowLiveTrading=1' + "\n" \
-        'AllowDllImport=1' + "\n" \
-        'Enabled=1' + "\n" \
-        '\n' \
-        '[Tester]' + "\n" \
-        'Expert=Advisors\{}'.format(self.bot) + "\n" \
-        'ExpertParameters=\{}\Phase3-{}-{}-{}-{}.set'.format(self.bot, self.bot, pair, time_frame, tail_number) + "\n" \
-        'Symbol={}'.format(pair) + 'MT5' + "\n" \
-        'Period={}'.format(time_frame) + "\n" \
-        ';Login=XXXXXX' + "\n" \
-        'Model={}'.format(model) + "\n" \
-        'ExecutionMode={}'.format(str(execution_mode)) + "\n" \
-        'Optimization={}'.format(optimization) + "\n" \
-        'OptimizationCriterion={}'.format(optimization_criterion) + "\n" \
-        'FromDate={}'.format(self.dto.opti_start_date) + "\n" \
-        'ToDate={}'.format(self.dto.opti_end_date) + "\n" \
-        ';ForwardMode={}'.format(forward_mode) + "\n" \
-        ';ForwardDate={}'.format(self.dto.forward_date) + "\n" \
-        'Report=reports\{}\SETS\Phase3-{}-{}-{}-{}'.format(self.bot, self.bot, pair, time_frame, tail_number) + "\n" \
-        ';--- If the specified report already exists, it will be overwritten' + "\n" \
-        'ReplaceReport={}'.format(replace_report) + "\n" \
-        ';--- Set automatic platform shutdown upon completion of testing/optimization' + "\n" \
-        'ShutdownTerminal={}'.format(shutdown) + "\n" \
-        'Deposit={}'.format(INITIAL_DEPOSIT) + "\n" \
-        'Currency={}'.format(DEPOSIT_CURRENCY) + "\n" \
-        ';Uses or refuses local network resources' + "\n" \
-        'UseLocal={}'.format(use_local) + "\n" \
-        ';Uses Visual test Mode' + "\n" \
-        ';Visual={}'.format(visual) + "\n" \
-        'ProfitInPips=0' + "\n" \
-        'Leverage={}'.format(str(leverage)) + "\n")
-
-        file.close()

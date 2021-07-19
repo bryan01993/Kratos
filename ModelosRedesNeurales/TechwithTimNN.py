@@ -13,14 +13,14 @@ class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
 
 train_images = train_images/255.0
 test_images = test_images/255.0
-#here start model creation
-model = keras.Sequential([keras.layers.Flatten(input_shape=(28,28)), # input layer
-                          keras.layers.Dense(128,activation="relu"), # hidden layer
-                          keras.layers.Dense(10,activation="softmax") # output layer
+# here start model creation
+model = keras.Sequential([keras.layers.Flatten(input_shape=(28,28)),  # input layer
+                          keras.layers.Dense(128,activation="relu"),  # hidden layer
+                          keras.layers.Dense(10,activation="softmax")  # output layer
                           ])
 model.compile(optimizer="adam",loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
 
-model.fit(train_images,train_labels, epochs=5)#number of repetitions
+model.fit(train_images,train_labels, epochs=5)  # number of repetitions
 
 prediction = model.predict(test_images)
 # Below here validating the model through visual vs prediction
