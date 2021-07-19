@@ -67,7 +67,6 @@ class SelectorRegression:
                 self.dataframe = pd.read_csv(base_dir + '/' + file)
                 self.dataframe['Range'] = self.file_start_date + ' to ' + self.file_end_date
                 self.dataframe = movecol(self.dataframe, ['Range'], 'Pass', place='Before')
-                #self.dataframe.to_csv(save_dir + '/' + '{} {}_data_last_step.csv'.format(look_start,phase_split))   # For debugging purposes
                 return self.dataframe
 
     def concatenate_phase(self, phase_list, Target):
@@ -102,44 +101,38 @@ class SelectorRegression:
 
     def create_basic_model(self, input_dimension):
         """Here the Model is created"""
-        self.optimizer = 'adam'
-        self.init_mode = 'uniform'
-        self.activation = 'tanh'
-        self.dropout_rate = 0.5
-        self.wd = 1e-5   # do not remember what this was, weight something
+        optimizer = 'adam'
+        init_mode = 'uniform'
+        activation = 'tanh'
+        dropout_rate = 0.5
+        wd = 1e-5
+
+
         self.model = tf.keras.Sequential([
-            tf.keras.layers.Dense(1200, input_shape=(input_dimension, ), kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='First_Layer'),
-            tf.keras.layers.Dense(1000, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='Second_Layer'),
-            tf.keras.layers.Dropout(self.dropout_rate),
-            tf.keras.layers.Dense(800, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='Third_Layer'),
-            tf.keras.layers.Dense(600, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='a'),
-            tf.keras.layers.Dropout(self.dropout_rate),
-            tf.keras.layers.Dense(400, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='b'),
-            tf.keras.layers.Dense(200, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='c'),
-            tf.keras.layers.Dropout(self.dropout_rate),
-            tf.keras.layers.Dense(100, kernel_regularizer=regularizers.l2(self.wd), activation=self.activation, name='Fourth_Layer'),
-            tf.keras.layers.Dense(1, kernel_initializer=self.init_mode, name='Fifth_Layer'),
+            tf.keras.layers.Dense(1200, input_shape=(input_dimension, ), kernel_regularizer=regularizers.l2(wd), activation=activation, name='First_Layer'),
+            tf.keras.layers.Dense(1000, kernel_regularizer=regularizers.l2(wd), activation=activation, name='Second_Layer'),
+            tf.keras.layers.Dropout(dropout_rate),
+            tf.keras.layers.Dense(800, kernel_regularizer=regularizers.l2(wd), activation=activation, name='Third_Layer'),
+            tf.keras.layers.Dense(600, kernel_regularizer=regularizers.l2(wd), activation=activation, name='a'),
+            tf.keras.layers.Dropout(dropout_rate),
+            tf.keras.layers.Dense(400, kernel_regularizer=regularizers.l2(wd), activation=activation, name='b'),
+            tf.keras.layers.Dense(200, kernel_regularizer=regularizers.l2(wd), activation=activation, name='c'),
+            tf.keras.layers.Dropout(dropout_rate),
+            tf.keras.layers.Dense(100, kernel_regularizer=regularizers.l2(wd), activation=activation, name='Fourth_Layer'),
+            tf.keras.layers.Dense(1, kernel_initializer=init_mode, name='Fifth_Layer'),
         ])
-        self.model.compile(optimizer=self.optimizer, loss='mae', metrics='mae')
+        self.model.compile(optimizer=optimizer, loss='mae', metrics='mae')
         self.model.optimizer.learning_rate.assign(0.001)
 
     def run(self):
         test_run = self.split_train_test_sequest_bricks()
         self.train_dataframe = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[0]
-        #print(len(self.train_dataframe.columns))
         self.train_target = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[1]
-        #self.train_dataframe[0].to_csv(save_dir + '/ some_concatenated_data.csv')     #  For Debugging
-        #self.train_dataframe[1].to_csv(save_dir + '/ some_concatenated_target.csv')   #  For Debugging
         self.norm_train_dataframe = self.normalize_dataframe(self.train_dataframe, 'Median')
         self.norm_train_target = self.normalize_dataframe(self.train_target, 'Median')
-        #self.norm_train_dataframe.to_csv(save_dir + '/ some_norm_data.csv')    #  For Debugging
         print('train done')
         validation_dataframe = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[0]
         validation_targets = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[1]
-        #some_other_dataframe[0].to_csv(save_dir + '/ other_concatenated_data.csv')   #  For Debugging
-        #some_other_dataframe[1].to_csv(save_dir + '/other_concatenated_target.csv')  #  For Debugging
-        # other_norm_dataframe = self.normalize_dataframe(some_other_dataframe[0], 'Median')
-        #other_norm_dataframe.to_csv(save_dir + '/ some_other_norm_data.csv')   #  For Debugging
         print('testing done')
         print('Enter basic model')
         self.create_basic_model(input_dimension=len(self.train_dataframe.columns))
