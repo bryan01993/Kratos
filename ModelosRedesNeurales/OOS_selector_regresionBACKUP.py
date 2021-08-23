@@ -163,16 +163,16 @@ def create_regulated_model( inputtrain, wd, rate, optimizer='adam', activation='
     """Creates the Model with L2 and dropout regulators , to be HyperParametrized and tested"""
     print('This is inputtrain shape[1]', inputtrain.shape[1])
     model = tf.keras.Sequential([
-    tf.keras.layers.Dense(1200, input_shape=(inputtrain.shape[1], ),kernel_regularizer=regularizers.l2(wd), activation=activation, name='First_Layer'),
-    tf.keras.layers.Dense(1000,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Second_Layer'),
+    tf.keras.layers.Dense(2400, input_shape=(inputtrain.shape[1], ),kernel_regularizer=regularizers.l2(wd), activation=activation, name='First_Layer'),
+    tf.keras.layers.Dense(2000,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Second_Layer'),
     tf.keras.layers.Dropout(rate),
-    tf.keras.layers.Dense(800,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Third_Layer'),
-    tf.keras.layers.Dense(600,kernel_regularizer=regularizers.l2(wd), activation=activation, name='a'),
+    tf.keras.layers.Dense(1600,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Third_Layer'),
+    tf.keras.layers.Dense(1200,kernel_regularizer=regularizers.l2(wd), activation=activation, name='a'),
     tf.keras.layers.Dropout(rate),
-    tf.keras.layers.Dense(400,kernel_regularizer=regularizers.l2(wd), activation=activation, name='b'),
-    tf.keras.layers.Dense(200,kernel_regularizer=regularizers.l2(wd), activation=activation, name='c'),
+    tf.keras.layers.Dense(800,kernel_regularizer=regularizers.l2(wd), activation=activation, name='b'),
+    tf.keras.layers.Dense(400,kernel_regularizer=regularizers.l2(wd), activation=activation, name='c'),
     tf.keras.layers.Dropout(rate),
-    tf.keras.layers.Dense(100,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Fourth_Layer'),
+    tf.keras.layers.Dense(200,kernel_regularizer=regularizers.l2(wd), activation=activation, name='Fourth_Layer'),
     tf.keras.layers.Dense(1, kernel_initializer=init_mode, name='Fifth_Layer'),
     ])
     model.compile(optimizer=optimizer, loss='mae', metrics='mae')
