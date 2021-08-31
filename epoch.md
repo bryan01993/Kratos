@@ -4,8 +4,8 @@ Tipos de funciones de perdidas
 
 ### Entrenamiento
 - loss
-- mae (Mean Absolute Error)
-
+- MAE (Mean Absolute Error)
+- MSE (mean square error)
 
 ### Validación
 - val_loss
@@ -18,5 +18,3 @@ Tipos de funciones de perdidas
 
 ## TO-DO
 Encontrar el resultado de validación cada epoch. --- check!
-
-

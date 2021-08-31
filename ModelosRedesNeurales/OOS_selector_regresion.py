@@ -27,10 +27,11 @@ LOG_DIR = f"{int(time.time())}"
 base_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/WF_Report'
 save_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/'
 tensor_dir = 'C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/Tensorlogs/'
-#save_dir = '/home/miguel/Proyectos/kratos/Data/GBPJPY/M15/'
-#base_dir = os.path.join(save_dir, 'WF_Report')
-#tensor_dir = os.path.join(save_dir, 'Tensorlogs')
+# save_dir = '/home/miguel/Proyectos/kratos/Data/GBPJPY/M15/'
+# base_dir = os.path.join(save_dir, 'WF_Report')
+# tensor_dir = os.path.join(save_dir, 'Tensorlogs')
 
+# tensorboard --logdir /home/miguel/Proyectos/kratos/Data/GBPJPY/M15/Tensorlogslogs
 
 ### Fechas de Entrenamiento y Validacion, cortes en uso de clase TimeBricks
 train_start = '2007.01.01'
@@ -167,18 +168,31 @@ class SelectorRegression:
         self.norm_validation_targets = self.normalize_dataframe(self.validation_targets, 'Median')
         input_dimension=len(self.train_dataframe.columns)
         model = tf.keras.Sequential()
-        activation = 'elu'
-        wd = 1e-5
-        model.add(layers.Dense(24, input_shape=(input_dimension, ), kernel_regularizer=regularizers.l2(wd), activation=activation, name='First_Layer'))
-        for i in range(hp.Int("num_layers", 10, 40)):
+
+        hp_activation = ['elu', 'relu']
+        hp_activation = hp.Choice('Activation', hp_activation)
+
+        hp_learning_rate = [0.1, 0.01, 0.001, 0.0001]
+        hp_learning_rate = hp.Choice('learningRate', hp_learning_rate)
+
+        hp_num_layers = hp.Int('numLayers', 1, 10)
+
+        hp_weight_decay = hp.Float('weightDecay', 0.001, 0.1, 0.001)
+
+        hp_type_regularization = hp.Choice('regularizer', ['l1', 'l2'])
+        regularizer = getattr(regularizers, hp_type_regularization)
+
+        model.add(layers.Dense(24, input_shape=(input_dimension, ), kernel_regularizer=regularizer(hp_weight_decay), activation=hp_activation, name='First_Layer'))
+        for i in range(hp_num_layers):
             model.add(
                 layers.Dense(
                     units=hp.Int("units_" + str(i), min_value=96, max_value=2048, step=32),
-                    activation="elu",
+                    activation=hp_activation,
+                    kernel_regularizer=regularizer(hp_weight_decay)
                 )
             )
         model.add(layers.Dense(1))
-        optimizer=tf.keras.optimizers.Adam(hp.Choice("learning_rate", [1e-2, 1e-3]))
+        optimizer=tf.keras.optimizers.Adam(hp_learning_rate)
         model.compile(optimizer=optimizer, loss='mae', metrics='mae')
         return model
 
@@ -189,7 +203,7 @@ class SelectorRegression:
         tuner = RandomSearch(
             self.build_model,
             objective="val_mae",
-            max_trials=200,
+            max_trials=5,
             executions_per_trial=1,
             overwrite=False,
             directory="my_dir",
@@ -197,7 +211,7 @@ class SelectorRegression:
         )
 
         print("Tuner Summary:", tuner.search_space_summary())
-        tuner.search(self.train_dataframe, self.train_target, epochs=50, validation_data=(self.validation_dataframe, self.validation_targets))
+        tuner.search(self.train_dataframe, self.train_target, epochs=10, validation_data=(self.validation_dataframe, self.validation_targets))
         print("Tuner Results Summary:", tuner.results_summary())
 
     def run(self):
@@ -226,7 +240,7 @@ class SelectorRegression:
             x=self.norm_train_dataframe,
             y=self.norm_train_target,
             batch_size=50,
-            epochs=1000,
+            epochs=10,
             verbose=2,
             shuffle=False,
             validation_data=(self.norm_validation_dataframe, self.norm_validation_targets),
@@ -260,7 +274,7 @@ class SelectorRegression:
         print(predictions)
 
 smth = SelectorRegression(train_start, test_start, sequest_start, train_steps)
-smth.run()
-#smth.run_tuner()
-smth.run_sequestered_model()
+# smth.run()
+smth.run_tuner()
+# smth.run_sequestered_model()
 
