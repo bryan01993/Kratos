@@ -1,5 +1,6 @@
 import pandas as pd
-import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 import os
 
 folder_name = 'EA-B1v2'
@@ -21,7 +22,11 @@ def create_dataframe_encadenado(folder_name=folder_name,folder_pair=folder_pair,
 
     print(dataframe_encadenado)
     dataframe_encadenado.to_csv(store_dir + "{} on {} on {}.csv".format(folder_name,folder_pair,folder_timeframe))
+    dataframe_encadenado.drop(dataframe_encadenado[dataframe_encadenado['Result'] <= 0].index, inplace=True)
     print("Optimization saved For {} on {} on {} in Data encadenada".format(folder_name,folder_pair,folder_timeframe))
+    sns.pairplot(dataframe_encadenado[['Result', 'Profit', 'Profit Factor', 'Trades', 'Forward Result']], diag_kind='kde')
+    sns.pairplot(dataframe_encadenado[['ATRMultiplierTP', 'ATRMultiplierSL', 'WilliamsPeriod', 'KeltnerPeriod','ATRPeriod', 'Forward Result']], diag_kind='kde')
+    plt.show()
 
 
 def create_dataframe_encadenado_normalizado(folder_name=folder_name,folder_pair=folder_pair,folder_timeframe=folder_timeframe):

@@ -2,19 +2,27 @@ import numpy as np
 import pandas as pd
 import os
 import sys
-import time
-import tensorflow as tf
-import keras_tuner as kt
-from tensorflow.keras import regularizers
-from sklearn import preprocessing
-import matplotlib.pyplot as plt
-from tensorflow.keras import layers
-from keras_tuner import RandomSearch
-from keras_tuner import HyperParameters
-
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(CURRENT_DIR))
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import time
+import tensorflow as tf
+import seaborn as sns
+from tensorflow.keras import regularizers
+from sklearn import preprocessing as skpre
+import matplotlib.pyplot as plt
+from tensorflow.keras import layers, preprocessing
+from tensorflow.keras.layers.experimental import preprocessing
+from keras_tuner import RandomSearch, BayesianOptimization
+from keras_tuner import HyperParameters
+###Magic Block
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
 
 from services.create_timebricks import CreateTimebricks
 from services.helpers import movecol
@@ -44,7 +52,6 @@ train_steps = 30
 #
 class SelectorRegression:
     """DNN to Forecast the best possibility of high walk forward values"""
-
     def __init__(self, train_start, test_start, sequest_start, train_steps):
         self.train_start = train_start
         self.test_start = test_start
@@ -77,15 +84,15 @@ class SelectorRegression:
         for step in phase_list:
             concatenated_dataframe = concatenated_dataframe.append(self.add_range(step[0]))
         concatenated_dataframe = concatenated_dataframe.dropna(axis=1, how='all')    #drop nan values
-        print("Before cutting: ", len(concatenated_dataframe))
+        #print("Before cutting: ", len(concatenated_dataframe))
         concatenated_dataframe.drop(concatenated_dataframe[concatenated_dataframe['Result'] <= 0].index, inplace=True) #drops custom values below 0
-        print("After cutting: ", len(concatenated_dataframe))
+        #print("After cutting: ", len(concatenated_dataframe))
         try:
             concatenated_target = concatenated_dataframe.pop(Target)
         except:
             print(Target)
-        concatenated_dataframe.to_csv(save_dir+'/cutlosers.csv')
-        le = preprocessing.LabelEncoder()
+        #concatenated_dataframe.to_csv(save_dir+'/cutlosers.csv')
+        le = skpre.LabelEncoder()
         concatenated_dataframe['Range'] = le.fit_transform(concatenated_dataframe['Range'])
         columns_list = list(concatenated_dataframe)
         forward_columns = [c for c in columns_list if 'Forward' in c]
@@ -109,112 +116,159 @@ class SelectorRegression:
         init_mode = 'uniform'
         activation = 'relu'
         dropout_rate = 0.5
-        wd = 1e-9
+        wd = 1e-6
 
         model = tf.keras.Sequential([
-            tf.keras.layers.Dense(24, input_shape=(input_dimension, ), kernel_regularizer=regularizers.l2(wd), activation='relu', name='first'),
+            tf.keras.layers.Dense(24, input_shape=(input_dimension, )),
             tf.keras.layers.Dense(2000, activation=activation, kernel_regularizer=regularizers.l2(wd), name='second'),
             tf.keras.layers.Dense(2000, activation=activation, kernel_regularizer=regularizers.l2(wd), name='third'),
             #tf.keras.layers.Dense(1440, kernel_regularizer=regularizers.l2(wd), activation=activation, name='c'),
             #tf.keras.layers.Dense(1984, kernel_regularizer=regularizers.l2(wd), activation=activation, name='Fourth_Layer'),
-            #tf.keras.layers.Dense(928, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(704, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1888, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1664, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(160, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(128, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1152, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(224, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1856, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(2016, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(544, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1024, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(288, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(896, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(160, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1504, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(352, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(96, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1184, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(2048, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(192, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(192, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1632, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1888, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1088, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(416, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1184, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1600, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(224, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1472, kernel_regularizer=regularizers.l2(wd), activation=activation),
-            #tf.keras.layers.Dense(1920, kernel_regularizer=regularizers.l2(wd), activation=activation),
             tf.keras.layers.Dense(1, name='output_layer'),
         ])
 
-        model.compile(optimizer=optimizer, loss='mse', metrics='mse')
-        model.optimizer.learning_rate.assign(0.001)
+        model.compile(optimizer=optimizer, loss='mae', metrics='mae')
+        model.optimizer.learning_rate.assign(0.01)
 
         return model
 
     def build_model(self, hp):
-        test_run = self.split_train_test_sequest_bricks()
-        self.train_dataframe = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[0]
-        self.train_target = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[1]
-        self.norm_train_dataframe = self.normalize_dataframe(self.train_dataframe, 'Median')
-        self.norm_train_target = self.normalize_dataframe(self.train_target, 'Median')
-        self.validation_dataframe = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[0]
-        self.validation_targets = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[1]
-        self.norm_validation_dataframe = self.normalize_dataframe(self.validation_dataframe, 'Median')
-        self.norm_validation_targets = self.normalize_dataframe(self.validation_targets, 'Median')
-        input_dimension=len(self.train_dataframe.columns)
+
         model = tf.keras.Sequential()
-
-        hp_activation = ['elu', 'relu']
+        hp_activation = ['elu', 'relu']  #, 'relu'
         hp_activation = hp.Choice('Activation', hp_activation)
-
-        hp_learning_rate = [0.1, 0.01, 0.001, 0.0001]
+        hp_learning_rate = [0.01, 0.001, 0.0001]            #  0.001, 0.0001
         hp_learning_rate = hp.Choice('learningRate', hp_learning_rate)
-
-        hp_num_layers = hp.Int('numLayers', 1, 10)
-
-        hp_weight_decay = hp.Float('weightDecay', 0.001, 0.1, 0.001)
-
-        hp_type_regularization = hp.Choice('regularizer', ['l1', 'l2'])
+        hp_num_layers = hp.Int('numLayers', 8, 12)
+        hp_weight_decay = [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01] #0.0001, 0.001, 0.01
+        hp_weight_decay = hp.Choice('weightDecay', hp_weight_decay)
+        hp_type_regularization = hp.Choice('regularizer', ['l1'])  #, 'l2'
         regularizer = getattr(regularizers, hp_type_regularization)
-
-        model.add(layers.Dense(24, input_shape=(input_dimension, ), kernel_regularizer=regularizer(hp_weight_decay), activation=hp_activation, name='First_Layer'))
+        weight_initializer = tf.keras.initializers.RandomNormal(mean=0, stddev=1.0)
+        data = np.array(self.train_dataframe)
+        data_normalizer = preprocessing.Normalization( axis=-1)
+        data_normalizer.adapt(data)
+        self.tensorboard = tf.keras.callbacks.TensorBoard(log_dir=tensor_dir + 'logs/{}-{}-{}-{}-{}'.format(hp_activation ,hp_learning_rate ,hp_num_layers ,hp_weight_decay, time.time()), histogram_freq=1)
+        model.add(layers.Dense(24, input_shape=(len(self.norm_train_dataframe.columns), )))
         for i in range(hp_num_layers):
             model.add(
                 layers.Dense(
-                    units=hp.Int("units_" + str(i), min_value=96, max_value=2048, step=32),
+                    units=hp.Int("units_" + str(i), min_value=400, max_value=1024, step=24),
                     activation=hp_activation,
-                    kernel_regularizer=regularizer(hp_weight_decay)
+                    kernel_regularizer=regularizer(hp_weight_decay),
+                    #kernel_initializer= weight_initializer
                 )
             )
         model.add(layers.Dense(1))
         optimizer=tf.keras.optimizers.Adam(hp_learning_rate)
         model.compile(optimizer=optimizer, loss='mae', metrics='mae')
+        #model.summary()
         return model
 
     def run_tuner(self):
         hp = HyperParameters()
+        test_run = self.split_train_test_sequest_bricks()
+        self.train_dataframe = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[0]
+        self.train_target = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[1]
+        self.norm_train_dataframe = self.normalize_dataframe(self.train_dataframe, 'Median')
+        #print("This is Training dataframe normalized", '\n', self.norm_train_dataframe.head())
+        training_data_description = self.norm_train_dataframe.describe()
+        #print("This is Training Data: ", "\n", training_data_description)
+        #training_data_description.to_csv(save_dir + 'training_data_description.csv')
+        self.norm_train_target = self.normalize_dataframe(self.train_target, 'Median')
+        training_target_description = self.norm_train_target.describe()
+        #print("This is Training Target : ", "\n",training_target_description)
+        #training_target_description.to_csv(save_dir + 'training_target_description.csv')
+        #print("This is Training target normalized", '\n', self.norm_train_target.head())
+        self.validation_dataframe = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[0]
+        self.validation_targets = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[1]
+        self.norm_validation_dataframe = self.normalize_dataframe(self.validation_dataframe, 'Median')
+        self.norm_validation_targets = self.normalize_dataframe(self.validation_targets, 'Median')
+        validation_data_description = self.norm_validation_dataframe.describe()
+        #print("This is Validation Data: ", "\n", validation_data_description)
+        #validation_data_description.to_csv(save_dir + 'validation_data_description.csv')
+        validation_target_description = self.norm_validation_targets.describe()
+        #print("This is Validation Target : ", "\n", validation_target_description)
+        #validation_target_description.to_csv(save_dir + 'validation_target_description.csv')
+        self.input_dimension=len(self.norm_train_dataframe.columns)
         # This will override the `learning_rate` parameter with your own selection of choices
-        #hp.Choice("learning_rate", values=[1e-2, 1e-3, 1e-4])
-        tuner = RandomSearch(
+        self.tuner = BayesianOptimization(
             self.build_model,
-            objective="val_mae",
-            max_trials=5,
+            objective="val_loss",
+            max_trials=10,
             executions_per_trial=1,
-            overwrite=False,
+            overwrite=True,
             directory="my_dir",
-            project_name="helloworld",
+            project_name="Kratos",
         )
 
-        print("Tuner Summary:", tuner.search_space_summary())
-        tuner.search(self.train_dataframe, self.train_target, epochs=10, validation_data=(self.validation_dataframe, self.validation_targets))
-        print("Tuner Results Summary:", tuner.results_summary())
+        print("Tuner Summary:", self.tuner.search_space_summary())
+        self.tuner.search(self.norm_train_dataframe, self.train_target, epochs=30, validation_data=(self.norm_validation_dataframe, self.validation_targets), shuffle=True, callbacks = [self.tensorboard])
+        print("Tuner Results Summary:", self.tuner.results_summary())
+
+    def single_input_model(self):
+        """Creates a Linear Regression Model based only on 1 feature"""
+        print("Starting Single Input Model")
+        test_run = self.split_train_test_sequest_bricks()
+        self.train_dataframe = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[0]
+        self.train_target = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[1]
+        normalizer = preprocessing.Normalization(axis=-1)
+        normalizer.adapt(np.array(self.train_dataframe))
+        profit = np.array(self.train_dataframe)
+        profit_normalizer = preprocessing.Normalization( axis=-1)
+        profit_normalizer.adapt(profit)
+        profit_model = tf.keras.Sequential([ profit_normalizer,layers.Dense(units=10), layers.Dense(units=1)])
+        profit_model.summary()
+        print(profit_model.predict(profit[:10]))
+
+        profit_model.compile(
+            optimizer=tf.optimizers.Adam(learning_rate=10),
+            loss='mean_absolute_error')
+
+        self.history = profit_model.fit(
+            self.train_dataframe, self.train_target,
+            epochs=20,
+            # suppress logging
+            verbose=1,
+            # Calculate validation results on 20% of the training data
+            validation_split=0.2)
+        print(normalizer.mean.numpy())
+        hist = pd.DataFrame(self.history.history)
+        hist['epoch'] = self.history.epoch
+        hist.tail()
+
+        test_results = {}
+
+        test_results['profit_model'] = profit_model.evaluate(
+            self.train_dataframe,
+            self.train_target, verbose=0)
+        #self.plot_loss()
+
+        x = tf.linspace(0.0, 250, 251)
+        y = profit_model.predict(x)
+
+        def plot_result(x, y):
+            plt.scatter(self.train_dataframe['Trades'], self.train_target, label='Data')
+            plt.plot(x, y, color='k', label='Predictions')
+            plt.xlabel('Trades')
+            plt.ylabel('Fwd Result')
+            plt.legend()
+
+        plot_result(x, y)
+        plt.show()
+
+    def plot_loss(self):
+        plt.plot(self.history.history['loss'], label='loss')
+        plt.plot(self.history.history['val_loss'], label='val_loss')
+        plt.ylim([0, 50])
+        plt.xlabel('Epoch')
+        plt.ylabel('Error [CustFwd]')
+        plt.legend()
+        plt.grid(True)
 
     def run(self):
+        """Simple 1 Time DNN Model, along with graphics on Loss and Predictions and saving the Model."""
+        print("Start Simple Run")
         test_run = self.split_train_test_sequest_bricks()
         self.train_dataframe = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[0]
         self.train_target = self.concatenate_phase(phase_list = self.train_list, Target="CustomForward")[1]
@@ -224,26 +278,21 @@ class SelectorRegression:
         self.validation_targets = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[1]
         self.norm_validation_dataframe = self.normalize_dataframe(self.validation_dataframe, 'Median')
         self.norm_validation_targets = self.normalize_dataframe(self.validation_targets, 'Median')
-        print('train done')
         validation_dataframe = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[0]
         validation_targets = self.concatenate_phase(phase_list = self.test_list, Target="CustomForward")[1]
-        print('testing done')
-        print('Enter basic model')
-
         callback_path = os.path.join(save_dir + 'savedmodel.ckpt')
         self.save_model_path = save_dir + 'saved_model.h5'
         tensorboard = tf.keras.callbacks.TensorBoard(log_dir=tensor_dir + 'logs', histogram_freq=1)
         model_callbacks = tf.keras.callbacks.ModelCheckpoint(filepath=callback_path, save_best_only=True, verbose=2)
-
         model = self.build_basic_model(input_dimension=len(self.train_dataframe.columns))
         history = model.fit(
             x=self.norm_train_dataframe,
-            y=self.norm_train_target,
+            y=self.train_target,
             batch_size=50,
-            epochs=10,
+            epochs=100,
             verbose=2,
             shuffle=False,
-            validation_data=(self.norm_validation_dataframe, self.norm_validation_targets),
+            validation_data=(self.norm_validation_dataframe, self.validation_targets),
             callbacks=[tensorboard, model_callbacks]
         )
         model.save(self.save_model_path)
@@ -257,24 +306,46 @@ class SelectorRegression:
         plt.show()
 
     def run_sequestered_model(self):
+        """Runs the Model (from tuner, single Column, or Simple Basic Model) with data straight from the optimization"""
         self.save_model_path = save_dir + 'saved_model.h5'
         self.sequest_list = [['2015.9.1', '2019.9.1', '2020.9.1'], ['2016.1.1', '2020.1.1', '2021.1.1']]
         self.split_train_test_sequest_bricks()
-        print('train: ', self.train_list)
-        print('test: ', self.test_list)
-        print("Start: ", self.sequest_start)
+        #print('train: ', self.train_list)
+        #print('test: ', self.test_list)
+        #print("Start: ", self.sequest_start)
         sequest_data = self.concatenate_phase(phase_list=self.sequest_list, Target="CustomForward")[0]
+        norm_sequest_data = self.normalize_dataframe(sequest_data, 'Median')
         sequest_target = self.concatenate_phase(phase_list=self.sequest_list, Target="CustomForward")[1]
+        norm_sequest_target = self.normalize_dataframe(sequest_target, 'Median')
         new_model = tf.keras.models.load_model(self.save_model_path)
-        predictions = new_model.predict(sequest_data)
-        sequest_data.to_csv(save_dir + "sequestered_data.csv")
-        sequest_target.to_csv(save_dir + '/sequestered_target.csv')
-        dfPredictions = pd.DataFrame(predictions)
-        dfPredictions.to_csv(save_dir + '/predictions.csv')
-        print(predictions)
+        #i = 00
+        for i in range(0,10):
+            new_model = self.tuner.get_best_models(num_models=20)[i]
+            self.predictions = new_model.predict(norm_sequest_data)
+            norm_sequest_data.to_csv(save_dir + "sequestered_data.csv")
+            norm_sequest_target.to_csv(save_dir + '/sequestered_target.csv')
+            dfPredictions = pd.DataFrame(self.predictions)
+            dfPredictions.to_csv(save_dir + '/predictions{}.csv'.format(i))
+            print("iteration", i)
+            print("Three prediction examples: ", self.predictions[:3])
+        self.plot_predictions_vs_actual(target= norm_sequest_target)
+
+    def plot_predictions_vs_actual(self, target):
+        """Plots Predictions against actual values from the sequestered test"""
+        print("plotting predictions")
+        a = plt.axes(aspect='equal')
+        plt.scatter(target, self.predictions)
+        plt.xlabel('Actual Results')
+        plt.ylabel('Predicted Results')
+        lims = [0, 20]
+        plt.xlim(lims)
+        plt.ylim(lims)
+        _ = plt.plot(lims, lims)
+        plt.show()
+
 
 smth = SelectorRegression(train_start, test_start, sequest_start, train_steps)
-# smth.run()
-smth.run_tuner()
-# smth.run_sequestered_model()
-
+#smth.single_input_model()
+smth.run()
+#smth.run_tuner()
+smth.run_sequestered_model()
