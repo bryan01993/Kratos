@@ -167,8 +167,6 @@ def other_stupid_model():
     model.add(tf.keras.layers.Dense(1))
     model.summary()
 
-
-
     size_histories = {}
     print("starting Tiny")
     size_histories['Tiny'] = compile_and_fit(tiny_model, 'sizes/Tiny')
