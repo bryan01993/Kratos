@@ -57,9 +57,13 @@ def create_dataframe(tf='H4'):
             file_dataframe = file_dataframe.rename(columns={'<CLOSE>': file_pair})
             analysis_dataframe = analysis_dataframe.join(file_dataframe[file_pair], how='left', on=['<DATE>','<TIME>'])
 
+
             print('Head:', '\n', analysis_dataframe.head())
             print('Tail:', '\n', analysis_dataframe.tail())
             print('Finished')
+    analysis_dataframe.fillna(method='ffill', inplace=True)
+    analysis_dataframe.fillna(method='bfill', inplace=True)
+    analysis_dataframe.to_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/All_dataframe.csv')
     return analysis_dataframe
 
 
@@ -298,6 +302,7 @@ def test():
         datafile = pd.read_csv(filepath, sep='\t', index_col=['<DATE>', '<TIME>'])
         datafile = datafile[start_date:end_date]
         series = datafile['<CLOSE>']
+        create_dataframe()
         calculate_adfuller(series)
         calculate_hurst(series)
         #calculate_variance_ratio(series)

@@ -19,11 +19,17 @@ first_sequester = base_dir + '/' + 'EA-B1v2 on USDJPY on M15.csv'
 df = pd.read_csv(
     first_sequester)
 
+df = df.drop(df[df['Result'] <= 0].index,inplace=True)  # drops custom values below 0
+
 # Execution
 def Interactive_Graph(BotName,df,i,j):
     print('Interactive Graph for Phase 1 for {} on {} at {}'.format(BotName,i,j))
     df = pd.read_csv(
         first_sequester)
+    df.drop(df[df['Result'] <= 0].index, inplace=True)  # drops custom values below 0
+    df.drop(df[df['CustomForward'] <= 0].index, inplace=True)
+    df.drop(df[df['Trades'] >=600].index, inplace=True)
+    df.to_csv('C:/Users/bryan/AppData/Roaming/MetaQuotes/Terminal/6C3C6A11D1C3791DD4DBF45421BF8028/reports/EA-B1v2/GBPJPY/M15/Bokehpassed.csv')
     columns = sorted(df.columns)
     discrete = [x for x in columns if df[x].dtype == object]
     continuous = [x for x in columns if x not in discrete]
